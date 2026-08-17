@@ -134,8 +134,7 @@ function AvatarsRow() {
       <div
         className="pointer-events-none absolute -inset-x-6 -inset-y-10 -z-10 opacity-[0.14]"
         style={{
-          maskImage:
-            "radial-gradient(ellipse at left, black, transparent 72%)",
+          maskImage: "radial-gradient(ellipse at left, black, transparent 72%)",
         }}
       >
         <svg width="100%" height="100%">
@@ -153,10 +152,26 @@ function AvatarsRow() {
                 strokeWidth="0.6"
                 strokeLinejoin="round"
               />
-              <polygon points={tileCross} fill="#ffc400" transform="translate(0 0)" />
-              <polygon points={tileCross} fill="#ffc400" transform="translate(40 0)" />
-              <polygon points={tileCross} fill="#ffc400" transform="translate(0 40)" />
-              <polygon points={tileCross} fill="#ffc400" transform="translate(40 40)" />
+              <polygon
+                points={tileCross}
+                fill="#ffc400"
+                transform="translate(0 0)"
+              />
+              <polygon
+                points={tileCross}
+                fill="#ffc400"
+                transform="translate(40 0)"
+              />
+              <polygon
+                points={tileCross}
+                fill="#ffc400"
+                transform="translate(0 40)"
+              />
+              <polygon
+                points={tileCross}
+                fill="#ffc400"
+                transform="translate(40 40)"
+              />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#hero-zellige)" />
@@ -190,7 +205,7 @@ function AvatarsRow() {
 
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden bg-[#fcfdfc] lg:min-h-[900px]">
+    <section className="relative isolate overflow-hidden bg-[#fcfdfc] xl:min-h-[700px]">
       <div className="absolute inset-y-0 right-0 w-[60%] sm:w-[55%]">
         <Image
           src={bghero}
@@ -200,32 +215,32 @@ export function Hero() {
           className="object-cover object-[62%_center]"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#fcfdfc] from-0% to-transparent to-70% lg:to-20%" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fcfdfc] from-0% to-transparent to-45% lg:hidden" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#fcfdfc] from-0% to-transparent to-70% xl:to-20%" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fcfdfc] from-0% to-transparent to-45% xl:hidden" />
       </div>
       <div className="hero-pattern absolute inset-0 opacity-70" />
-      <div className="relative z-10 mx-auto grid max-w-[1440px] grid-cols-1 px-5 py-16 sm:px-8 lg:min-h-[900px] lg:grid-cols-[51%_49%] lg:px-12 lg:py-20">
-        <div className="relative z-10 flex flex-col justify-center lg:pb-28">
+      <div className="relative z-10 mx-auto grid max-w-[1440px] grid-cols-1 px-5 py-10 sm:px-8 lg:pt-16 xl:min-h-[700px] xl:grid-cols-[51%_49%] xl:content-start xl:px-12 xl:py-14">
+        <div className="relative z-10 flex flex-col justify-center xl:pb-28">
           <div className="inline-flex w-fit items-center gap-2 text-sm font-bold tracking-[0.07em] text-teal-700 ">
             <span className="flex size-8 items-center justify-center rounded-full bg-teal-50">
               <MapPin className="size-[18px]" />
             </span>
             CASABLANCA
           </div>
-          <h1 className="mt-8 max-w-[680px] text-[32px] font-bold text-slate-950 sm:text-[44px] lg:text-[50px]">
-            Un artisan chez vous<span className="text-teal-600">.</span>
+          <h1 className="mt-5 max-w-[680px] text-[32px] font-bold text-slate-950 sm:text-[44px] lg:text-[50px]">
+            Un Artisan Chez Vous<span className="text-teal-600">.</span>
             <br />
-            Vérifié avant votre choix<span className="text-teal-600">.</span>
+            Vérifié Avant Votre Choix<span className="text-teal-600">.</span>
           </h1>
-          <p className="mt-8 max-w-[555px] font-normal text-[18px] leading-[1.75] text-slate-800">
+          <p className="mt-5 max-w-[555px] font-normal text-[18px] leading-[1.75] text-slate-800">
             Identité vérifiée, avis liés aux travaux réalisés et possibilité de
             demander une facture avant même de recevoir une réponse.
           </p>
-          <div className="mt-6 flex items-center gap-2.5 text-[16px] font-semibold text-teal-700">
+          <div className="mt-4 flex items-center gap-2.5 text-[16px] font-semibold text-teal-700">
             <ShieldCheck className="size-5" />
             Vous choisissez après avoir comparé.
           </div>
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row">
             <Button
               render={<Link href="/publier-une-demande" />}
               nativeButton={false}
@@ -244,13 +259,13 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="relative z-10 mt-8 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:flex lg:items-center lg:justify-center">
-          <div className="mx-auto w-full max-w-[400px] rounded-[27px] border border-white/80 bg-white/95 p-6 shadow-[0_24px_60px_rgba(12,55,55,0.2)] backdrop-blur-md lg:absolute lg:left-[30%] lg:top-[54%] lg:w-[400px] lg:max-w-none lg:-translate-x-1/2 lg:-translate-y-1/2">
+        <div className="relative z-10 mt-8 xl:col-start-2 xl:row-span-2 xl:mt-0 xl:flex xl:items-center xl:justify-center">
+          <div className="mx-auto w-full max-w-[400px] rounded-[27px] border border-white/80 bg-white/95 p-6 shadow-[0_24px_60px_rgba(12,55,55,0.2)] backdrop-blur-md xl:absolute xl:left-[30%] xl:top-[54%] xl:w-[400px] xl:max-w-none xl:-translate-x-1/2 xl:-translate-y-1/2">
             <ProviderCard />
           </div>
         </div>
 
-        <div className="mt-8 lg:col-start-1 lg:row-start-2 lg:mt-0 lg:flex lg:items-end lg:pb-10">
+        <div className="mt-10 mb-20 xl:col-start-1 xl:row-start-2 xl:mb-0 xl:-mt-64 xl:flex xl:items-end xl:pb-10">
           <AvatarsRow />
         </div>
       </div>
