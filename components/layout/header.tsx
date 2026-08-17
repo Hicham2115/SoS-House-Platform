@@ -29,7 +29,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-[14px] font-semibold text-slate-800 transition-colors hover:text-teal-700"
+              className="relative text-[14px] font-semibold text-slate-800 transition-colors hover:text-teal-700 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-teal-700 after:transition-all after:duration-300 hover:after:w-full"
             >
               {link.label}
             </Link>

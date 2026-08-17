@@ -18,6 +18,30 @@ import avatar3 from "@/app/assets/avatars/avatar-3.png";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
+function starPoints(
+  cx: number,
+  cy: number,
+  spikes: number,
+  outerR: number,
+  innerR: number,
+) {
+  const step = Math.PI / spikes;
+  const coords: string[] = [];
+  for (let i = 0; i < spikes * 2; i++) {
+    const r = i % 2 === 0 ? outerR : innerR;
+    const angle = i * step - Math.PI / 2;
+    coords.push(
+      `${(cx + r * Math.cos(angle)).toFixed(2)},${(cy + r * Math.sin(angle)).toFixed(2)}`,
+    );
+  }
+  return coords.join(" ");
+}
+
+const outerStar = starPoints(32, 32, 8, 27, 15.5);
+const rosetteStar = starPoints(32, 32, 8, 19.5, 10.5);
+const sunStar = starPoints(32, 32, 8, 8.5, 4.5);
+const dotAngles = Array.from({ length: 8 }, (_, i) => i * 45 - 90);
+
 const clientAvatars = [avatar1, avatar2, avatar3];
 
 const trustItems = [
@@ -148,7 +172,7 @@ export function Hero() {
       <div className="hero-pattern absolute inset-0 opacity-70" />
       <div className="relative z-10 mx-auto grid max-w-[1440px] grid-cols-1 px-5 py-16 sm:px-8 lg:min-h-[900px] lg:grid-cols-[51%_49%] lg:px-12 lg:py-20">
         <div className="relative z-10 flex flex-col justify-center lg:pb-28">
-          <div className="inline-flex w-fit items-center gap-2 text-sm font-bold tracking-[0.07em] text-teal-700 lg:-mt-20">
+          <div className="inline-flex w-fit items-center gap-2 text-sm font-bold tracking-[0.07em] text-teal-700 ">
             <span className="flex size-8 items-center justify-center rounded-full bg-teal-50">
               <MapPin className="size-[18px]" />
             </span>
@@ -171,7 +195,7 @@ export function Hero() {
             <Button
               render={<Link href="/publier-une-demande" />}
               nativeButton={false}
-              className="h-[66px] justify-between rounded-xl bg-[#ffc400] px-7 text-[16px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19] sm:min-w-[260px]"
+              className="h-[60px] justify-between rounded-xl bg-[#ffc400] px-7 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19] sm:min-w-[200px]"
             >
               Publier une demande <ArrowRight className="size-5" />
             </Button>
@@ -179,7 +203,7 @@ export function Hero() {
               render={<Link href="/devenir-prestataire" />}
               nativeButton={false}
               variant="outline"
-              className="h-[66px] rounded-xl border-teal-700 bg-white/70 px-8 text-[16px] font-bold text-teal-700 transition hover:bg-teal-50"
+              className="h-[60px] rounded-xl border-teal-700 bg-white/70 px-8 text-[15px] font-bold text-teal-700 transition hover:bg-teal-50"
             >
               Devenir prestataire
             </Button>
@@ -204,45 +228,56 @@ export function Hero() {
       >
         <defs>
           <linearGradient id="starBody" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#14958f" />
+            <stop offset="0%" stopColor="#1a9e97" />
             <stop offset="100%" stopColor="#0b5f5c" />
           </linearGradient>
-          <radialGradient id="starCenter" cx="35%" cy="30%" r="75%">
-            <stop offset="0%" stopColor="#ffe08a" />
+          <radialGradient id="starPlate" cx="40%" cy="35%" r="70%">
+            <stop offset="0%" stopColor="#2fb3aa" />
+            <stop offset="100%" stopColor="#0f7a75" />
+          </radialGradient>
+          <radialGradient id="starSun" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stopColor="#ffe9ad" />
             <stop offset="55%" stopColor="#ffc400" />
             <stop offset="100%" stopColor="#e6a600" />
           </radialGradient>
         </defs>
-        <rect
-          x="9"
-          y="9"
-          width="46"
-          height="46"
-          rx="4"
+        <polygon
+          points={outerStar}
           fill="url(#starBody)"
           stroke="#08403e"
           strokeWidth="0.75"
+          strokeLinejoin="round"
         />
-        <rect
-          x="9"
-          y="9"
-          width="46"
-          height="46"
-          rx="4"
-          fill="url(#starBody)"
-          stroke="#08403e"
-          strokeWidth="0.75"
-          transform="rotate(45 32 32)"
-        />
-        <path
-          d="M32 20.5 L36.5 27.5 L44.5 27 L40 34 L44.5 41 L36.5 40.5 L32 47.5 L27.5 40.5 L19.5 41 L24 34 L19.5 27 L27.5 27.5 Z"
+        <circle cx="32" cy="32" r="21" fill="url(#starPlate)" />
+        <polygon
+          points={rosetteStar}
           fill="none"
-          stroke="#a9e6df"
-          strokeOpacity="0.55"
-          strokeWidth="0.75"
+          stroke="#e8fbf8"
+          strokeOpacity="0.8"
+          strokeWidth="0.9"
+          strokeLinejoin="round"
         />
-        <circle cx="32" cy="32" r="7" fill="url(#starCenter)" stroke="#a9770a" strokeWidth="0.5" />
-        <circle cx="30" cy="30" r="2" fill="#fff6db" fillOpacity="0.8" />
+        {dotAngles.map((deg) => {
+          const rad = (deg * Math.PI) / 180;
+          return (
+            <circle
+              key={deg}
+              cx={32 + 19.5 * Math.cos(rad)}
+              cy={32 + 19.5 * Math.sin(rad)}
+              r="1.1"
+              fill="#e8fbf8"
+              fillOpacity="0.9"
+            />
+          );
+        })}
+        <polygon
+          points={sunStar}
+          fill="url(#starSun)"
+          stroke="#a9770a"
+          strokeWidth="0.5"
+          strokeLinejoin="round"
+        />
+        <circle cx="30" cy="30" r="1.4" fill="#fff6db" fillOpacity="0.85" />
       </svg>
     </section>
   );
