@@ -253,30 +253,26 @@ function DoorIllustration() {
 export function HowItWorks() {
   return (
     <section className="relative isolate overflow-hidden bg-[#f6f5fc] py-20 sm:py-24 lg:py-[86px]">
-      <div
-        className="how-it-works-pattern pointer-events-none absolute -right-20 -top-20 h-80 w-80 opacity-60 sm:h-[440px] sm:w-[440px]"
-        style={{
-          maskImage:
-            "radial-gradient(circle at top right, black, transparent 70%)",
-        }}
+      <ZelligeCorner
+        id="zellige-tr"
+        corner="top-right"
+        className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 opacity-70 sm:h-[440px] sm:w-[440px]"
       />
-      <div
-        className="how-it-works-pattern pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 opacity-60 sm:h-[440px] sm:w-[440px]"
-        style={{
-          maskImage:
-            "radial-gradient(circle at bottom left, black, transparent 70%)",
-        }}
+      <ZelligeCorner
+        id="zellige-bl"
+        corner="bottom-left"
+        className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 opacity-70 sm:h-[440px] sm:w-[440px]"
       />
 
       <div className="relative mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
-          <div className="flex items-center gap-5">
-            <span className="h-px w-7 bg-teal-300" />
-            <span className="flex items-center gap-2 text-sm font-bold tracking-[0.08em] text-teal-700">
-              <House className="size-10" strokeWidth={1.7} />
+          <div className="flex items-center gap-3 sm:gap-5">
+            <span className="h-px w-5 shrink-0 bg-teal-300 sm:w-7" />
+            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-700 whitespace-nowrap sm:text-sm">
+              <House className="size-7 shrink-0 sm:size-10" strokeWidth={1.7} />
               COMMENT ÇA MARCHE
             </span>
-            <span className="h-px w-7 bg-teal-300" />
+            <span className="h-px w-5 shrink-0 bg-teal-300 sm:w-7" />
           </div>
           <h2 className="mt-6 text-[31px] font-bold leading-[1.2] tracking-[-0.04em] text-slate-950 sm:text-[40px] lg:text-[48px]">
             3 étapes simples pour trouver
@@ -291,16 +287,20 @@ export function HowItWorks() {
           </p>
         </div>
 
-        <div className="relative mt-10 grid grid-cols-1 gap-8 lg:mt-10 lg:grid-cols-3 lg:gap-10">
-          {steps.map((step) => (
+        <div className="relative mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6 lg:mt-10 lg:grid-cols-3 lg:gap-10">
+          {steps.map((step, index) => (
             <div
               key={step.number}
-              className="relative min-h-[440px] rounded-[15px] bg-white px-7 pb-7 pt-5 text-center shadow-[0_12px_34px_rgba(69,64,112,0.055)]"
+              className={`relative min-h-[440px] rounded-[15px] bg-white px-5 pb-7 pt-5 text-center shadow-[0_12px_34px_rgba(69,64,112,0.055)] sm:px-6 lg:px-7 ${
+                index === steps.length - 1
+                  ? "sm:col-span-2 sm:mx-auto sm:max-w-[calc(50%-0.75rem)] lg:col-span-1 lg:max-w-none lg:mx-0"
+                  : ""
+              }`}
             >
               <span className="absolute left-5 top-5 z-20 flex size-11 items-center justify-center rounded-full bg-teal-700 text-lg font-bold text-white shadow-[0_5px_14px_rgba(15,122,117,0.2)]">
                 {step.number}
               </span>
-              <div className="mx-auto size-[218px]">
+              <div className="mx-auto size-45 sm:size-47.5 lg:size-54.5">
                 <step.Illustration />
               </div>
               <h3 className="mt-1 text-[23px] font-semibold tracking-[-0.03em] text-slate-950">
