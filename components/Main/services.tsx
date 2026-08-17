@@ -106,15 +106,11 @@ export function Services() {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((service, index) => (
+        <div className="mt-10 flex flex-wrap justify-center gap-6">
+          {services.map((service) => (
             <div
               key={service.title}
-              className={`group overflow-hidden rounded-2xl border border-slate-900/5 bg-white shadow-[0_12px_34px_rgba(69,64,112,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(69,64,112,0.16)] ${
-                index === services.length - 1
-                  ? "sm:col-span-2 sm:mx-auto sm:max-w-[calc(50%-0.75rem)] lg:col-span-1 lg:max-w-none lg:mx-0"
-                  : ""
-              }`}
+              className="group w-full overflow-hidden rounded-2xl border border-slate-900/5 bg-white shadow-[0_12px_34px_rgba(69,64,112,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(69,64,112,0.16)] sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
             >
               <div className="relative h-[170px] w-full overflow-hidden">
                 <Image
