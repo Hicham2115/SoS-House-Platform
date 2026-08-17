@@ -4,6 +4,7 @@ import { Verification } from "@/components/Main/verification";
 import { Services } from "@/components/Main/services";
 import { ForArtisans } from "@/components/Main/for-artisans";
 import { Testimonials } from "@/components/Main/testimonials";
+import { CallToAction } from "@/components/Main/call-to-action";
 
 export default function Home() {
   return (
@@ -11,9 +12,10 @@ export default function Home() {
       <Hero />
       <HowItWorks />
       <Verification />
-      <Services />
       <ForArtisans />
+      <Services />
       <Testimonials />
+      <CallToAction />
     </>
   );
 }
