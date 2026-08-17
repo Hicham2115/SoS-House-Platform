@@ -291,7 +291,7 @@ export function HowItWorks() {
           {steps.map((step, index) => (
             <div
               key={step.number}
-              className={`relative min-h-[440px] rounded-[15px] bg-white px-5 pb-7 pt-5 text-center shadow-[0_12px_34px_rgba(69,64,112,0.055)] sm:px-6 lg:px-7 ${
+              className={`relative min-h-110 rounded-[15px] bg-white px-5 pb-7 pt-5 text-center shadow-[0_12px_34px_rgba(69,64,112,0.055)] sm:px-6 lg:px-7 ${
                 index === steps.length - 1
                   ? "sm:col-span-2 sm:mx-auto sm:max-w-[calc(50%-0.75rem)] lg:col-span-1 lg:max-w-none lg:mx-0"
                   : ""

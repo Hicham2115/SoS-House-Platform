@@ -42,6 +42,9 @@ const rosetteStar = starPoints(32, 32, 8, 19.5, 10.5);
 const sunStar = starPoints(32, 32, 8, 8.5, 4.5);
 const dotAngles = Array.from({ length: 8 }, (_, i) => i * 45 - 90);
 
+const tileStar = starPoints(20, 20, 8, 12, 6);
+const tileCross = starPoints(0, 0, 4, 5, 2);
+
 const clientAvatars = [avatar1, avatar2, avatar3];
 
 const trustItems = [
@@ -127,7 +130,38 @@ function ProviderCard() {
 
 function AvatarsRow() {
   return (
-    <div className="flex items-center gap-4">
+    <div className="relative flex items-center gap-4">
+      <div
+        className="pointer-events-none absolute -inset-x-6 -inset-y-10 -z-10 opacity-[0.14]"
+        style={{
+          maskImage:
+            "radial-gradient(ellipse at left, black, transparent 72%)",
+        }}
+      >
+        <svg width="100%" height="100%">
+          <defs>
+            <pattern
+              id="hero-zellige"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <polygon
+                points={tileStar}
+                fill="#0f7a75"
+                stroke="#0b5f5c"
+                strokeWidth="0.6"
+                strokeLinejoin="round"
+              />
+              <polygon points={tileCross} fill="#ffc400" transform="translate(0 0)" />
+              <polygon points={tileCross} fill="#ffc400" transform="translate(40 0)" />
+              <polygon points={tileCross} fill="#ffc400" transform="translate(0 40)" />
+              <polygon points={tileCross} fill="#ffc400" transform="translate(40 40)" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hero-zellige)" />
+        </svg>
+      </div>
       <div className="flex -space-x-3">
         {clientAvatars.map((src, index) => (
           <Avatar
