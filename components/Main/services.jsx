@@ -57,7 +57,7 @@ const services = [
 ];
 export function Services() {
     const openSignUp = useAuthDialogStore((state) => state.openSignUp);
-    return (<section className="relative isolate overflow-hidden bg-[#f6f5fc] py-20 sm:py-24 lg:py-[86px]">
+    return (<section id="services" className="relative isolate scroll-mt-20 overflow-hidden bg-[#f6f5fc] py-20 sm:py-24 lg:scroll-mt-24 lg:py-[86px]">
       <ZelligeCorner id="zellige-services-tr" corner="top-right" className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 opacity-70 sm:h-[440px] sm:w-[440px]"/>
       <ZelligeCorner id="zellige-services-bl" corner="bottom-left" className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 opacity-70 sm:h-[440px] sm:w-[440px]"/>
 

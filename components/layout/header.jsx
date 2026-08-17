@@ -7,10 +7,10 @@ import { AuthDialog } from "@/components/layout/auth-dialog";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { useAuthDialogStore } from "@/lib/store/auth-dialog";
 const navLinks = [
-    { label: "Services", href: "/services" },
-    { label: "Comment ça marche", href: "/comment-ca-marche" },
-    { label: "Pour les prestataires", href: "/prestataires" },
-    { label: "À propos", href: "/a-propos" },
+    { label: "Services", href: "/#services" },
+    { label: "Comment ça marche", href: "/#comment-ca-marche" },
+    { label: "Pour les prestataires", href: "/#prestataires" },
+    { label: "À propos", href: "/#a-propos" },
 ];
 export function Header() {
     const openSignIn = useAuthDialogStore((state) => state.openSignIn);

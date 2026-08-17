@@ -14,7 +14,7 @@ export const metadata = {
     description: "Trouvez un artisan vérifié près de chez vous à Casablanca. Identité vérifiée, avis liés aux travaux réalisés, facture disponible avant votre choix.",
 };
 export default function RootLayout({ children }) {
-    return (<html lang="fr" className={`${poppins.variable} h-full antialiased`}>
+    return (<html lang="fr" className={`${poppins.variable} h-full scroll-smooth antialiased`}>
       <body className="min-h-full flex flex-col">
         <TooltipProvider>
           <Header />

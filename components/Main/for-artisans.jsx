@@ -43,7 +43,7 @@ const stats = [
 ];
 export function ForArtisans() {
     const openSignUp = useAuthDialogStore((state) => state.openSignUp);
-    return (<section className="bg-white py-20 sm:py-24 lg:py-[86px]">
+    return (<section id="prestataires" className="scroll-mt-20 bg-white py-20 sm:py-24 lg:scroll-mt-24 lg:py-[86px]">
       <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
