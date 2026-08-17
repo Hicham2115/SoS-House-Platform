@@ -1,5 +1,5 @@
+"use client";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, Check, FileText, IdCard, LockKeyhole, MapPin, ShieldCheck, Star, } from "lucide-react";
 import bghero from "@/app/assets/bghero.png";
 import avatar1 from "@/app/assets/avatars/avatar-1.png";
@@ -7,6 +7,7 @@ import avatar2 from "@/app/assets/avatars/avatar-2.png";
 import avatar3 from "@/app/assets/avatars/avatar-3.png";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useAuthDialogStore } from "@/lib/store/auth-dialog";
 function starPoints(cx, cy, spikes, outerR, innerR) {
     const step = Math.PI / spikes;
     const coords = [];
@@ -136,6 +137,7 @@ function AvatarsRow() {
     </div>);
 }
 export function Hero() {
+    const openSignUp = useAuthDialogStore((state) => state.openSignUp);
     return (<section className="relative isolate overflow-hidden bg-[#fcfdfc] xl:min-h-[700px]">
       <div className="absolute inset-y-0 right-0 w-[60%] sm:w-[55%]">
         <Image src={bghero} alt="" fill sizes="(min-width: 1024px) 55vw, 60vw" className="object-cover object-[62%_center]" priority/>
@@ -165,10 +167,10 @@ export function Hero() {
             Vous choisissez après avoir comparé.
           </div>
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
-            <Button render={<Link href="/publier-une-demande"/>} nativeButton={false} className="h-[60px] justify-between rounded-xl bg-[#ffc400] px-7 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19] sm:min-w-[200px]">
+            <Button onClick={openSignUp} className="h-[60px] justify-between rounded-xl bg-[#ffc400] px-7 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19] sm:min-w-[200px]">
               Publier une demande <ArrowRight className="size-5"/>
             </Button>
-            <Button render={<Link href="/devenir-prestataire"/>} nativeButton={false} variant="outline" className="h-[60px] rounded-xl border-teal-700 bg-white/70 px-8 text-[15px] font-bold text-teal-700 transition hover:bg-teal-50">
+            <Button onClick={openSignUp} variant="outline" className="h-[60px] rounded-xl border-teal-700 bg-white/70 px-8 text-[15px] font-bold text-teal-700 transition hover:bg-teal-50">
               Devenir prestataire
             </Button>
           </div>

@@ -180,10 +180,10 @@ export function Testimonials() {
         </div>
 
         <div className="relative mt-10 px-9 sm:px-0">
-          <button type="button" onClick={() => scrollByCard(-1)} aria-label="Avis précédents" className="absolute left-0 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-white text-teal-700 shadow-[0_12px_28px_rgba(69,64,112,0.16)] transition hover:bg-teal-50 sm:size-11 sm:-translate-x-1/2">
+          <button type="button" onClick={() => scrollByCard(-1)} aria-label="Avis précédents" className="absolute left-0 top-1/2 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-teal-700 shadow-[0_12px_28px_rgba(69,64,112,0.16)] transition hover:bg-teal-50 sm:size-11 sm:-translate-x-1/2">
             <ArrowLeft className="size-5"/>
           </button>
-          <button type="button" onClick={() => scrollByCard(1)} aria-label="Avis suivants" className="absolute right-0 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-white text-teal-700 shadow-[0_12px_28px_rgba(69,64,112,0.16)] transition hover:bg-teal-50 sm:size-11 sm:translate-x-1/2">
+          <button type="button" onClick={() => scrollByCard(1)} aria-label="Avis suivants" className="absolute right-0 top-1/2 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-teal-700 shadow-[0_12px_28px_rgba(69,64,112,0.16)] transition hover:bg-teal-50 sm:size-11 sm:translate-x-1/2">
             <ArrowRight className="size-5"/>
           </button>
 

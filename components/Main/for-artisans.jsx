@@ -1,8 +1,9 @@
+"use client";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight, Briefcase, CheckCircle2, FileText, Headset, Hexagon, Quote, ShieldCheck, Star, TrendingUp, Users, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import avatar2 from "@/app/assets/avatars/avatar-2.png";
+import { useAuthDialogStore } from "@/lib/store/auth-dialog";
 const benefits = [
     {
         Icon: Users,
@@ -41,6 +42,7 @@ const stats = [
     },
 ];
 export function ForArtisans() {
+    const openSignUp = useAuthDialogStore((state) => state.openSignUp);
     return (<section className="bg-white py-20 sm:py-24 lg:py-[86px]">
       <div className="mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
@@ -155,7 +157,7 @@ export function ForArtisans() {
             </p>
           </div>
           <div className="relative flex shrink-0 flex-col items-start gap-2 sm:items-end">
-            <Button render={<Link href="/devenir-prestataire"/>} nativeButton={false} className="h-[52px] justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19]">
+            <Button onClick={openSignUp} className="h-[52px] justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19]">
               Créer mon compte artisan <ArrowRight className="size-4"/>
             </Button>
             <p className="flex items-center gap-1.5 text-[12px] text-teal-100">

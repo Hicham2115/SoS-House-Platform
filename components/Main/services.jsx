@@ -1,8 +1,9 @@
+"use client";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight, Broom, Car, ChevronRight, Droplet, Hexagon, Key, PaintRoller, ShieldCheck, Wrench, Zap, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ZelligeCorner } from "@/components/Main/zellige-corner";
+import { useAuthDialogStore } from "@/lib/store/auth-dialog";
 import plombier from "@/app/assets/services/plombier.jpg";
 import electricity from "@/app/assets/services/electricity.jpg";
 import serrurerie from "@/app/assets/services/serrurerie.jpg";
@@ -55,6 +56,7 @@ const services = [
     },
 ];
 export function Services() {
+    const openSignUp = useAuthDialogStore((state) => state.openSignUp);
     return (<section className="relative isolate overflow-hidden bg-[#f6f5fc] py-20 sm:py-24 lg:py-[86px]">
       <ZelligeCorner id="zellige-services-tr" corner="top-right" className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 opacity-70 sm:h-[440px] sm:w-[440px]"/>
       <ZelligeCorner id="zellige-services-bl" corner="bottom-left" className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 opacity-70 sm:h-[440px] sm:w-[440px]"/>
@@ -125,7 +127,7 @@ export function Services() {
               </p>
             </div>
           </div>
-          <Button render={<Link href="/publier-une-demande"/>} nativeButton={false} className="h-[52px] shrink-0 justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19]">
+          <Button onClick={openSignUp} className="h-[52px] shrink-0 justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19]">
             Publier une demande <ArrowRight className="size-4"/>
           </Button>
         </div>

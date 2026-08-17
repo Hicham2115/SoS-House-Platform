@@ -1,8 +1,9 @@
+"use client";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight, FileText, Headset, Lock, MapPin, MessageCircle, Phone, ShieldCheck, Star, } from "lucide-react";
 import bghero from "@/app/assets/bghero.png";
 import { Button } from "@/components/ui/button";
+import { useAuthDialogStore } from "@/lib/store/auth-dialog";
 const trustItems = [
     {
         icon: ShieldCheck,
@@ -22,6 +23,7 @@ const trustItems = [
     },
 ];
 export function CallToAction() {
+    const openSignUp = useAuthDialogStore((state) => state.openSignUp);
     return (<section className="relative overflow-hidden bg-[#f4f3fb] px-4 py-10 sm:px-8 lg:px-12">
       <div className="relative mx-auto max-w-[1500px] overflow-hidden rounded-[28px] bg-white shadow-[0_30px_60px_rgba(15,23,42,0.08)]">
         <div className="grid grid-cols-1 lg:grid-cols-[54%_46%]">
@@ -40,10 +42,10 @@ export function CallToAction() {
               convient.
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <Button render={<Link href="/publier-une-demande"/>} nativeButton={false} className="h-[56px] justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19] sm:min-w-[220px]">
+              <Button onClick={openSignUp} className="h-[56px] justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19] sm:min-w-[220px]">
                 Publier une demande <ArrowRight className="size-5"/>
               </Button>
-              <Button render={<Link href="/devenir-prestataire"/>} nativeButton={false} variant="outline" className="h-[56px] rounded-xl border-teal-700 px-7 text-[15px] font-bold text-teal-700 transition hover:bg-teal-50">
+              <Button onClick={openSignUp} variant="outline" className="h-[56px] rounded-xl border-teal-700 px-7 text-[15px] font-bold text-teal-700 transition hover:bg-teal-50">
                 Devenir prestataire
               </Button>
             </div>
