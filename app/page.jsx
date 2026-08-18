@@ -6,7 +6,8 @@ import { ForArtisans } from "@/components/Main/for-artisans";
 import { Testimonials } from "@/components/Main/testimonials";
 import { CallToAction } from "@/components/Main/call-to-action";
 export default function Home() {
-    return (<>
+  return (
+    <>
       <Hero />
       <HowItWorks />
       <Verification />
@@ -14,5 +15,6 @@ export default function Home() {
       <Services />
       <Testimonials />
       <CallToAction />
-    </>);
+    </>
+  );
 }
