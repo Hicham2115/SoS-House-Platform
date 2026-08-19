@@ -1,41 +1,53 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
 # misc
 .DS_Store
 *.pem
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+# --- FrontEnd (Next.js) ---
+FrontEnd/my-app/node_modules
+FrontEnd/my-app/.pnp
+FrontEnd/my-app/.pnp.*
+FrontEnd/my-app/.yarn/*
+!FrontEnd/my-app/.yarn/patches
+!FrontEnd/my-app/.yarn/plugins
+!FrontEnd/my-app/.yarn/releases
+!FrontEnd/my-app/.yarn/versions
+FrontEnd/my-app/coverage
+FrontEnd/my-app/.next/
+FrontEnd/my-app/out/
+FrontEnd/my-app/build
+FrontEnd/my-app/npm-debug.log*
+FrontEnd/my-app/yarn-debug.log*
+FrontEnd/my-app/yarn-error.log*
+FrontEnd/my-app/.pnpm-debug.log*
+FrontEnd/my-app/.env*
+FrontEnd/my-app/.vercel
+FrontEnd/my-app/*.tsbuildinfo
+FrontEnd/my-app/next-env.d.ts
 
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# --- BackEnd (Laravel) ---
+BackEnd/my-laravel-app/*.log
+BackEnd/my-laravel-app/.env
+BackEnd/my-laravel-app/.env.backup
+BackEnd/my-laravel-app/.env.production
+BackEnd/my-laravel-app/.phpactor.json
+BackEnd/my-laravel-app/.phpunit.result.cache
+BackEnd/my-laravel-app/.codex
+BackEnd/my-laravel-app/.cursor/
+BackEnd/my-laravel-app/.idea
+BackEnd/my-laravel-app/.nova
+BackEnd/my-laravel-app/.phpunit.cache
+BackEnd/my-laravel-app/.vscode
+BackEnd/my-laravel-app/.zed
+BackEnd/my-laravel-app/auth.json
+BackEnd/my-laravel-app/node_modules
+BackEnd/my-laravel-app/public/build
+BackEnd/my-laravel-app/public/fonts-manifest.dev.json
+BackEnd/my-laravel-app/public/hot
+BackEnd/my-laravel-app/public/storage
+BackEnd/my-laravel-app/storage/*.key
+BackEnd/my-laravel-app/storage/pail
+BackEnd/my-laravel-app/vendor
+BackEnd/my-laravel-app/_ide_helper.php
+BackEnd/my-laravel-app/Homestead.json
+BackEnd/my-laravel-app/Homestead.yaml
+BackEnd/my-laravel-app/Thumbs.db
