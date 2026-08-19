@@ -6,7 +6,6 @@ import { useMutation } from "@tanstack/react-query";
 import {
   Building2,
   Camera,
-  Check,
   ChevronLeft,
   ChevronRight,
   Hash,
@@ -21,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import defaultAvatar from "@/app/assets/avatars/avatar-1.png";
+import { StepProgress } from "@/components/dashboard/step-progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,14 +37,6 @@ import {
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Stepper,
-  StepperIndicator,
-  StepperItem,
-  StepperNav,
-  StepperSeparator,
-  StepperTrigger,
-} from "@/components/reui/stepper";
 import { readAvatarFile } from "@/lib/avatar";
 import {
   accountTypes,
@@ -127,38 +119,6 @@ const addressSchema = z.object({
   adresseComplete: z.string().trim().min(1, "L'adresse complète est requise"),
   etage: z.string().trim().optional(),
 });
-
-// Purely visual progress display — going back is handled by the explicit
-// chevron button in the dialog header, not by clicking a step here.
-function OnboardingStepper({ steps, activeStep }) {
-  const activeIndex = steps.indexOf(activeStep);
-  return (
-    <Stepper
-      value={activeIndex + 1}
-      indicators={{ completed: <Check className="size-3.5" /> }}
-      className="mt-5"
-    >
-      <StepperNav className="gap-2">
-        {steps.map((step, index) => (
-          <StepperItem
-            key={step}
-            step={index + 1}
-            className="flex-1 items-center"
-          >
-            <StepperTrigger className="cursor-default">
-              <StepperIndicator className="size-6 text-[11px] font-bold data-[state=inactive]:bg-slate-100 data-[state=inactive]:text-slate-400 data-[state=active]:bg-teal-100 data-[state=active]:text-teal-700 data-[state=active]:ring-2 data-[state=active]:ring-teal-600 data-[state=completed]:bg-teal-600 data-[state=completed]:text-white">
-                {index + 1}
-              </StepperIndicator>
-            </StepperTrigger>
-            {index < steps.length - 1 && (
-              <StepperSeparator className="data-[state=completed]:bg-teal-600" />
-            )}
-          </StepperItem>
-        ))}
-      </StepperNav>
-    </Stepper>
-  );
-}
 
 export function ProfileOnboarding() {
   const user = useAuthStore((state) => state.user);
@@ -342,7 +302,7 @@ export function ProfileOnboarding() {
           </div>
 
           <div className="border-b border-slate-100 pb-5">
-            <OnboardingStepper steps={flow} activeStep={currentStep} />
+            <StepProgress steps={flow} activeStep={currentStep} />
           </div>
 
           {currentStep === STEP_ACCOUNT_TYPE && (

@@ -1,84 +1,112 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { AlignLeft, BadgePlus, Lock, MapPin, Tag } from "lucide-react";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
+import { StepProgress } from "@/components/dashboard/step-progress";
+import { StepCategory } from "@/components/dashboard/publier/step-category";
+import { StepInvoice } from "@/components/dashboard/publier/step-invoice";
+import { StepLocation } from "@/components/dashboard/publier/step-location";
+import { StepQualification } from "@/components/dashboard/publier/step-qualification";
+import { StepRecap } from "@/components/dashboard/publier/step-recap";
+import { StepUrgency } from "@/components/dashboard/publier/step-urgency";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
-import { Button } from "@/components/ui/button";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupTextarea,
-} from "@/components/ui/input-group";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { getInvoiceRequirement } from "@/lib/onboarding";
+import { getPriceEstimate } from "@/lib/lead-pricing";
+import { getCategory } from "@/lib/services-catalog";
 import { useAuthStore } from "@/lib/store/auth";
-import { categories, useListingsStore } from "@/lib/store/listings";
+import { useListingsStore } from "@/lib/store/listings";
 
-const inputGroupClassName =
-  "h-12 rounded-xl border-slate-200 bg-slate-50/70 px-1 has-[[data-slot=input-group-control]:focus-visible]:border-teal-600 has-[[data-slot=input-group-control]:focus-visible]:ring-teal-600/15";
+const STEP_CATEGORY = "category";
+const STEP_QUALIFICATION = "qualification";
+const STEP_LOCATION = "location";
+const STEP_URGENCY = "urgency";
+const STEP_INVOICE = "invoice";
+const STEP_RECAP = "recap";
 
-const invoiceLabels = {
-  aucune: "Aucune facture",
-  simple: "Facture simple (sans TVA)",
-  tva: "Facture avec TVA récupérable",
+const flow = [
+  STEP_CATEGORY,
+  STEP_QUALIFICATION,
+  STEP_LOCATION,
+  STEP_URGENCY,
+  STEP_INVOICE,
+  STEP_RECAP,
+];
+
+const stepLabels = {
+  [STEP_CATEGORY]: "Catégorie",
+  [STEP_QUALIFICATION]: "Qualification",
+  [STEP_LOCATION]: "Localisation",
+  [STEP_URGENCY]: "Urgence",
+  [STEP_INVOICE]: "Facture requise",
+  [STEP_RECAP]: "Récapitulatif",
 };
-
-const listingSchema = z.object({
-  title: z.string().trim().min(1, "Le titre est requis").max(100),
-  category: z.string().min(1, "Choisissez une catégorie"),
-  city: z.string().trim().min(1, "La ville est requise"),
-  adresseComplete: z
-    .string()
-    .trim()
-    .min(1, "L'adresse complète est requise"),
-  etage: z.string().trim().optional(),
-  invoiceRequired: z.enum(["aucune", "simple", "tva"]),
-  description: z
-    .string()
-    .trim()
-    .min(10, "Décrivez votre besoin (10 caractères minimum)")
-    .max(500),
-});
 
 export default function PublierPage() {
   const user = useAuthStore((state) => state.user);
   const addListing = useListingsStore((state) => state.addListing);
   const invoiceRequirement = getInvoiceRequirement(user?.accountType);
+  const hasDefaultAddress = Boolean(user?.defaultAddress?.ville);
 
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      category: "",
-      city: user?.defaultAddress?.ville ?? "",
-      adresseComplete: user?.defaultAddress?.adresseComplete ?? "",
-      etage: user?.defaultAddress?.etage ?? "",
-      invoiceRequired: invoiceRequirement.value,
-      description: "",
+  const [currentStep, setCurrentStep] = useState(STEP_CATEGORY);
+  const [draft, setDraft] = useState(() => ({
+    category: "",
+    subcategory: "",
+    propertyType: "",
+    qualification: {},
+    photos: [],
+    description: "",
+    ville: user?.defaultAddress?.ville ?? "",
+    adresseComplete: user?.defaultAddress?.adresseComplete ?? "",
+    etage: user?.defaultAddress?.etage ?? "",
+    urgency: "",
+    scheduledDate: null,
+    scheduledTime: "",
+    budget: null,
+    invoiceRequired: invoiceRequirement.value,
+  }));
+
+  // Stands in for a real "publish demande" endpoint: same
+  // mutate/isPending/onSuccess surface a network call would give us, just
+  // backed by the local listings store for now.
+  const publish = useMutation({
+    mutationFn: async (listing) => {
+      const category = getCategory(listing.category);
+      const subcategory = category?.subcategories.find(
+        (s) => s.value === listing.subcategory,
+      );
+      addListing({
+        ...listing,
+        title: `${category?.label ?? ""} — ${subcategory?.label ?? ""}`,
+        city: listing.ville,
+      });
+      return listing;
     },
-    onSubmit: async ({ value }) => {
-      const parsed = listingSchema.safeParse(value);
-      if (!parsed.success) {
-        toast.error(
-          parsed.error.issues[0]?.message ?? "Veuillez vérifier les champs.",
-        );
-        return;
-      }
-
-      addListing(parsed.data);
+    onSuccess: () => {
       toast.success("Votre demande a été publiée.");
-      form.reset();
+      setCurrentStep(STEP_CATEGORY);
+      setDraft((d) => ({
+        ...d,
+        category: "",
+        subcategory: "",
+        propertyType: "",
+        qualification: {},
+        photos: [],
+        description: "",
+        urgency: "",
+        scheduledDate: null,
+        scheduledTime: "",
+        budget: null,
+      }));
     },
   });
+
+  const activeIndex = flow.indexOf(currentStep);
+
+  function goBack() {
+    if (activeIndex > 0) setCurrentStep(flow[activeIndex - 1]);
+  }
 
   return (
     <>
@@ -88,247 +116,94 @@ export default function PublierPage() {
       />
 
       <div className="flex flex-1 flex-col bg-slate-50 p-5 sm:p-8">
-        <form
-          className="flex w-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
-          onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
-          }}
-        >
-          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-              <BadgePlus className="size-5" strokeWidth={1.8} />
-            </span>
+        <div className="w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+          <div className="flex items-center gap-3">
+            {activeIndex > 0 && (
+              <button
+                type="button"
+                onClick={goBack}
+                aria-label="Retour"
+                className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+              >
+                <ChevronLeft className="size-5" />
+              </button>
+            )}
             <div>
-              <p className="text-[15px] font-bold text-slate-950">
-                Nouvelle demande
+              <p className="text-[17px] font-bold text-slate-950">
+                {stepLabels[currentStep]}
               </p>
-              <p className="text-[12px] text-slate-500">
-                Visible par tous les artisans vérifiés
+              <p className="text-[13px] text-slate-600">
+                Étape {activeIndex + 1} sur {flow.length}
               </p>
             </div>
           </div>
 
-          <form.Field name="title">
-            {(field) => (
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="title" className="text-[13px] text-slate-700">
-                  Titre
-                </Label>
-                <InputGroup className={inputGroupClassName}>
-                  <InputGroupAddon>
-                    <Tag />
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    id="title"
-                    placeholder="Ex : Fuite d'eau sous l'évier"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </InputGroup>
-              </div>
-            )}
-          </form.Field>
+          <div className="border-b border-slate-100 pb-5">
+            <StepProgress steps={flow} activeStep={currentStep} />
+          </div>
 
-          <form.Field name="category">
-            {(field) => (
-              <div className="flex flex-col gap-1.5">
-                <Label
-                  htmlFor="category"
-                  className="text-[13px] text-slate-700"
-                >
-                  Catégorie
-                </Label>
-                <Select
-                  value={field.state.value}
-                  onValueChange={(value) => field.handleChange(value)}
-                >
-                  <SelectTrigger
-                    id="category"
-                    className="h-12 w-full rounded-xl border-slate-200 bg-slate-50/70 px-3 data-[state=open]:border-teal-600"
-                  >
-                    <span className="flex flex-1 items-center gap-2.5 overflow-hidden">
-                      {(() => {
-                        const SelectedIcon =
-                          categories.find((c) => c.value === field.state.value)
-                            ?.Icon ?? Tag;
-                        return (
-                          <SelectedIcon className="size-4 shrink-0 text-slate-500" />
-                        );
-                      })()}
-                      <SelectValue placeholder="Choisissez une catégorie">
-                        {(value) =>
-                          categories.find((c) => c.value === value)?.label ??
-                          "Choisissez une catégorie"
-                        }
-                      </SelectValue>
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map(({ value, label, Icon }) => (
-                      <SelectItem key={value} value={value}>
-                        <Icon className="size-4 text-teal-700" />
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </form.Field>
+          {currentStep === STEP_CATEGORY && (
+            <StepCategory
+              defaultValues={draft}
+              onSubmit={(values) => {
+                setDraft((d) => ({ ...d, ...values }));
+                setCurrentStep(STEP_QUALIFICATION);
+              }}
+            />
+          )}
 
-          <form.Field name="city">
-            {(field) => (
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="city" className="text-[13px] text-slate-700">
-                  Ville
-                </Label>
-                <InputGroup className={inputGroupClassName}>
-                  <InputGroupAddon>
-                    <MapPin />
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    id="city"
-                    placeholder="Ex : Casablanca"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </InputGroup>
-              </div>
-            )}
-          </form.Field>
+          {currentStep === STEP_QUALIFICATION && (
+            <StepQualification
+              category={draft.category}
+              defaultValues={draft}
+              onSubmit={(values) => {
+                setDraft((d) => ({ ...d, ...values }));
+                setCurrentStep(STEP_LOCATION);
+              }}
+            />
+          )}
 
-          <form.Field name="adresseComplete">
-            {(field) => (
-              <div className="flex flex-col gap-1.5">
-                <Label
-                  htmlFor="adresseComplete"
-                  className="text-[13px] text-slate-700"
-                >
-                  Adresse complète
-                </Label>
-                <InputGroup className={inputGroupClassName}>
-                  <InputGroupAddon>
-                    <MapPin />
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    id="adresseComplete"
-                    placeholder="N°, rue, résidence..."
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </InputGroup>
-              </div>
-            )}
-          </form.Field>
+          {currentStep === STEP_LOCATION && (
+            <StepLocation
+              defaultValues={draft}
+              prefilled={hasDefaultAddress}
+              onSubmit={(values) => {
+                setDraft((d) => ({ ...d, ...values }));
+                setCurrentStep(STEP_URGENCY);
+              }}
+            />
+          )}
 
-          <form.Field name="etage">
-            {(field) => (
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="etage" className="text-[13px] text-slate-700">
-                  Étage (optionnel)
-                </Label>
-                <InputGroup className={inputGroupClassName}>
-                  <InputGroupAddon>
-                    <MapPin />
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    id="etage"
-                    placeholder="Ex : 3ème étage, porte 12"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </InputGroup>
-              </div>
-            )}
-          </form.Field>
+          {currentStep === STEP_URGENCY && (
+            <StepUrgency
+              defaultValues={draft}
+              priceRange={getPriceEstimate(draft.category)}
+              onSubmit={(values) => {
+                setDraft((d) => ({ ...d, ...values }));
+                setCurrentStep(STEP_INVOICE);
+              }}
+            />
+          )}
 
-          <form.Field name="invoiceRequired">
-            {(field) => (
-              <div className="flex flex-col gap-1.5">
-                <Label
-                  htmlFor="invoiceRequired"
-                  className="text-[13px] text-slate-700"
-                >
-                  Facture requise
-                </Label>
-                {invoiceRequirement.editable ? (
-                  <Select
-                    value={field.state.value}
-                    onValueChange={(value) => field.handleChange(value)}
-                  >
-                    <SelectTrigger
-                      id="invoiceRequired"
-                      className="h-12 w-full rounded-xl border-slate-200 bg-slate-50/70 px-3 data-[state=open]:border-teal-600"
-                    >
-                      <SelectValue placeholder="Choisissez">
-                        {(value) => invoiceLabels[value] ?? "Choisissez"}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(invoiceLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <>
-                    <div
-                      id="invoiceRequired"
-                      className="flex h-12 items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-100 px-3.5 text-[14px] text-slate-600"
-                    >
-                      <Lock className="size-4 shrink-0 text-slate-400" />
-                      {invoiceLabels[field.state.value]}
-                    </div>
-                    <p className="text-[12px] text-slate-500">
-                      Verrouillé pour les comptes Entreprise — chaque
-                      demande exige une facture avec TVA récupérable.
-                    </p>
-                  </>
-                )}
-              </div>
-            )}
-          </form.Field>
+          {currentStep === STEP_INVOICE && (
+            <StepInvoice
+              defaultValue={draft.invoiceRequired}
+              editable={invoiceRequirement.editable}
+              onSubmit={(value) => {
+                setDraft((d) => ({ ...d, invoiceRequired: value }));
+                setCurrentStep(STEP_RECAP);
+              }}
+            />
+          )}
 
-          <form.Field name="description">
-            {(field) => (
-              <div className="flex flex-col gap-1.5">
-                <Label
-                  htmlFor="description"
-                  className="text-[13px] text-slate-700"
-                >
-                  Description
-                </Label>
-                <InputGroup className={`${inputGroupClassName} h-auto`}>
-                  <InputGroupAddon align="block-start">
-                    <AlignLeft />
-                  </InputGroupAddon>
-                  <InputGroupTextarea
-                    id="description"
-                    placeholder="Décrivez le problème et vos disponibilités..."
-                    className="min-h-24"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </InputGroup>
-              </div>
-            )}
-          </form.Field>
-
-          <Button
-            type="submit"
-            className="mt-1 h-12 w-full justify-center rounded-xl bg-[#ffa514] text-[14px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
-          >
-            Publier ma demande
-          </Button>
-        </form>
+          {currentStep === STEP_RECAP && (
+            <StepRecap
+              draft={draft}
+              isPending={publish.isPending}
+              onSubmit={() => publish.mutate(draft)}
+            />
+          )}
+        </div>
       </div>
     </>
   );

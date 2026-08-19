@@ -1,23 +1,4 @@
-import {
-  AirVent,
-  Droplet,
-  KeyRound,
-  PaintRoller,
-  Sparkles,
-  Wrench,
-  Zap,
-} from "lucide-react";
 import { create } from "zustand";
-
-export const categories = [
-  { value: "plomberie", label: "Plomberie", Icon: Droplet },
-  { value: "electricite", label: "Électricité", Icon: Zap },
-  { value: "serrurerie", label: "Serrurerie", Icon: KeyRound },
-  { value: "peinture", label: "Peinture", Icon: PaintRoller },
-  { value: "climatisation", label: "Climatisation", Icon: AirVent },
-  { value: "nettoyage", label: "Nettoyage", Icon: Sparkles },
-  { value: "autre", label: "Autre", Icon: Wrench },
-];
 
 const initialListings = [
   {
