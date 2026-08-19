@@ -140,7 +140,11 @@ function OnboardingStepper({ steps, activeStep }) {
     >
       <StepperNav className="gap-2">
         {steps.map((step, index) => (
-          <StepperItem key={step} step={index + 1} className="flex-1 items-center">
+          <StepperItem
+            key={step}
+            step={index + 1}
+            className="flex-1 items-center"
+          >
             <StepperTrigger className="cursor-default">
               <StepperIndicator className="size-6 text-[11px] font-bold data-[state=inactive]:bg-slate-100 data-[state=inactive]:text-slate-400 data-[state=active]:bg-teal-100 data-[state=active]:text-teal-700 data-[state=active]:ring-2 data-[state=active]:ring-teal-600 data-[state=completed]:bg-teal-600 data-[state=completed]:text-white">
                 {index + 1}
@@ -164,19 +168,33 @@ export function ProfileOnboarding() {
   const [notificationChannel, setNotificationChannel] = useState(
     () => user?.notificationChannel ?? "whatsapp",
   );
+  // Every step writes here as the user moves forward. Nothing reaches the
+  // auth store until the final step submits it all as one patch.
+  const [draft, setDraft] = useState(() => ({
+    accountType: user?.accountType ?? "",
+    raisonSociale: user?.raisonSociale ?? "",
+    ice: user?.ice ?? "",
+    referentName: user?.referentName ?? "",
+    defaultAddress: user?.defaultAddress ?? null,
+    avatarUrl: user?.avatarUrl ?? null,
+  }));
 
-  // Stands in for a real "save onboarding step" endpoint: same
+  // Stands in for a real "complete onboarding" endpoint: same
   // mutate/isPending/onSuccess surface a network call would give us, just
   // backed by the local auth store for now.
-  const saveStep = useMutation({
+  const completeOnboarding = useMutation({
     mutationFn: async (patch) => {
       updateUser(patch);
       return patch;
     },
+    onSuccess: () => {
+      toast.success("Profil complet ! Vous êtes prêt à publier.");
+      setOpen(false);
+    },
   });
 
   const accountTypeForm = useForm({
-    defaultValues: { accountType: user?.accountType ?? "" },
+    defaultValues: { accountType: draft.accountType },
     onSubmit: async ({ value }) => {
       const parsed = accountTypeSchema.safeParse(value);
       if (!parsed.success) {
@@ -184,46 +202,38 @@ export function ProfileOnboarding() {
         return;
       }
       const type = getAccountType(parsed.data.accountType);
-      saveStep.mutate(parsed.data, {
-        onSuccess: () =>
-          setCurrentStep(
-            type?.requiresRaisonSociale ? STEP_BUSINESS_INFO : STEP_ADDRESS,
-          ),
-      });
+      setDraft((d) => ({ ...d, ...parsed.data }));
+      setCurrentStep(
+        type?.requiresRaisonSociale ? STEP_BUSINESS_INFO : STEP_ADDRESS,
+      );
     },
   });
 
   const businessInfoForm = useForm({
     defaultValues: {
-      raisonSociale: user?.raisonSociale ?? "",
-      ice: user?.ice ?? "",
-      referentName: user?.referentName ?? "",
+      raisonSociale: draft.raisonSociale,
+      ice: draft.ice,
+      referentName: draft.referentName,
     },
     onSubmit: async ({ value }) => {
       const parsed = getBusinessInfoSchema(
-        getAccountType(user?.accountType),
+        getAccountType(draft.accountType),
       ).safeParse(value);
       if (!parsed.success) {
         showValidationError(parsed.error);
         return;
       }
-      saveStep.mutate(
-        {
-          raisonSociale: parsed.data.raisonSociale,
-          ice: parsed.data.ice,
-          referentName: parsed.data.referentName,
-        },
-        { onSuccess: () => setCurrentStep(STEP_ADDRESS) },
-      );
+      setDraft((d) => ({ ...d, ...parsed.data }));
+      setCurrentStep(STEP_ADDRESS);
     },
   });
 
   const addressForm = useForm({
     defaultValues: {
-      ville: user?.defaultAddress?.ville ?? "",
-      quartier: user?.defaultAddress?.quartier ?? "",
-      adresseComplete: user?.defaultAddress?.adresseComplete ?? "",
-      etage: user?.defaultAddress?.etage ?? "",
+      ville: draft.defaultAddress?.ville ?? "",
+      quartier: draft.defaultAddress?.quartier ?? "",
+      adresseComplete: draft.defaultAddress?.adresseComplete ?? "",
+      etage: draft.defaultAddress?.etage ?? "",
     },
     onSubmit: async ({ value }) => {
       const parsed = addressSchema.safeParse(value);
@@ -231,19 +241,17 @@ export function ProfileOnboarding() {
         showValidationError(parsed.error);
         return;
       }
-      saveStep.mutate(
-        { defaultAddress: parsed.data },
-        { onSuccess: () => setCurrentStep(STEP_NOTIFICATIONS) },
-      );
+      setDraft((d) => ({ ...d, defaultAddress: parsed.data }));
+      setCurrentStep(STEP_NOTIFICATIONS);
     },
   });
 
   if (!user || user.onboardingCompleted) return null;
 
   const pct = getProfileCompletionPct(user);
-  const flow = getStepFlow(user?.accountType);
+  const flow = getStepFlow(draft.accountType);
   const activeIndex = flow.indexOf(currentStep);
-  const businessAccountType = getAccountType(user?.accountType);
+  const businessAccountType = getAccountType(draft.accountType);
 
   function goBack() {
     if (activeIndex > 0) setCurrentStep(flow[activeIndex - 1]);
@@ -256,25 +264,19 @@ export function ProfileOnboarding() {
 
     try {
       const dataUrl = await readAvatarFile(file);
-      saveStep.mutate(
-        { avatarUrl: dataUrl },
-        { onSuccess: () => toast.success("Photo de profil ajoutée.") },
-      );
+      setDraft((d) => ({ ...d, avatarUrl: dataUrl }));
+      toast.success("Photo de profil ajoutée.");
     } catch (error) {
       toast.error(error.message);
     }
   }
 
-  function finishOnboarding(channel) {
-    saveStep.mutate(
-      { notificationChannel: channel, onboardingCompleted: true },
-      {
-        onSuccess: () => {
-          toast.success("Profil complet ! Vous êtes prêt à publier.");
-          setOpen(false);
-        },
-      },
-    );
+  function finishOnboarding() {
+    completeOnboarding.mutate({
+      ...draft,
+      notificationChannel,
+      onboardingCompleted: true,
+    });
   }
 
   return (
@@ -402,7 +404,6 @@ export function ProfileOnboarding() {
 
               <Button
                 type="submit"
-                disabled={saveStep.isPending}
                 className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
               >
                 Continuer
@@ -503,7 +504,6 @@ export function ProfileOnboarding() {
 
               <Button
                 type="submit"
-                disabled={saveStep.isPending}
                 className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
               >
                 Continuer
@@ -624,7 +624,6 @@ export function ProfileOnboarding() {
 
               <Button
                 type="submit"
-                disabled={saveStep.isPending}
                 className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
               >
                 Continuer
@@ -637,7 +636,7 @@ export function ProfileOnboarding() {
               <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
                 <Avatar className="size-14">
                   <AvatarImage
-                    src={user?.avatarUrl || defaultAvatar.src}
+                    src={draft.avatarUrl || defaultAvatar.src}
                     alt={user?.name ?? "Photo de profil"}
                   />
                   <AvatarFallback className="bg-teal-100 font-bold text-teal-700">
@@ -665,41 +664,50 @@ export function ProfileOnboarding() {
                 </div>
               </div>
 
-              <RadioGroup
-                value={notificationChannel}
-                onValueChange={setNotificationChannel}
-                className="gap-2.5"
-              >
-                <label
-                  htmlFor="notif-whatsapp"
-                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] hover:bg-slate-50"
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-[13px] text-slate-700">
+                  Comment souhaitez-vous être contacté à l&apos;avenir ?
+                </Label>
+
+                <RadioGroup
+                  value={notificationChannel}
+                  onValueChange={setNotificationChannel}
+                  className="gap-2.5"
                 >
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                    <MessageCircle className="size-[18px]" strokeWidth={1.8} />
-                  </span>
-                  <span className="flex-1 text-[14px] font-semibold text-slate-950">
-                    WhatsApp
-                  </span>
-                  <RadioGroupItem value="whatsapp" id="notif-whatsapp" />
-                </label>
-                <label
-                  htmlFor="notif-email"
-                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] hover:bg-slate-50"
-                >
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                    <Mail className="size-[18px]" strokeWidth={1.8} />
-                  </span>
-                  <span className="flex-1 text-[14px] font-semibold text-slate-950">
-                    Email
-                  </span>
-                  <RadioGroupItem value="email" id="notif-email" />
-                </label>
-              </RadioGroup>
+                  <label
+                    htmlFor="notif-whatsapp"
+                    className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] hover:bg-slate-50"
+                  >
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                      <MessageCircle
+                        className="size-[18px]"
+                        strokeWidth={1.8}
+                      />
+                    </span>
+                    <span className="flex-1 text-[14px] font-semibold text-slate-950">
+                      WhatsApp
+                    </span>
+                    <RadioGroupItem value="whatsapp" id="notif-whatsapp" />
+                  </label>
+                  <label
+                    htmlFor="notif-email"
+                    className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] hover:bg-slate-50"
+                  >
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                      <Mail className="size-[18px]" strokeWidth={1.8} />
+                    </span>
+                    <span className="flex-1 text-[14px] font-semibold text-slate-950">
+                      Email
+                    </span>
+                    <RadioGroupItem value="email" id="notif-email" />
+                  </label>
+                </RadioGroup>
+              </div>
 
               <Button
                 type="button"
-                disabled={saveStep.isPending}
-                onClick={() => finishOnboarding(notificationChannel)}
+                disabled={completeOnboarding.isPending}
+                onClick={finishOnboarding}
                 className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
               >
                 Terminer
