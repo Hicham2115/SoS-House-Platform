@@ -10,7 +10,7 @@ export const useAuthDialogStore = create((set) => ({
     set({ open: true, mode: "signup", step: "role", role: null }),
 
   openSignIn: () =>
-    set({ open: true, mode: "signin", step: "role", role: null }),
+    set({ open: true, mode: "signin", step: "form", role: null }),
 
   setOpen: (open) => set(open ? { open } : { open, step: "role", role: null }),
 

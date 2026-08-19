@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/input-group";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
+import { useAuthStore } from "@/lib/store/auth";
 import { useAuthDialogStore } from "@/lib/store/auth-dialog";
 
 const inputGroupClassName =
@@ -90,6 +91,7 @@ export function AuthDialog() {
   const setMode = useAuthDialogStore((state) => state.setMode);
   const selectRole = useAuthDialogStore((state) => state.selectRole);
   const backToRole = useAuthDialogStore((state) => state.backToRole);
+  const setAuth = useAuthStore((state) => state.setAuth);
   const [showPassword, setShowPassword] = useState(false);
 
   const signUpForm = useForm({
@@ -141,9 +143,18 @@ export function AuthDialog() {
         );
         return;
       }
-      toast.success("Connexion réussie.");
-      signInForm.reset();
-      setOpen(false);
+
+      try {
+        const { data } = await api.post("/login", parsed.data);
+        console.log(" Data", data);
+
+        setAuth(data.user, data.token);
+        toast.success("Connexion réussie.");
+        signInForm.reset();
+        setOpen(false);
+      } catch (error) {
+        toast.error(error.message);
+      }
     },
   });
 
@@ -453,7 +464,10 @@ export function AuthDialog() {
                 <button
                   type="button"
                   className="cursor-pointer font-semibold text-teal-700 hover:text-teal-800"
-                  onClick={() => setMode("signup")}
+                  onClick={() => {
+                    setMode("signup");
+                    backToRole();
+                  }}
                 >
                   Créer un compte
                 </button>
