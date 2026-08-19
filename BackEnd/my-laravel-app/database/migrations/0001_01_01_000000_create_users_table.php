@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string(("account_type"))->nullable();
             $table->string(("raison_sociale"))->nullable();
             $table->string(("ice"))->nullable();
+            $table->string(("nom_du_referant"))->nullable();
             $table->string(("ville"))->nullable();
             $table->string(("quartier"))->nullable();
             $table->string(("adresse"))->nullable();

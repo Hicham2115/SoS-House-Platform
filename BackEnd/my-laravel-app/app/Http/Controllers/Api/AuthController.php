@@ -28,6 +28,7 @@ class AuthController extends Controller
             'quartier' => ['string', 'max:255'],
             'adresse' => ['string', 'max:255'],
             'etage' => ['string', 'max:255'],
+            'nom_du_referant' => ['string', 'max:255'],
         ]);
 
         $user = User::create($validated);
