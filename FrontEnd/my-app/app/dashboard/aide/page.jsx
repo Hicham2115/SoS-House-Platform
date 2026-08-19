@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Phone,
   Send,
+  Tag,
 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -82,7 +83,94 @@ export default function AidePage() {
 
       <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
-          <div className="flex flex-col gap-6">
+          <form
+            className="order-2 flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)] lg:order-1"
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+          >
+            <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                <MessageCircle className="size-5" strokeWidth={1.8} />
+              </span>
+              <div>
+                <p className="text-[15px] font-bold text-slate-950">
+                  Envoyer un message
+                </p>
+                <p className="text-[12px] text-slate-500">
+                  Réponse sous 24h ouvrées
+                </p>
+              </div>
+            </div>
+
+            <form.Field name="subject">
+              {(field) => (
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor="subject"
+                    className="text-[13px] text-slate-700"
+                  >
+                    Sujet
+                  </Label>
+                  <Select
+                    value={field.state.value}
+                    onValueChange={(value) => field.handleChange(value)}
+                  >
+                    <SelectTrigger
+                      id="subject"
+                      className="h-12 w-full rounded-xl border-slate-200 bg-slate-50/70 px-3 data-[state=open]:border-teal-600"
+                    >
+                      <span className="flex flex-1 items-center gap-2.5 overflow-hidden">
+                        <Tag className="size-4 shrink-0 text-slate-500" />
+                        <SelectValue placeholder="Choisissez un sujet" />
+                      </span>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subjects.map(({ value, label }) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="message">
+              {(field) => (
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor="message"
+                    className="text-[13px] text-slate-700"
+                  >
+                    Message
+                  </Label>
+                  <InputGroup className={`${inputGroupClassName} h-auto`}>
+                    <InputGroupTextarea
+                      id="message"
+                      placeholder="Décrivez votre demande en détail..."
+                      className="min-h-40 py-3"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </InputGroup>
+                </div>
+              )}
+            </form.Field>
+
+            <Button
+              type="submit"
+              className="mt-1 h-12 w-full justify-center gap-2 rounded-xl bg-[#ffa514] text-[14px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
+            >
+              <Send className="size-4" />
+              Envoyer le message
+            </Button>
+          </form>
+
+          <div className="order-1 flex flex-col gap-6 lg:order-2">
             <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-teal-600 to-teal-700 p-6 shadow-[0_20px_40px_rgba(13,148,136,0.25)]">
               <span className="absolute -top-8 -right-8 size-32 rounded-full bg-white/10" />
               <span className="absolute -bottom-10 right-16 size-24 rounded-full bg-white/10" />
@@ -132,90 +220,6 @@ export default function AidePage() {
               </Accordion>
             </div>
           </div>
-
-          <form
-            className="flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)] lg:sticky lg:top-8"
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
-          >
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                <MessageCircle className="size-5" strokeWidth={1.8} />
-              </span>
-              <div>
-                <p className="text-[15px] font-bold text-slate-950">
-                  Envoyer un message
-                </p>
-                <p className="text-[12px] text-slate-500">
-                  Réponse sous 24h ouvrées
-                </p>
-              </div>
-            </div>
-
-            <form.Field name="subject">
-              {(field) => (
-                <div className="flex flex-col gap-1.5">
-                  <Label
-                    htmlFor="subject"
-                    className="text-[13px] text-slate-700"
-                  >
-                    Sujet
-                  </Label>
-                  <Select
-                    value={field.state.value}
-                    onValueChange={(value) => field.handleChange(value)}
-                  >
-                    <SelectTrigger
-                      id="subject"
-                      className="h-12 w-full rounded-xl border-slate-200 bg-slate-50/70 px-3 data-[state=open]:border-teal-600"
-                    >
-                      <SelectValue placeholder="Choisissez un sujet" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {subjects.map(({ value, label }) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            </form.Field>
-
-            <form.Field name="message">
-              {(field) => (
-                <div className="flex flex-col gap-1.5">
-                  <Label
-                    htmlFor="message"
-                    className="text-[13px] text-slate-700"
-                  >
-                    Message
-                  </Label>
-                  <InputGroup className={`${inputGroupClassName} h-auto`}>
-                    <InputGroupTextarea
-                      id="message"
-                      placeholder="Décrivez votre demande en détail..."
-                      className="min-h-32 py-3"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                  </InputGroup>
-                </div>
-              )}
-            </form.Field>
-
-            <Button
-              type="submit"
-              className="mt-1 h-12 w-full justify-center gap-2 rounded-xl bg-[#ffa514] text-[14px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
-            >
-              <Send className="size-4" />
-              Envoyer le message
-            </Button>
-          </form>
         </div>
       </div>
     </>

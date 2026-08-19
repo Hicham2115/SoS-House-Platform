@@ -47,7 +47,10 @@ export function DashboardHeader({ title, subtitle }) {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-full py-1 pr-2 outline-none hover:bg-slate-50">
             <Avatar>
-              <AvatarImage src={avatar1.src} alt={displayName} />
+              <AvatarImage
+                src={user?.avatarUrl || avatar1.src}
+                alt={displayName}
+              />
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
             <span className="text-[14px] font-semibold text-slate-800">

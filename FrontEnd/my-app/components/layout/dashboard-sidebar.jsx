@@ -82,7 +82,10 @@ export function DashboardSidebar() {
 
       <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3.5">
         <Avatar size="lg">
-          <AvatarImage src={avatar1.src} alt={user?.name ?? "Profil"} />
+          <AvatarImage
+            src={user?.avatarUrl || avatar1.src}
+            alt={user?.name ?? "Profil"}
+          />
           <AvatarFallback className="bg-teal-100 font-bold text-teal-700">
             {user?.name?.[0]?.toUpperCase() ?? "U"}
           </AvatarFallback>

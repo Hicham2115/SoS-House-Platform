@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { useForm as useTanstackForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Camera, Mail, MapPin, Phone, User } from "lucide-react";
@@ -31,7 +30,7 @@ export default function ProfilPage() {
   const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
 
-  const form = useTanstackForm({
+  const form = useForm({
     defaultValues: {
       name: user?.name ?? "",
       email: user?.email ?? "",

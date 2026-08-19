@@ -80,8 +80,20 @@ export const stats = [
     label: "Missions terminées",
     tone: "teal",
   },
-  { Icon: Star, value: "4,8/5", label: "Note moyenne donnée", tone: "amber" },
-  { Icon: Smile, value: "97%", label: "Taux de satisfaction", tone: "amber" },
+  {
+    Icon: Star,
+    value: "4,8/5",
+    label: "Note moyenne donnée",
+    tone: "amber",
+    progress: 96,
+  },
+  {
+    Icon: Smile,
+    value: "97%",
+    label: "Taux de satisfaction",
+    tone: "amber",
+    progress: 97,
+  },
 ];
 
 export const reasons = [
