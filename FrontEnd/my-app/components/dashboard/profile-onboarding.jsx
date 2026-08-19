@@ -57,15 +57,13 @@ import { useAuthStore } from "@/lib/store/auth";
 const STEP_ACCOUNT_TYPE = "account-type";
 const STEP_BUSINESS_INFO = "business-info";
 const STEP_ADDRESS = "address";
-const STEP_CONTACT = "contact";
 const STEP_NOTIFICATIONS = "notifications";
 
 const stepLabels = {
   [STEP_ACCOUNT_TYPE]: "Type de compte",
   [STEP_BUSINESS_INFO]: "Informations professionnelles",
   [STEP_ADDRESS]: "Adresse",
-  [STEP_CONTACT]: "Contact",
-  [STEP_NOTIFICATIONS]: "Notifications",
+  [STEP_NOTIFICATIONS]: "Finalisation",
 };
 
 const accountTypeIcons = {
@@ -83,7 +81,7 @@ function getStepFlow(accountTypeValue) {
   const type = getAccountType(accountTypeValue);
   const flow = [STEP_ACCOUNT_TYPE];
   if (type?.requiresRaisonSociale) flow.push(STEP_BUSINESS_INFO);
-  flow.push(STEP_ADDRESS, STEP_CONTACT, STEP_NOTIFICATIONS);
+  flow.push(STEP_ADDRESS, STEP_NOTIFICATIONS);
   return flow;
 }
 
@@ -94,7 +92,11 @@ function getInitialStep(user) {
     return STEP_BUSINESS_INFO;
   }
   if (!hasDefaultAddress(user?.defaultAddress)) return STEP_ADDRESS;
-  return STEP_CONTACT;
+  return STEP_NOTIFICATIONS;
+}
+
+function showValidationError(error) {
+  toast.error(error.issues[0]?.message ?? "Veuillez vérifier les champs.");
 }
 
 const accountTypeSchema = z.object({
@@ -126,24 +128,20 @@ const addressSchema = z.object({
   etage: z.string().trim().optional(),
 });
 
-function OnboardingStepper({ steps, activeStep, onStepClick }) {
+// Purely visual progress display — going back is handled by the explicit
+// chevron button in the dialog header, not by clicking a step here.
+function OnboardingStepper({ steps, activeStep }) {
   const activeIndex = steps.indexOf(activeStep);
   return (
     <Stepper
       value={activeIndex + 1}
-      onValueChange={(step) => onStepClick(steps[step - 1])}
       indicators={{ completed: <Check className="size-3.5" /> }}
       className="mt-5"
     >
       <StepperNav className="gap-2">
         {steps.map((step, index) => (
-          <StepperItem
-            key={step}
-            step={index + 1}
-            disabled={index > activeIndex}
-            className="flex-1 items-center"
-          >
-            <StepperTrigger>
+          <StepperItem key={step} step={index + 1} className="flex-1 items-center">
+            <StepperTrigger className="cursor-default">
               <StepperIndicator className="size-6 text-[11px] font-bold data-[state=inactive]:bg-slate-100 data-[state=inactive]:text-slate-400 data-[state=active]:bg-teal-100 data-[state=active]:text-teal-700 data-[state=active]:ring-2 data-[state=active]:ring-teal-600 data-[state=completed]:bg-teal-600 data-[state=completed]:text-white">
                 {index + 1}
               </StepperIndicator>
@@ -163,6 +161,9 @@ export function ProfileOnboarding() {
   const updateUser = useAuthStore((state) => state.updateUser);
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(() => getInitialStep(user));
+  const [notificationChannel, setNotificationChannel] = useState(
+    () => user?.notificationChannel ?? "whatsapp",
+  );
 
   // Stands in for a real "save onboarding step" endpoint: same
   // mutate/isPending/onSuccess surface a network call would give us, just
@@ -179,9 +180,7 @@ export function ProfileOnboarding() {
     onSubmit: async ({ value }) => {
       const parsed = accountTypeSchema.safeParse(value);
       if (!parsed.success) {
-        toast.error(
-          parsed.error.issues[0]?.message ?? "Veuillez vérifier les champs.",
-        );
+        showValidationError(parsed.error);
         return;
       }
       const type = getAccountType(parsed.data.accountType);
@@ -205,9 +204,7 @@ export function ProfileOnboarding() {
         getAccountType(user?.accountType),
       ).safeParse(value);
       if (!parsed.success) {
-        toast.error(
-          parsed.error.issues[0]?.message ?? "Veuillez vérifier les champs.",
-        );
+        showValidationError(parsed.error);
         return;
       }
       saveStep.mutate(
@@ -231,14 +228,12 @@ export function ProfileOnboarding() {
     onSubmit: async ({ value }) => {
       const parsed = addressSchema.safeParse(value);
       if (!parsed.success) {
-        toast.error(
-          parsed.error.issues[0]?.message ?? "Veuillez vérifier les champs.",
-        );
+        showValidationError(parsed.error);
         return;
       }
       saveStep.mutate(
         { defaultAddress: parsed.data },
-        { onSuccess: () => setCurrentStep(STEP_CONTACT) },
+        { onSuccess: () => setCurrentStep(STEP_NOTIFICATIONS) },
       );
     },
   });
@@ -345,11 +340,7 @@ export function ProfileOnboarding() {
           </div>
 
           <div className="border-b border-slate-100 pb-5">
-            <OnboardingStepper
-              steps={flow}
-              activeStep={currentStep}
-              onStepClick={setCurrentStep}
-            />
+            <OnboardingStepper steps={flow} activeStep={currentStep} />
           </div>
 
           {currentStep === STEP_ACCOUNT_TYPE && (
@@ -492,9 +483,7 @@ export function ProfileOnboarding() {
                             id="referentName"
                             value={field.state.value}
                             onBlur={field.handleBlur}
-                            onChange={(e) =>
-                              field.handleChange(e.target.value)
-                            }
+                            onChange={(e) => field.handleChange(e.target.value)}
                           />
                         </InputGroup>
                       </div>
@@ -643,7 +632,7 @@ export function ProfileOnboarding() {
             </form>
           )}
 
-          {currentStep === STEP_CONTACT && (
+          {currentStep === STEP_NOTIFICATIONS && (
             <div className="mt-5 flex flex-col gap-4">
               <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
                 <Avatar className="size-14">
@@ -676,21 +665,9 @@ export function ProfileOnboarding() {
                 </div>
               </div>
 
-              <Button
-                type="button"
-                onClick={() => setCurrentStep(STEP_NOTIFICATIONS)}
-                className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
-              >
-                Continuer
-              </Button>
-            </div>
-          )}
-
-          {currentStep === STEP_NOTIFICATIONS && (
-            <div className="mt-5 flex flex-col gap-4">
               <RadioGroup
-                defaultValue={user?.notificationChannel ?? "whatsapp"}
-                onValueChange={(value) => finishOnboarding(value)}
+                value={notificationChannel}
+                onValueChange={setNotificationChannel}
                 className="gap-2.5"
               >
                 <label
@@ -722,9 +699,7 @@ export function ProfileOnboarding() {
               <Button
                 type="button"
                 disabled={saveStep.isPending}
-                onClick={() =>
-                  finishOnboarding(user?.notificationChannel ?? "whatsapp")
-                }
+                onClick={() => finishOnboarding(notificationChannel)}
                 className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
               >
                 Terminer
