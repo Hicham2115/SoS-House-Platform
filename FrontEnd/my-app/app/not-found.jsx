@@ -23,7 +23,7 @@ export default function NotFound() {
           partout au Maroc.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <Button render={<Link href="/"/>} nativeButton={false} className="h-[56px] justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19] sm:min-w-[220px]">
+          <Button render={<Link href="/"/>} nativeButton={false} className="h-[56px] justify-between rounded-xl bg-[#ffa514] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d] sm:min-w-[220px]">
             <House className="size-5"/>
             Retour à l&apos;accueil
           </Button>

@@ -139,7 +139,7 @@ const stats = [
 ];
 function StarRow() {
     return (<div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }, (_, i) => (<Star key={i} className="size-4 fill-[#ffc400] text-[#ffc400]"/>))}
+      {Array.from({ length: 5 }, (_, i) => (<Star key={i} className="size-4 fill-[#ffa514] text-[#ffa514]"/>))}
     </div>);
 }
 export function Testimonials() {

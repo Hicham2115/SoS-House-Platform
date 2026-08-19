@@ -165,7 +165,7 @@ export function Services() {
           </div>
           <Button
             onClick={openSignUp}
-            className="h-[52px] shrink-0 justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19]"
+            className="h-[52px] shrink-0 justify-between rounded-xl bg-[#ffa514] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
           >
             Publier une demande <ArrowRight className="size-4" />
           </Button>

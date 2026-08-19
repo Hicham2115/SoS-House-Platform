@@ -95,7 +95,7 @@ function ProviderCard() {
         ))}
       </div>
       <div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-5 text-sm">
-        <Star className="size-5 fill-[#ffc400] text-[#ffc400]" />
+        <Star className="size-5 fill-[#ffa514] text-[#ffa514]" />
         <span className="font-bold text-slate-950">4,9 / 5</span>
         <span className="mx-1 text-teal-700">•</span>
         <span className="text-slate-600">27 travaux réalisés</span>
@@ -103,7 +103,7 @@ function ProviderCard() {
       <p className="mt-1 pl-7 text-xs text-slate-500">
         Avis liés aux travaux réalisés
       </p>
-      <div className="mt-5 flex items-center gap-3 rounded-2xl bg-[#edf7f6] p-4">
+      <div className="mt-5 flex items-center gap-3 rounded-2xl bg-[#edf3f7] p-4">
         <LockKeyhole className="size-6 shrink-0 text-teal-700" />
         <div>
           <p className="text-sm font-bold text-teal-950">
@@ -136,29 +136,29 @@ function AvatarsRow() {
             >
               <polygon
                 points={tileStar}
-                fill="#0f7a75"
-                stroke="#0b5f5c"
+                fill="#0f557a"
+                stroke="#0b425f"
                 strokeWidth="0.6"
                 strokeLinejoin="round"
               />
               <polygon
                 points={tileCross}
-                fill="#ffc400"
+                fill="#ffa514"
                 transform="translate(0 0)"
               />
               <polygon
                 points={tileCross}
-                fill="#ffc400"
+                fill="#ffa514"
                 transform="translate(40 0)"
               />
               <polygon
                 points={tileCross}
-                fill="#ffc400"
+                fill="#ffa514"
                 transform="translate(0 40)"
               />
               <polygon
                 points={tileCross}
-                fill="#ffc400"
+                fill="#ffa514"
                 transform="translate(40 40)"
               />
             </pattern>
@@ -233,7 +233,7 @@ export function Hero() {
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
             <Button
               onClick={openSignUp}
-              className="h-[60px] justify-between rounded-xl bg-[#ffc400] px-7 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19] sm:min-w-[200px]"
+              className="h-[60px] justify-between rounded-xl bg-[#ffa514] px-7 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d] sm:min-w-[200px]"
             >
               Publier une demande <ArrowRight className="size-5" />
             </Button>
@@ -257,7 +257,7 @@ export function Hero() {
           <AvatarsRow />
         </div>
       </div>
-      <div className="pointer-events-none absolute bottom-[-116px] left-[-5%] z-20 h-[190px] w-[110%] rounded-[50%_50%_0_0/50%_50%_0_0] bg-[#edf8f7]" />
+      <div className="pointer-events-none absolute bottom-[-116px] left-[-5%] z-20 h-[190px] w-[110%] rounded-[50%_50%_0_0/50%_50%_0_0] bg-[#edf4f8]" />
       <svg
         viewBox="0 0 64 64"
         className="pointer-events-none absolute bottom-4 left-1/2 z-30 size-16 -translate-x-1/2 drop-shadow-[0_6px_10px_rgba(6,60,58,0.35)]"
@@ -265,23 +265,23 @@ export function Hero() {
       >
         <defs>
           <linearGradient id="starBody" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#1a9e97" />
-            <stop offset="100%" stopColor="#0b5f5c" />
+            <stop offset="0%" stopColor="#1a709e" />
+            <stop offset="100%" stopColor="#0b425f" />
           </linearGradient>
           <radialGradient id="starPlate" cx="40%" cy="35%" r="70%">
-            <stop offset="0%" stopColor="#2fb3aa" />
-            <stop offset="100%" stopColor="#0f7a75" />
+            <stop offset="0%" stopColor="#2f85b3" />
+            <stop offset="100%" stopColor="#0f557a" />
           </radialGradient>
           <radialGradient id="starSun" cx="35%" cy="30%" r="75%">
-            <stop offset="0%" stopColor="#ffe9ad" />
-            <stop offset="55%" stopColor="#ffc400" />
-            <stop offset="100%" stopColor="#e6a600" />
+            <stop offset="0%" stopColor="#ffe7c1" />
+            <stop offset="55%" stopColor="#ffa514" />
+            <stop offset="100%" stopColor="#fa9a00" />
           </radialGradient>
         </defs>
         <polygon
           points={outerStar}
           fill="url(#starBody)"
-          stroke="#08403e"
+          stroke="#082c40"
           strokeWidth="0.75"
           strokeLinejoin="round"
         />
@@ -289,7 +289,7 @@ export function Hero() {
         <polygon
           points={rosetteStar}
           fill="none"
-          stroke="#e8fbf8"
+          stroke="#e8f4fb"
           strokeOpacity="0.8"
           strokeWidth="0.9"
           strokeLinejoin="round"
@@ -302,7 +302,7 @@ export function Hero() {
               cx={32 + 19.5 * Math.cos(rad)}
               cy={32 + 19.5 * Math.sin(rad)}
               r="1.1"
-              fill="#e8fbf8"
+              fill="#e8f4fb"
               fillOpacity="0.9"
             />
           );

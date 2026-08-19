@@ -187,7 +187,7 @@ export function ForArtisans() {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-6 rounded-[20px] bg-[#eef5f7] px-6 py-6 shadow-[0_12px_30px_rgba(67,94,110,0.05)] sm:px-10 lg:grid-cols-4 lg:divide-x lg:divide-slate-200">
+        <div className="mt-8 grid grid-cols-2 gap-6 rounded-[20px] bg-[#eef4f7] px-6 py-6 shadow-[0_12px_30px_rgba(67,94,110,0.05)] sm:px-10 lg:grid-cols-4 lg:divide-x lg:divide-slate-200">
           {stats.map((stat) => (
             <div
               key={stat.label}
@@ -226,7 +226,7 @@ export function ForArtisans() {
           </div>
         </div>
 
-        <div className="relative mt-5 flex flex-col gap-6 overflow-hidden rounded-[20px] bg-[#166f6c] px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10">
+        <div className="relative mt-5 flex flex-col gap-6 overflow-hidden rounded-[20px] bg-[#16506f] px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10">
           <ZelligeCorner
             id="artisan-cta-zellige"
             corner="bottom-left"
@@ -244,7 +244,7 @@ export function ForArtisans() {
           <div className="relative flex shrink-0 flex-col items-start gap-2 sm:items-end">
             <Button
               onClick={openSignUp}
-              className="h-[52px] justify-between rounded-xl bg-[#ffc400] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19]"
+              className="h-[52px] justify-between rounded-xl bg-[#ffa514] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
             >
               Créer mon compte artisan <ArrowRight className="size-4" />
             </Button>

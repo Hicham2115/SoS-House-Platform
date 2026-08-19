@@ -23,7 +23,7 @@ export function MobileNav({ navLinks, onOpenAuth, onOpenSignUp }) {
           <SheetClose onClick={onOpenAuth} className="cursor-pointer rounded-lg px-3 py-2.5 text-center text-[15px] font-semibold text-teal-700">
             Se connecter
           </SheetClose>
-          <SheetClose onClick={onOpenSignUp} render={<Button className="h-12 rounded-xl bg-[#ffc400] px-7 text-[15px] font-semibold text-slate-950 shadow-[0_8px_20px_rgba(255,196,0,0.18)] transition hover:bg-[#ffcb19]"/>} nativeButton={false}>
+          <SheetClose onClick={onOpenSignUp} render={<Button className="h-12 rounded-xl bg-[#ffa514] px-7 text-[15px] font-semibold text-slate-950 shadow-[0_8px_20px_rgba(255,165,20,0.18)] transition hover:bg-[#ffaf2d]"/>} nativeButton={false}>
             Publier une demande
           </SheetClose>
         </div>

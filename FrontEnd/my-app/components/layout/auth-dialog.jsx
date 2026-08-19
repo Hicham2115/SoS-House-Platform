@@ -15,7 +15,7 @@ import {
   User,
   Wrench,
 } from "lucide-react";
-import logo from "@/app/assets/logo.png";
+import logo from "@/app/assets/logo.jpeg";
 import {
   Dialog,
   DialogContent,
@@ -301,7 +301,7 @@ export function AuthDialog() {
 
             <Button
               type="submit"
-              className="mt-2 h-[52px] justify-center rounded-xl bg-[#ffc400] text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19]"
+              className="mt-2 h-[52px] justify-center rounded-xl bg-[#ffa514] text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
             >
               {role === "artisan"
                 ? "Créer mon compte artisan"
@@ -354,7 +354,7 @@ export function AuthDialog() {
 
             <Button
               type="submit"
-              className="mt-2 h-[52px] justify-center rounded-xl bg-[#ffc400] text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,196,0,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffcb19]"
+              className="mt-2 h-[52px] justify-center rounded-xl bg-[#ffa514] text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
             >
               Se connecter
             </Button>
