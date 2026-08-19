@@ -19,7 +19,7 @@ function SelectTrigger({ className, size = "default", children, ...props }) {
 function SelectContent({ className, children, side = "bottom", sideOffset = 4, align = "center", alignOffset = 0, alignItemWithTrigger = true, ...props }) {
     return (<SelectPrimitive.Portal>
       <SelectPrimitive.Positioner side={side} sideOffset={sideOffset} align={align} alignOffset={alignOffset} alignItemWithTrigger={alignItemWithTrigger} className="isolate z-50">
-        <SelectPrimitive.Popup data-slot="select-content" data-align-trigger={alignItemWithTrigger} className={cn("relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className)} {...props}>
+        <SelectPrimitive.Popup data-slot="select-content" data-align-trigger={alignItemWithTrigger} className={cn("relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl border border-slate-100 bg-popover p-1.5 text-popover-foreground shadow-[0_20px_45px_rgba(15,23,42,0.12)] ring-1 ring-foreground/5 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className)} {...props}>
           <SelectScrollUpButton />
           <SelectPrimitive.List>{children}</SelectPrimitive.List>
           <SelectScrollDownButton />
@@ -31,11 +31,11 @@ function SelectLabel({ className, ...props }) {
     return (<SelectPrimitive.GroupLabel data-slot="select-label" className={cn("px-1.5 py-1 text-xs text-muted-foreground", className)} {...props}/>);
 }
 function SelectItem({ className, children, ...props }) {
-    return (<SelectPrimitive.Item data-slot="select-item" className={cn("relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2", className)} {...props}>
-      <SelectPrimitive.ItemText className="flex flex-1 shrink-0 gap-2 whitespace-nowrap">
+    return (<SelectPrimitive.Item data-slot="select-item" className={cn("relative flex w-full cursor-pointer items-center gap-2.5 rounded-lg py-2 pr-8 pl-2.5 text-sm font-medium text-slate-700 outline-hidden select-none transition-colors focus:bg-teal-50 focus:text-teal-800 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2", className)} {...props}>
+      <SelectPrimitive.ItemText className="flex flex-1 shrink-0 items-center gap-2.5 whitespace-nowrap">
         {children}
       </SelectPrimitive.ItemText>
-      <SelectPrimitive.ItemIndicator render={<span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center"/>}>
+      <SelectPrimitive.ItemIndicator render={<span className="pointer-events-none absolute right-2.5 flex size-4 items-center justify-center text-teal-600"/>}>
         <CheckIcon className="pointer-events-none"/>
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>);

@@ -1,29 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
+import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { useAuthStore } from "@/lib/store/auth";
+
+const emptySubscribe = () => () => {};
 
 export default function DashboardLayout({ children }) {
   const token = useAuthStore((state) => state.token);
   const router = useRouter();
-  const [hydrated, setHydrated] = useState(() =>
-    useAuthStore.persist.hasHydrated(),
+  // token is only trustworthy once React has moved past the hydration
+  // render (which must match the server and reads the pre-hydration
+  // snapshot). This flips to true on the same render pass zustand's
+  // useSyncExternalStore starts returning the real, rehydrated token.
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
   );
 
   useEffect(() => {
-    return useAuthStore.persist.onFinishHydration(() => setHydrated(true));
-  }, []);
-
-  useEffect(() => {
-    if (hydrated && !token) {
+    if (mounted && !token) {
       router.replace("/");
     }
-  }, [hydrated, token, router]);
+  }, [mounted, token, router]);
 
-  if (!hydrated || !token) {
+  if (!mounted || !token) {
     return null;
   }
 
-  return children;
+  return (
+    <div className="flex min-h-full flex-1">
+      <DashboardSidebar />
+      <div className="flex flex-1 flex-col">{children}</div>
+    </div>
+  );
 }
