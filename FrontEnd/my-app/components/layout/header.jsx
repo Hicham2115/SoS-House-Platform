@@ -57,9 +57,9 @@ export function Header() {
         <div className="flex shrink-0 items-center gap-2 lg:hidden">
           <Button
             onClick={openSignUp}
-            className="h-10 rounded-md bg-[#ffa514] px-4 text-sm font-bold text-slate-950"
+            className="h-10 rounded-md bg-[#ffa514] px-4 text-sm font-bold text-slate-950 transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
           >
-            Demander
+            Publier une demande
           </Button>
           <MobileNav
             navLinks={navLinks}

@@ -5,6 +5,7 @@ import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import {
+  BadgeCheck,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -12,6 +13,7 @@ import {
   Lock,
   Mail,
   Phone,
+  ShieldCheck,
   User,
   Wrench,
 } from "lucide-react";
@@ -30,6 +32,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/axios";
 import { useAuthDialogStore } from "@/lib/store/auth-dialog";
 
 const inputGroupClassName =
@@ -57,13 +60,25 @@ const roleChoices = [
     Icon: User,
     title: "Je suis un client",
     description: "Je cherche un artisan vérifié pour mes travaux.",
+    borderClass: "border-l-teal-600",
+    iconWrapClass: "bg-teal-50 text-teal-700",
+    chevronClass: "bg-teal-600 text-white",
   },
   {
     role: "artisan",
     Icon: Wrench,
     title: "Je suis un artisan",
     description: "Je veux recevoir des demandes de clients.",
+    borderClass: "border-l-[#ffa514]",
+    iconWrapClass: "bg-[#ffa514]/10 text-[#ffa514]",
+    chevronClass: "bg-[#ffa514] text-white",
   },
+];
+
+const trustBadges = [
+  { Icon: ShieldCheck, label: "Artisans vérifiés en personne" },
+  { Icon: BadgeCheck, label: "Avis authentiques de vrais clients" },
+  { Icon: Lock, label: "Vos données sont sécurisées" },
 ];
 
 export function AuthDialog() {
@@ -95,9 +110,24 @@ export function AuthDialog() {
         );
         return;
       }
-      toast.success("Compte créé avec succès.");
-      signUpForm.reset();
-      setOpen(false);
+
+      try {
+        console.log(" Data", parsed.data, role);
+
+        await api.post("/users", {
+          name: parsed.data.fullName,
+          email: parsed.data.email,
+          password: parsed.data.password,
+          phone: parsed.data.phone,
+          profession: parsed.data.profession,
+          role,
+        });
+        toast.success("Compte créé avec succès.");
+        signUpForm.reset();
+        setOpen(false);
+      } catch (error) {
+        toast.error(error.message);
+      }
     },
   });
 
@@ -167,43 +197,86 @@ export function AuthDialog() {
                   : "Créer un compte"
                 : "Se connecter"}
           </DialogTitle>
+          {step === "role" && (
+            <span className="h-1 w-10 rounded-full bg-teal-600" />
+          )}
           <DialogDescription className="text-[15px] text-slate-600">
-            {step === "role"
-              ? "Dites-nous qui vous êtes pour continuer."
-              : mode === "signup"
-                ? role === "artisan"
-                  ? "Recevez des demandes de clients vérifiés près de chez vous."
-                  : "Publiez une demande et trouvez un artisan vérifié."
-                : "Accédez à votre espace SOS House."}
+            {step === "role" ? (
+              <>
+                Dites-nous{" "}
+                <span className="font-semibold text-teal-700">
+                  qui vous êtes
+                </span>{" "}
+                pour continuer.
+              </>
+            ) : mode === "signup" ? (
+              role === "artisan" ? (
+                "Recevez des demandes de clients vérifiés près de chez vous."
+              ) : (
+                "Publiez une demande et trouvez un artisan vérifié."
+              )
+            ) : (
+              "Accédez à votre espace SOS House."
+            )}
           </DialogDescription>
         </DialogHeader>
 
         {step === "role" ? (
-          <div className="mt-6 flex flex-col gap-3">
-            {roleChoices.map(
-              ({ role: choiceRole, Icon, title, description }) => (
-                <button
-                  key={choiceRole}
-                  type="button"
-                  onClick={() => selectRole(choiceRole)}
-                  className="group flex cursor-pointer items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-teal-600 hover:bg-teal-50/50"
+          <>
+            <div className="mt-6 flex flex-col gap-3">
+              {roleChoices.map(
+                ({
+                  role: choiceRole,
+                  Icon,
+                  title,
+                  description,
+                  borderClass,
+                  iconWrapClass,
+                  chevronClass,
+                }) => (
+                  <button
+                    key={choiceRole}
+                    type="button"
+                    onClick={() => selectRole(choiceRole)}
+                    className={`group flex cursor-pointer items-center gap-4 rounded-2xl border border-l-4 border-slate-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.1)] ${borderClass}`}
+                  >
+                    <span
+                      className={`flex size-12 shrink-0 items-center justify-center rounded-full ${iconWrapClass}`}
+                    >
+                      <Icon className="size-5" strokeWidth={1.8} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-bold text-slate-950">
+                        {title}
+                      </p>
+                      <p className="mt-0.5 text-[13px] leading-[1.5] text-slate-600">
+                        {description}
+                      </p>
+                    </div>
+                    <span
+                      className={`flex size-8 shrink-0 items-center justify-center rounded-full transition group-hover:translate-x-0.5 ${chevronClass}`}
+                    >
+                      <ChevronRight className="size-4" />
+                    </span>
+                  </button>
+                ),
+              )}
+            </div>
+
+            <div className="mt-6 flex items-center justify-center gap-4 divide-x divide-slate-200 border-t border-slate-100 pt-5 sm:gap-6">
+              {trustBadges.map(({ Icon, label }) => (
+                <div
+                  key={label}
+                  className="flex flex-1 items-start gap-1.5 pl-4 first:pl-0"
                 >
-                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700 transition group-hover:bg-teal-600 group-hover:text-white">
-                    <Icon className="size-5" strokeWidth={1.8} />
+                  <Icon className="size-4 shrink-0 text-teal-600" />
+                  <span className="text-[11px] leading-[1.4] text-slate-600">
+                    {label}
                   </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[15px] font-bold text-slate-950">
-                      {title}
-                    </p>
-                    <p className="mt-0.5 text-[13px] leading-[1.5] text-slate-600">
-                      {description}
-                    </p>
-                  </div>
-                  <ChevronRight className="size-5 shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-teal-600" />
-                </button>
-              ),
-            )}
-          </div>
+                </div>
+              ))}
+            </div>
+          </>
         ) : mode === "signup" ? (
           <form
             className="mt-6 flex flex-col gap-3.5"
