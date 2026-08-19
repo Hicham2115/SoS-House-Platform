@@ -12,9 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { readAvatarFile } from "@/lib/avatar";
 import { useAuthStore } from "@/lib/store/auth";
-
-const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 
 const accountSchema = z.object({
   name: z.string().trim().min(1, "Le nom complet est requis").max(255),
@@ -99,29 +98,18 @@ export default function ParametresPage() {
     },
   });
 
-  function handleAvatarChange(e) {
+  async function handleAvatarChange(e) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Veuillez choisir un fichier image.");
-      return;
-    }
-    if (file.size > MAX_AVATAR_SIZE) {
-      toast.error("L'image ne doit pas dépasser 2 Mo.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      updateUser({ avatarUrl: reader.result });
+    try {
+      const dataUrl = await readAvatarFile(file);
+      updateUser({ avatarUrl: dataUrl });
       toast.success("Photo de profil mise à jour.");
-    };
-    reader.onerror = () => {
-      toast.error("Impossible de lire cette image.");
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      toast.error(error.message);
+    }
   }
 
   function handleRemoveAvatar() {
@@ -137,250 +125,250 @@ export default function ParametresPage() {
       />
 
       <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
-          <form
-            className="relative flex flex-col gap-1 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
-          >
-            <ZelligeCorner
-              id="parametres-zellige-tr"
-              corner="top-right"
-              className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 opacity-60"
-            />
+        <form
+          className="relative flex flex-col gap-1 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+        >
+          <ZelligeCorner
+            id="parametres-zellige-tr"
+            corner="top-right"
+            className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 opacity-60"
+          />
 
-            <div className="relative flex items-center gap-3 border-b border-slate-100 pb-5">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                <User className="size-5" strokeWidth={1.8} />
-              </span>
-              <div>
-                <p className="text-[17px] font-bold text-slate-950">
-                  Informations personnelles
-                </p>
-                <p className="text-[13px] text-slate-500">
-                  Gardez vos informations à jour pour une meilleure expérience.
-                </p>
-              </div>
+          <div className="relative flex items-center gap-3 border-b border-slate-100 pb-5">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+              <User className="size-5" strokeWidth={1.8} />
+            </span>
+            <div>
+              <p className="text-[17px] font-bold text-slate-950">
+                Informations personnelles
+              </p>
+              <p className="text-[13px] text-slate-500">
+                Gardez vos informations à jour pour une meilleure expérience.
+              </p>
             </div>
+          </div>
 
-            <div className="relative flex items-center gap-4 border-b border-slate-100 py-5">
-              <Avatar className="size-16">
-                <AvatarImage
-                  src={user?.avatarUrl || defaultAvatar.src}
-                  alt={user?.name ?? "Photo de profil"}
-                />
-                <AvatarFallback className="bg-teal-100 text-lg font-bold text-teal-700">
-                  {user?.name?.[0]?.toUpperCase() ?? "U"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <p className="text-[14px] font-bold text-slate-950">
-                  Photo de profil
-                </p>
-                <p className="text-[12px] text-slate-500">
-                  JPG ou PNG, 2 Mo maximum.
-                </p>
-                <div className="mt-2.5 flex items-center gap-4">
-                  <Button
+          <div className="relative flex items-center gap-4 border-b border-slate-100 py-5">
+            <Avatar className="size-16">
+              <AvatarImage
+                src={user?.avatarUrl || defaultAvatar.src}
+                alt={user?.name ?? "Photo de profil"}
+              />
+              <AvatarFallback className="bg-teal-100 text-lg font-bold text-teal-700">
+                {user?.name?.[0]?.toUpperCase() ?? "U"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <p className="text-[14px] font-bold text-slate-950">
+                Photo de profil
+              </p>
+              <p className="text-[12px] text-slate-500">
+                JPG ou PNG, 2 Mo maximum.
+              </p>
+              <div className="mt-2.5 flex items-center gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="h-9 rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <Camera className="size-4" />
+                  Changer la photo
+                </Button>
+                {user?.avatarUrl && (
+                  <button
                     type="button"
-                    variant="outline"
-                    onClick={() => avatarInputRef.current?.click()}
-                    className="h-9 rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+                    onClick={handleRemoveAvatar}
+                    className="text-[13px] font-semibold text-red-600 hover:underline"
                   >
-                    <Camera className="size-4" />
-                    Changer la photo
-                  </Button>
-                  {user?.avatarUrl && (
-                    <button
-                      type="button"
-                      onClick={handleRemoveAvatar}
-                      className="text-[13px] font-semibold text-red-600 hover:underline"
-                    >
-                      Supprimer
-                    </button>
-                  )}
-                </div>
-                <input
-                  ref={avatarInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarChange}
-                />
+                    Supprimer
+                  </button>
+                )}
               </div>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
             </div>
+          </div>
 
-            <form.Field name="name">
-              {(field) => (
-                <FieldRow
-                  Icon={User}
+          <form.Field name="name">
+            {(field) => (
+              <FieldRow
+                Icon={User}
+                id="name"
+                label="Nom complet"
+                helperText="Utilisez votre nom et prénom tels qu'ils apparaissent sur vos documents."
+                first
+              >
+                <Input
                   id="name"
-                  label="Nom complet"
-                  helperText="Utilisez votre nom et prénom tels qu'ils apparaissent sur vos documents."
-                  first
-                >
-                  <Input
-                    id="name"
-                    className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </FieldRow>
-              )}
-            </form.Field>
+                  className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </FieldRow>
+            )}
+          </form.Field>
 
-            <form.Field name="email">
-              {(field) => (
-                <FieldRow
-                  Icon={Mail}
+          <form.Field name="email">
+            {(field) => (
+              <FieldRow
+                Icon={Mail}
+                id="email"
+                label="Adresse e-mail"
+                helperText="C'est l'adresse utilisée pour recevoir les notifications et les mises à jour."
+              >
+                <Input
                   id="email"
-                  label="Adresse e-mail"
-                  helperText="C'est l'adresse utilisée pour recevoir les notifications et les mises à jour."
-                >
-                  <Input
-                    id="email"
-                    type="email"
-                    className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </FieldRow>
-              )}
-            </form.Field>
+                  type="email"
+                  className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </FieldRow>
+            )}
+          </form.Field>
 
-            <form.Field name="phone">
-              {(field) => (
-                <FieldRow
-                  Icon={Phone}
+          <form.Field name="phone">
+            {(field) => (
+              <FieldRow
+                Icon={Phone}
+                id="phone"
+                label="Téléphone"
+                helperText="Nous utiliserons ce numéro pour vous contacter si nécessaire."
+              >
+                <Input
                   id="phone"
-                  label="Téléphone"
-                  helperText="Nous utiliserons ce numéro pour vous contacter si nécessaire."
-                >
-                  <Input
-                    id="phone"
-                    type="tel"
-                    className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </FieldRow>
-              )}
-            </form.Field>
+                  type="tel"
+                  className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </FieldRow>
+            )}
+          </form.Field>
 
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-5">
-              <Button
-                type="submit"
-                className="h-11 rounded-xl bg-teal-600 px-6 text-[14px] font-semibold text-white hover:bg-teal-700"
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-5">
+            <Button
+              type="submit"
+              className="h-11 rounded-xl bg-teal-600 px-6 text-[14px] font-semibold text-white hover:bg-teal-700"
+            >
+              <Check className="size-4" />
+              Enregistrer les modifications
+            </Button>
+            <span className="flex items-center gap-1.5 text-[12px] text-slate-500">
+              <Lock className="size-3.5" />
+              Vos données sont sécurisées
+            </span>
+          </div>
+        </form>
+
+        <form
+          className="relative flex flex-col gap-1 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
+          onSubmit={(e) => {
+            e.preventDefault();
+            passwordForm.handleSubmit();
+          }}
+        >
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-5">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+              <KeyRound className="size-5" strokeWidth={1.8} />
+            </span>
+            <div>
+              <p className="text-[17px] font-bold text-slate-950">
+                Mot de passe
+              </p>
+              <p className="text-[13px] text-slate-500">
+                Choisissez un mot de passe robuste pour protéger votre compte.
+              </p>
+            </div>
+          </div>
+
+          <passwordForm.Field name="currentPassword">
+            {(field) => (
+              <FieldRow
+                Icon={Lock}
+                id="currentPassword"
+                label="Mot de passe actuel"
+                helperText="Confirmez votre mot de passe actuel pour continuer."
+                first
               >
-                <Check className="size-4" />
-                Enregistrer les modifications
-              </Button>
-              <span className="flex items-center gap-1.5 text-[12px] text-slate-500">
-                <Lock className="size-3.5" />
-                Vos données sont sécurisées
-              </span>
-            </div>
-          </form>
-
-          <form
-            className="relative flex flex-col gap-1 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
-            onSubmit={(e) => {
-              e.preventDefault();
-              passwordForm.handleSubmit();
-            }}
-          >
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-5">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                <KeyRound className="size-5" strokeWidth={1.8} />
-              </span>
-              <div>
-                <p className="text-[17px] font-bold text-slate-950">
-                  Mot de passe
-                </p>
-                <p className="text-[13px] text-slate-500">
-                  Choisissez un mot de passe robuste pour protéger votre compte.
-                </p>
-              </div>
-            </div>
-
-            <passwordForm.Field name="currentPassword">
-              {(field) => (
-                <FieldRow
-                  Icon={Lock}
+                <Input
                   id="currentPassword"
-                  label="Mot de passe actuel"
-                  helperText="Confirmez votre mot de passe actuel pour continuer."
-                  first
-                >
-                  <Input
-                    id="currentPassword"
-                    type="password"
-                    autoComplete="current-password"
-                    className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </FieldRow>
-              )}
-            </passwordForm.Field>
+                  type="password"
+                  autoComplete="current-password"
+                  className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </FieldRow>
+            )}
+          </passwordForm.Field>
 
-            <passwordForm.Field name="newPassword">
-              {(field) => (
-                <FieldRow
-                  Icon={KeyRound}
-                  id="newPassword"
-                  label="Nouveau mot de passe"
-                  helperText="8 caractères minimum."
-                >
-                  <Input
-                    id="newPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </FieldRow>
-              )}
-            </passwordForm.Field>
-
-            <passwordForm.Field name="confirmPassword">
-              {(field) => (
-                <FieldRow
-                  Icon={KeyRound}
-                  id="confirmPassword"
-                  label="Confirmer le nouveau mot de passe"
-                  helperText="Ressaisissez le même mot de passe."
-                >
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </FieldRow>
-              )}
-            </passwordForm.Field>
-
-            <div className="mt-2 border-t border-slate-100 pt-5">
-              <Button
-                type="submit"
-                className="h-11 rounded-xl bg-teal-600 px-6 text-[14px] font-semibold text-white hover:bg-teal-700"
+          <passwordForm.Field name="newPassword">
+            {(field) => (
+              <FieldRow
+                Icon={KeyRound}
+                id="newPassword"
+                label="Nouveau mot de passe"
+                helperText="8 caractères minimum."
               >
-                <Check className="size-4" />
-                Mettre à jour le mot de passe
-              </Button>
-            </div>
-          </form>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </FieldRow>
+            )}
+          </passwordForm.Field>
+
+          <passwordForm.Field name="confirmPassword">
+            {(field) => (
+              <FieldRow
+                Icon={KeyRound}
+                id="confirmPassword"
+                label="Confirmer le nouveau mot de passe"
+                helperText="Ressaisissez le même mot de passe."
+              >
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </FieldRow>
+            )}
+          </passwordForm.Field>
+
+          <div className="mt-2 border-t border-slate-100 pt-5">
+            <Button
+              type="submit"
+              className="h-11 rounded-xl bg-teal-600 px-6 text-[14px] font-semibold text-white hover:bg-teal-700"
+            >
+              <Check className="size-4" />
+              Mettre à jour le mot de passe
+            </Button>
+          </div>
+        </form>
       </div>
     </>
   );

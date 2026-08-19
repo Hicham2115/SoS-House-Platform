@@ -1,4 +1,5 @@
 import { Poppins } from "next/font/google";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
@@ -22,8 +23,10 @@ export default function RootLayout({ children }) {
       className={`${poppins.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster />
+        <QueryProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster />
+        </QueryProvider>
       </body>
     </html>
   );

@@ -20,6 +20,14 @@ return new class extends Migration
             $table->string('role')->default('client');
             $table->string('profession')->nullable();
             $table->string('phone')->nullable();
+            $table->string('avatar')->nullable();
+            $table->string(("account_type"))->nullable();
+            $table->string(("raison_sociale"))->nullable();
+            $table->string(("ice"))->nullable();
+            $table->string(("ville"))->nullable();
+            $table->string(("quartier"))->nullable();
+            $table->string(("adresse"))->nullable();
+            $table->string(("etage"))->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

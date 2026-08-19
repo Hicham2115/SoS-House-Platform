@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { AlignLeft, BadgePlus, MapPin, Tag } from "lucide-react";
+import { AlignLeft, BadgePlus, Lock, MapPin, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
@@ -20,15 +20,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getInvoiceRequirement } from "@/lib/onboarding";
+import { useAuthStore } from "@/lib/store/auth";
 import { categories, useListingsStore } from "@/lib/store/listings";
 
 const inputGroupClassName =
   "h-12 rounded-xl border-slate-200 bg-slate-50/70 px-1 has-[[data-slot=input-group-control]:focus-visible]:border-teal-600 has-[[data-slot=input-group-control]:focus-visible]:ring-teal-600/15";
 
+const invoiceLabels = {
+  aucune: "Aucune facture",
+  simple: "Facture simple (sans TVA)",
+  tva: "Facture avec TVA récupérable",
+};
+
 const listingSchema = z.object({
   title: z.string().trim().min(1, "Le titre est requis").max(100),
   category: z.string().min(1, "Choisissez une catégorie"),
   city: z.string().trim().min(1, "La ville est requise"),
+  adresseComplete: z
+    .string()
+    .trim()
+    .min(1, "L'adresse complète est requise"),
+  etage: z.string().trim().optional(),
+  invoiceRequired: z.enum(["aucune", "simple", "tva"]),
   description: z
     .string()
     .trim()
@@ -37,10 +51,20 @@ const listingSchema = z.object({
 });
 
 export default function PublierPage() {
+  const user = useAuthStore((state) => state.user);
   const addListing = useListingsStore((state) => state.addListing);
+  const invoiceRequirement = getInvoiceRequirement(user?.accountType);
 
   const form = useForm({
-    defaultValues: { title: "", category: "", city: "", description: "" },
+    defaultValues: {
+      title: "",
+      category: "",
+      city: user?.defaultAddress?.ville ?? "",
+      adresseComplete: user?.defaultAddress?.adresseComplete ?? "",
+      etage: user?.defaultAddress?.etage ?? "",
+      invoiceRequired: invoiceRequirement.value,
+      description: "",
+    },
     onSubmit: async ({ value }) => {
       const parsed = listingSchema.safeParse(value);
       if (!parsed.success) {
@@ -172,6 +196,102 @@ export default function PublierPage() {
                     onChange={(e) => field.handleChange(e.target.value)}
                   />
                 </InputGroup>
+              </div>
+            )}
+          </form.Field>
+
+          <form.Field name="adresseComplete">
+            {(field) => (
+              <div className="flex flex-col gap-1.5">
+                <Label
+                  htmlFor="adresseComplete"
+                  className="text-[13px] text-slate-700"
+                >
+                  Adresse complète
+                </Label>
+                <InputGroup className={inputGroupClassName}>
+                  <InputGroupAddon>
+                    <MapPin />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="adresseComplete"
+                    placeholder="N°, rue, résidence..."
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </InputGroup>
+              </div>
+            )}
+          </form.Field>
+
+          <form.Field name="etage">
+            {(field) => (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="etage" className="text-[13px] text-slate-700">
+                  Étage (optionnel)
+                </Label>
+                <InputGroup className={inputGroupClassName}>
+                  <InputGroupAddon>
+                    <MapPin />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="etage"
+                    placeholder="Ex : 3ème étage, porte 12"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </InputGroup>
+              </div>
+            )}
+          </form.Field>
+
+          <form.Field name="invoiceRequired">
+            {(field) => (
+              <div className="flex flex-col gap-1.5">
+                <Label
+                  htmlFor="invoiceRequired"
+                  className="text-[13px] text-slate-700"
+                >
+                  Facture requise
+                </Label>
+                {invoiceRequirement.editable ? (
+                  <Select
+                    value={field.state.value}
+                    onValueChange={(value) => field.handleChange(value)}
+                  >
+                    <SelectTrigger
+                      id="invoiceRequired"
+                      className="h-12 w-full rounded-xl border-slate-200 bg-slate-50/70 px-3 data-[state=open]:border-teal-600"
+                    >
+                      <SelectValue placeholder="Choisissez">
+                        {(value) => invoiceLabels[value] ?? "Choisissez"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(invoiceLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <>
+                    <div
+                      id="invoiceRequired"
+                      className="flex h-12 items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-100 px-3.5 text-[14px] text-slate-600"
+                    >
+                      <Lock className="size-4 shrink-0 text-slate-400" />
+                      {invoiceLabels[field.state.value]}
+                    </div>
+                    <p className="text-[12px] text-slate-500">
+                      Verrouillé pour les comptes Entreprise — chaque
+                      demande exige une facture avec TVA récupérable.
+                    </p>
+                  </>
+                )}
               </div>
             )}
           </form.Field>

@@ -52,10 +52,10 @@ export function DashboardSidebar() {
   const logout = useAuthStore((state) => state.logout);
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white p-5 lg:flex">
-      <Image src={logo} alt="SOS House" className="w-30 m-auto" />
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white p-5 lg:flex">
+      <Image src={logo} alt="SOS House" className="w-30 mx-auto" />
 
-      <nav className="mt-8 flex flex-1 flex-col gap-1">
+      <nav className="mt-8 flex flex-col gap-1">
         {navItems.map(({ href, Icon, label, badge }) => {
           const active = pathname === href;
           return (
@@ -80,7 +80,7 @@ export function DashboardSidebar() {
         })}
       </nav>
 
-      <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3.5">
+      <div className="mt-16 flex items-center gap-3 rounded-2xl bg-slate-50 p-3.5">
         <Avatar size="lg">
           <AvatarImage
             src={user?.avatarUrl || avatar1.src}
@@ -108,7 +108,7 @@ export function DashboardSidebar() {
           logout();
           router.push("/");
         }}
-        className="mt-1 flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold text-red-600 transition hover:bg-red-50"
+        className="mt-5 flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold text-red-600 transition hover:bg-red-50"
       >
         <LogOut className="size-[18px] shrink-0" strokeWidth={1.8} />
         <span className="whitespace-nowrap">Se déconnecter</span>
