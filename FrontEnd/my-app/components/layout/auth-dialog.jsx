@@ -35,6 +35,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
 import { useAuthStore } from "@/lib/store/auth";
 import { useAuthDialogStore } from "@/lib/store/auth-dialog";
+import { useRouter } from "next/navigation";
 
 const inputGroupClassName =
   "h-12 rounded-xl border-slate-200 bg-slate-50/70 px-1 has-[[data-slot=input-group-control]:focus-visible]:border-teal-600 has-[[data-slot=input-group-control]:focus-visible]:ring-teal-600/15";
@@ -93,6 +94,8 @@ export function AuthDialog() {
   const backToRole = useAuthDialogStore((state) => state.backToRole);
   const setAuth = useAuthStore((state) => state.setAuth);
   const [showPassword, setShowPassword] = useState(false);
+  const openSignIn = useAuthDialogStore((state) => state.openSignIn);
+  const router = useRouter();
 
   const signUpForm = useForm({
     defaultValues: {
@@ -126,7 +129,7 @@ export function AuthDialog() {
         });
         toast.success("Compte créé avec succès.");
         signUpForm.reset();
-        setOpen(false);
+        openSignIn();
       } catch (error) {
         toast.error(error.message);
       }
@@ -152,6 +155,7 @@ export function AuthDialog() {
         toast.success("Connexion réussie.");
         signInForm.reset();
         setOpen(false);
+        router.push("/dashboard");
       } catch (error) {
         toast.error(error.message);
       }
