@@ -1,28 +1,106 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { useState } from "react";
+import Link from "next/link";
+import { DemandeDetailsSheet } from "@/components/dashboard/demande-details-sheet";
 import { ProfileOnboarding } from "@/components/dashboard/profile-onboarding";
 import { RequestCard } from "@/components/dashboard/request-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDemandes } from "@/hooks/use-demandes";
-import { stats, toRequestCard } from "@/lib/dashboard-data";
+import { useUser } from "@/hooks/use-user";
+import { getCategory } from "@/lib/services-catalog";
+import {
+  missionHistoryPreview,
+  missionStatusLabels,
+  missionStatusStyles,
+} from "@/lib/dashboard-data";
+import {
+  CalendarX,
+  CircleCheckBig,
+  FileText,
+  MoreVertical,
+  Smile,
+  Star,
+  TrendingUp,
+} from "lucide-react";
+
+const toneStyles = {
+  blue: "bg-teal-50 text-teal-700",
+  green: "bg-green-50 text-green-600",
+  purple: "bg-violet-50 text-violet-600",
+  orange: "bg-amber-50 text-amber-600",
+};
+
+const captionStyles = {
+  blue: "text-teal-700",
+  green: "text-green-600",
+  gray: "text-slate-500",
+};
+
+const missionIconStyles = {
+  terminee: "bg-green-50 text-green-600",
+  annulee: "bg-slate-100 text-slate-500",
+};
 
 export default function DashboardPage() {
   const { data: demandes, isPending } = useDemandes();
-  const requests = (demandes ?? [])
-    .slice(0, 3)
-    .map((demande) => ({ id: demande.id, ...toRequestCard(demande) }));
+  const { data: user } = useUser();
+  const [selectedDemande, setSelectedDemande] = useState(null);
+
+  const requests = (demandes ?? []).slice(0, 5).map((demande) => {
+    const category = getCategory(demande.category);
+    return {
+      id: demande.id,
+      demande,
+      Icon: category?.Icon ?? FileText,
+      title: category?.label ?? demande.category,
+    };
+  });
+
+  const stats = [
+    {
+      Icon: FileText,
+      value: demandes?.length ?? 0,
+      label: "Demandes actives",
+      tone: "blue",
+      caption: "En attente de réponse",
+      captionTone: "blue",
+    },
+    {
+      Icon: CircleCheckBig,
+      value: "12",
+      label: "Missions terminées",
+      tone: "green",
+      caption: "+3 ce mois-ci",
+      captionTone: "green",
+      captionIcon: TrendingUp,
+    },
+    {
+      Icon: Star,
+      value: "4,8/5",
+      label: "Note moyenne donnée",
+      tone: "purple",
+      rating: 4.8,
+      caption: "Sur la qualité des services",
+      captionTone: "gray",
+    },
+    {
+      Icon: Smile,
+      value: "97%",
+      label: "Taux de satisfaction",
+      tone: "orange",
+      progress: 97,
+      caption: "Clients satisfaits",
+      captionTone: "gray",
+    },
+  ];
 
   return (
     <>
       <DashboardHeader
-        title="Bonjour, Hicham 👋"
+        title={`Bonjour, ${user?.name || "utilisateur"} 👋`}
         subtitle="Voici un aperçu de vos demandes et interventions."
       />
 
@@ -30,51 +108,84 @@ export default function DashboardPage() {
         <ProfileOnboarding />
 
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {stats.map(({ Icon, value, label, tone, progress }) => (
-            <div
-              key={label}
-              className="rounded-2xl border border-slate-200 bg-white p-5"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-[13px] font-semibold text-slate-500">
-                  {label}
-                </p>
-                <span
-                  className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${
-                    tone === "teal"
-                      ? "bg-teal-50 text-teal-700"
-                      : "bg-amber-50 text-amber-600"
-                  }`}
-                >
-                  <Icon className="size-4" strokeWidth={1.8} />
-                </span>
-              </div>
-              <p className="mt-4 text-[26px] font-bold text-slate-950">
-                {value}
-              </p>
-              {progress != null && (
-                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                  <div
-                    className={`h-full rounded-full ${
-                      tone === "teal" ? "bg-teal-600" : "bg-amber-500"
-                    }`}
-                    style={{ width: `${progress}%` }}
-                  />
+          {stats.map(
+            ({
+              Icon,
+              value,
+              label,
+              tone,
+              progress,
+              rating,
+              caption,
+              captionTone,
+              captionIcon: CaptionIcon,
+            }) => (
+              <div
+                key={label}
+                className="rounded-2xl border border-slate-200 bg-white p-5"
+              >
+                <div className="flex items-center gap-4">
+                  <span
+                    className={`flex size-14 shrink-0 items-center justify-center rounded-full ${toneStyles[tone]}`}
+                  >
+                    <Icon className="size-7" strokeWidth={1.8} />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-slate-500">
+                      {label}
+                    </p>
+                    <p className="mt-1 text-[26px] font-bold text-slate-950">
+                      {value}
+                    </p>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+                {rating != null && (
+                  <div className="mt-3 flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <Star
+                        key={index}
+                        className={`size-3.5 ${
+                          index < Math.round(rating)
+                            ? "fill-amber-400 text-amber-400"
+                            : "fill-slate-200 text-slate-200"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+                {caption && (
+                  <p
+                    className={`mt-2 flex items-center gap-1 text-[12px] font-semibold ${captionStyles[captionTone]}`}
+                  >
+                    {CaptionIcon && <CaptionIcon className="size-3.5" />}
+                    {caption}
+                  </p>
+                )}
+                {progress != null && (
+                  <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-teal-600"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+            ),
+          )}
         </div>
 
-        <div className="flex flex-1 flex-col gap-6">
+        <div className="flex flex-col gap-6">
           <div>
             <div className="flex items-center justify-between">
               <h2 className="text-[17px] font-bold text-slate-950">
                 Demandes actives
               </h2>
-              <span className="text-[13px] font-semibold text-teal-700">
+              <Link
+                href="/dashboard/demandes"
+                className="text-[13px] font-semibold text-teal-700"
+              >
                 Voir toutes ({demandes?.length ?? 0}) →
-              </span>
+              </Link>
             </div>
 
             <div className="mt-4 flex flex-col gap-3">
@@ -97,7 +208,13 @@ export default function DashboardPage() {
                 </p>
               ) : (
                 requests.map((request) => (
-                  <RequestCard key={request.id} request={request} />
+                  <RequestCard
+                    key={request.id}
+                    demande={request.demande}
+                    icon={request.Icon}
+                    title={request.title}
+                    onViewDetails={() => setSelectedDemande(request.demande)}
+                  />
                 ))
               )}
             </div>
@@ -108,24 +225,81 @@ export default function DashboardPage() {
               <h2 className="text-[17px] font-bold text-slate-950">
                 Historique des missions
               </h2>
-              <span className="text-[13px] font-semibold text-teal-700">
+              <Link
+                href="/dashboard/historique"
+                className="text-[13px] font-semibold text-teal-700"
+              >
                 Voir tout →
-              </span>
+              </Link>
             </div>
 
-            <Accordion className="mt-4 rounded-2xl border border-slate-200 bg-white px-4">
-              <AccordionItem value="history" className="border-b-0">
-                <AccordionTrigger className="text-[14px] text-slate-700">
-                  Voir vos anciennes missions terminées
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-600">
-                  Aucune autre mission archivée pour le moment.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <div className="mt-4 flex flex-col gap-3">
+              {missionHistoryPreview.map((mission) => {
+                const Icon =
+                  mission.status === "annulee" ? CalendarX : CircleCheckBig;
+                return (
+                  <div
+                    key={mission.title}
+                    className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center"
+                  >
+                    <span
+                      className={`flex size-11 shrink-0 items-center justify-center rounded-full ${missionIconStyles[mission.status]}`}
+                    >
+                      <Icon className="size-5" strokeWidth={1.8} />
+                    </span>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-bold text-slate-950">
+                        {mission.title}
+                      </p>
+                      <p className="mt-0.5 text-[13px] text-slate-600">
+                        {mission.category} · {mission.ville}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide uppercase ${missionStatusStyles[mission.status]}`}
+                    >
+                      {missionStatusLabels[mission.status]}
+                    </span>
+
+                    <div className="shrink-0 text-right">
+                      <p className="text-[14px] font-bold text-slate-950">
+                        {mission.price ?? "—"}
+                      </p>
+                      <p className="text-[12px] text-slate-500">
+                        {mission.date}
+                      </p>
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-2">
+                      <Button
+                        variant="outline"
+                        className="h-9 rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+                      >
+                        Voir les détails
+                      </Button>
+                      <button
+                        type="button"
+                        aria-label="Plus d'options"
+                        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-50 hover:text-slate-700"
+                      >
+                        <MoreVertical className="size-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
+
+      <DemandeDetailsSheet
+        demande={selectedDemande}
+        open={Boolean(selectedDemande)}
+        onOpenChange={(open) => !open && setSelectedDemande(null)}
+      />
     </>
   );
 }

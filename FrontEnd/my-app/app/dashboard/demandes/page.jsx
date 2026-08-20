@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, LayoutGrid, Table2 } from "lucide-react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { Eye, FileText, LayoutGrid, Table2 } from "lucide-react";
 import { DemandeDetailsSheet } from "@/components/dashboard/demande-details-sheet";
 import { RequestCard } from "@/components/dashboard/request-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
@@ -16,7 +18,8 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDemandes } from "@/hooks/use-demandes";
-import { statusStyles, toRequestCard, urgencyStyles } from "@/lib/dashboard-data";
+import { statusStyles, urgencyStyles } from "@/lib/dashboard-data";
+import { getCategory, urgencyOptions } from "@/lib/services-catalog";
 
 const views = [
   { value: "cards", label: "Cartes", Icon: LayoutGrid },
@@ -131,11 +134,26 @@ export default function DemandesPage() {
   const [view, setView] = useState("cards");
   const [selectedDemande, setSelectedDemande] = useState(null);
   const { data: demandes, isPending } = useDemandes();
-  const requests = (demandes ?? []).map((demande) => ({
-    id: demande.id,
-    demande,
-    ...toRequestCard(demande),
-  }));
+  const requests = (demandes ?? []).map((demande) => {
+    const category = getCategory(demande.category);
+    const subcategory = category?.subcategories.find(
+      (s) => s.value === demande.subcategory,
+    );
+
+    return {
+      id: demande.id,
+      demande,
+      Icon: category?.Icon ?? FileText,
+      title: subcategory
+        ? `${category.label} — ${subcategory.label}`
+        : (category?.label ?? demande.category),
+      subtitle: demande.ville,
+      meta: `Créée le ${format(new Date(demande.created_at), "d MMMM yyyy", { locale: fr })}`,
+      status: "En attente de réponses",
+      urgency: urgencyOptions.find((u) => u.value === demande.urgency)?.label,
+      urgencyValue: demande.urgency,
+    };
+  });
 
   return (
     <>
@@ -162,7 +180,9 @@ export default function DemandesPage() {
             {requests.map((request) => (
               <RequestCard
                 key={request.id}
-                request={request}
+                demande={request.demande}
+                icon={request.Icon}
+                title={request.title}
                 onViewDetails={() => setSelectedDemande(request.demande)}
               />
             ))}

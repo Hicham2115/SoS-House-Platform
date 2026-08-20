@@ -1,5 +1,3 @@
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import {
   BadgeCheck,
   CircleCheckBig,
@@ -12,7 +10,6 @@ import {
 } from "lucide-react";
 import avatar2 from "@/app/assets/avatars/avatar-2.png";
 import avatar3 from "@/app/assets/avatars/avatar-3.png";
-import { getCategory, urgencyOptions } from "@/lib/services-catalog";
 
 // Only status the backend sets today — extend alongside the backend's
 // workflow (mission accepted, in progress, done, ...) as it's built out.
@@ -25,28 +22,6 @@ export const urgencyStyles = {
   "sous-48h": "bg-amber-50 text-amber-700",
   urgente: "bg-red-50 text-red-700",
 };
-
-// Shapes a raw demande row (from GET /demandes) into what RequestCard and
-// the demandes table expect. No provider/note/action yet — that needs the
-// missions domain, which isn't built.
-export function toRequestCard(demande) {
-  const category = getCategory(demande.category);
-  const subcategory = category?.subcategories.find(
-    (s) => s.value === demande.subcategory,
-  );
-
-  return {
-    Icon: category?.Icon ?? FileText,
-    title: subcategory
-      ? `${category.label} — ${subcategory.label}`
-      : (category?.label ?? demande.category),
-    subtitle: demande.ville,
-    meta: `Créée le ${format(new Date(demande.created_at), "d MMMM yyyy", { locale: fr })}`,
-    status: "En attente de réponses",
-    urgency: urgencyOptions.find((u) => u.value === demande.urgency)?.label,
-    urgencyValue: demande.urgency,
-  };
-}
 
 export const stats = [
   { Icon: FileText, value: "4", label: "Demandes actives", tone: "teal" },
@@ -138,11 +113,50 @@ export const missionHistory = [
   },
 ];
 
+// Placeholder rows for the dashboard overview's "Historique des missions"
+// preview — swap for a real endpoint once mission history is built.
+export const missionHistoryPreview = [
+  {
+    title: "Réparation chasse d'eau",
+    category: "Plomberie",
+    ville: "Casablanca, Maarif",
+    status: "terminee",
+    price: "450 MAD",
+    date: "20/07/2026",
+  },
+  {
+    title: "Installation luminaire",
+    category: "Électricité",
+    ville: "Rabat, Agdal",
+    status: "terminee",
+    price: "350 MAD",
+    date: "15/07/2026",
+  },
+  {
+    title: "Peinture salon",
+    category: "Peinture",
+    ville: "Casablanca, Anfa",
+    status: "annulee",
+    price: null,
+    date: "10/07/2026",
+  },
+];
+
+export const missionStatusStyles = {
+  terminee: "bg-green-50 text-green-700",
+  annulee: "bg-blue-50 text-blue-600",
+};
+
+export const missionStatusLabels = {
+  terminee: "Terminée",
+  annulee: "Annulée",
+};
+
 export const faqs = [
   {
     question: "Comment publier une nouvelle demande ?",
     answer:
-      "Cliquez sur \"Publier une demande\" en haut de votre tableau de bord, décrivez votre besoin et recevez des réponses d'artisans vérifiés.",
+      'Cliquez sur "Publier une demande" en haut de votre tableau de bord, décrivez votre besoin et recevez des réponses d\'artisans vérifiés.',
   },
   {
     question: "Comment sont vérifiés les artisans ?",
@@ -152,7 +166,7 @@ export const faqs = [
   {
     question: "Puis-je annuler une intervention planifiée ?",
     answer:
-      "Oui, depuis \"Demandes actives\", ouvrez la demande concernée puis contactez le prestataire ou le support pour annuler.",
+      'Oui, depuis "Demandes actives", ouvrez la demande concernée puis contactez le prestataire ou le support pour annuler.',
   },
   {
     question: "Comment mes données sont-elles protégées ?",

@@ -170,7 +170,7 @@ export default function AidePage() {
 
             <Button
               type="submit"
-              className="mt-1 h-12 w-full justify-center gap-2 rounded-xl bg-[#ffa514] text-[14px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
+              className="mt-1 h-12 w-full justify-center gap-2 rounded-xl bg-[#0b1730] text-[14px] font-bold text-white shadow-[0_13px_25px_rgba(11,23,48,0.25)] transition hover:-translate-y-0.5 hover:bg-[#142248]"
             >
               <Send className="size-4" />
               Envoyer le message

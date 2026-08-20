@@ -38,7 +38,7 @@ export function DashboardHeader({ title, subtitle }) {
           className="relative flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
         >
           <Bell className="size-5" strokeWidth={1.8} />
-          <span className="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-[#ffa514] text-[10px] font-bold text-slate-950">
+          <span className="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
             3
           </span>
         </button>
@@ -82,7 +82,7 @@ export function DashboardHeader({ title, subtitle }) {
         <Button
           render={<Link href="/dashboard/publier" />}
           nativeButton={false}
-          className="h-11 shrink-0 rounded-xl bg-[#ffa514] px-5 text-[14px] font-semibold text-slate-950 shadow-[0_8px_20px_rgba(255,165,20,0.18)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
+          className="h-11 shrink-0 rounded-xl bg-[#0b1730] px-5 text-[14px] font-semibold text-white shadow-[0_8px_20px_rgba(11,23,48,0.2)] transition hover:-translate-y-0.5 hover:bg-[#142248]"
         >
           + Publier une demande
         </Button>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,6 +12,8 @@ import {
   LogOut,
   Megaphone,
   MessageSquare,
+  PanelLeftClose,
+  PanelLeftOpen,
   Settings,
 } from "lucide-react";
 import avatar1 from "@/app/assets/avatars/avatar-1.png";
@@ -50,27 +53,53 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const { data: user } = useUser();
   const logout = useLogout();
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className="scrollbar-blue sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white p-5 lg:flex">
-      <Image src={logo} alt="SOS House" className="w-30 mx-auto" />
+    <aside
+      className={`scrollbar-blue sticky top-0 hidden h-screen shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-[#0b1730] p-5 transition-[width] duration-200 lg:flex ${
+        collapsed ? "w-40" : "w-64"
+      }`}
+    >
+      <div className={`flex ${collapsed ? "justify-center" : "justify-end"}`}>
+        <button
+          type="button"
+          onClick={() => setCollapsed((v) => !v)}
+          aria-label={collapsed ? "Développer le menu" : "Réduire le menu"}
+          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/10 text-slate-300 transition hover:bg-white/10 hover:text-white"
+        >
+          {collapsed ? (
+            <PanelLeftOpen className="size-3.5" strokeWidth={1.8} />
+          ) : (
+            <PanelLeftClose className="size-3.5" strokeWidth={1.8} />
+          )}
+        </button>
+      </div>
+      <div className="mx-auto w-35">
+        <Image src={logo} alt="SOS House" />
+      </div>
 
-      <nav className="mt-8 flex flex-col gap-1">
+      <nav className="mt-2 flex flex-col gap-1">
         {navItems.map(({ href, Icon, label, badge }) => {
           const active = pathname === href;
           return (
             <Link
               key={href}
               href={href}
+              title={collapsed ? label : undefined}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold transition ${
+                collapsed ? "justify-center" : ""
+              } ${
                 active
-                  ? "bg-teal-600 text-white shadow-[0_8px_20px_rgba(13,148,136,0.25)]"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ? "bg-[#063fb4] text-white shadow-[0_8px_20px_rgba(11,146,218,0.3)]"
+                  : "text-slate-300 hover:bg-white/5 hover:text-white"
               }`}
             >
               <Icon className="size-[18px] shrink-0" strokeWidth={1.8} />
-              <span className="flex-1 whitespace-nowrap">{label}</span>
-              {badge && (
+              {!collapsed && (
+                <span className="flex-1 whitespace-nowrap">{label}</span>
+              )}
+              {badge && !collapsed && (
                 <span className="flex size-5 items-center justify-center rounded-full bg-[#ffa514] text-[11px] font-bold text-slate-950">
                   {badge}
                 </span>
@@ -80,7 +109,11 @@ export function DashboardSidebar() {
         })}
       </nav>
 
-      <div className="mt-16 flex items-center gap-3 rounded-2xl bg-slate-50 p-3.5">
+      <div
+        className={`mt-16 flex items-center gap-3 rounded-2xl bg-white/5 p-3.5 ${
+          collapsed ? "justify-center" : ""
+        }`}
+      >
         <Avatar size="lg">
           <AvatarImage
             src={user?.avatar || avatar1.src}
@@ -90,23 +123,32 @@ export function DashboardSidebar() {
             {user?.name?.[0]?.toUpperCase() ?? "U"}
           </AvatarFallback>
         </Avatar>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-[14px] font-bold text-slate-950">
-            {user?.name ?? "Mon profil"}
-          </p>
-          {user?.email && (
-            <p className="truncate text-[12px] text-slate-500">{user.email}</p>
-          )}
-        </div>
+        {!collapsed && (
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[14px] font-bold text-white">
+              {user?.name ?? "Mon profil"}
+            </p>
+            {user?.email && (
+              <p className="truncate text-[12px] text-slate-400">
+                {user.email}
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       <button
         type="button"
+        title={collapsed ? "Se déconnecter" : undefined}
         onClick={() => logout.mutate()}
-        className="mt-5 flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold text-red-600 transition hover:bg-red-50"
+        className={`mt-5 flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 px-3 py-2.5 text-left text-[14px] font-semibold text-slate-300 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400 ${
+          collapsed ? "justify-center" : ""
+        }`}
       >
         <LogOut className="size-[18px] shrink-0" strokeWidth={1.8} />
-        <span className="whitespace-nowrap">Se déconnecter</span>
+        {!collapsed && (
+          <span className="whitespace-nowrap">Se déconnecter</span>
+        )}
       </button>
     </aside>
   );
