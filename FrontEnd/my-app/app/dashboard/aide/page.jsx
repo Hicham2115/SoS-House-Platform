@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { api } from "@/lib/axios";
 import { faqs } from "@/lib/dashboard-data";
 
 const inputGroupClassName =
@@ -69,8 +70,14 @@ export default function AidePage() {
         return;
       }
 
-      toast.success("Votre message a été envoyé au support.");
-      form.reset();
+      try {
+        await api.post("/contacts", parsed.data);
+        toast.success("Votre message a été envoyé au support.");
+        form.reset();
+      } catch (error) {
+        console.error(error);
+        toast.error("Impossible d'envoyer votre message. Veuillez réessayer.");
+      }
     },
   });
 
