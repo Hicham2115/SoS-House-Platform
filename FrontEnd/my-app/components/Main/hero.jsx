@@ -79,7 +79,7 @@ function ProviderCard() {
       <div className="mt-6 space-y-4 border-t border-slate-200 pt-5">
         {trustItems.map((item) => (
           <div key={item.title} className="flex items-center gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-800">
               <item.icon className="size-[17px]" />
             </div>
             <div className="min-w-0 flex-1">
@@ -97,19 +97,19 @@ function ProviderCard() {
       <div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-5 text-sm">
         <Star className="size-5 fill-[#ffa514] text-[#ffa514]" />
         <span className="font-bold text-slate-950">4,9 / 5</span>
-        <span className="mx-1 text-teal-700">•</span>
+        <span className="mx-1 text-teal-800">•</span>
         <span className="text-slate-600">27 travaux réalisés</span>
       </div>
       <p className="mt-1 pl-7 text-xs text-slate-500">
         Avis liés aux travaux réalisés
       </p>
       <div className="mt-5 flex items-center gap-3 rounded-2xl bg-[#edf3f7] p-4">
-        <LockKeyhole className="size-6 shrink-0 text-teal-700" />
+        <LockKeyhole className="size-6 shrink-0 text-teal-800" />
         <div>
           <p className="text-sm font-bold text-teal-950">
             Facture garantie avant réponse
           </p>
-          <p className="mt-0.5 text-xs text-teal-700">
+          <p className="mt-0.5 text-xs text-teal-800">
             Vous le savez avant de choisir.
           </p>
         </div>
@@ -184,7 +184,7 @@ function AvatarsRow() {
         partout au Maroc
         <br />
         par des{" "}
-        <span className="font-medium text-teal-700 underline decoration-teal-400 decoration-2 underline-offset-4">
+        <span className="font-medium text-teal-800 underline decoration-teal-400 decoration-2 underline-offset-4">
           artisans vérifiés
         </span>
       </p>
@@ -211,22 +211,22 @@ export function Hero() {
       <div className="hero-pattern absolute inset-0 opacity-70" />
       <div className="relative z-10 mx-auto grid max-w-[1440px] grid-cols-1 px-5 py-10 sm:px-8 lg:pt-16 xl:min-h-[700px] xl:grid-cols-[51%_49%] xl:content-start xl:px-12 xl:py-14">
         <div className="relative z-10 flex flex-col justify-center xl:pb-28">
-          <div className="inline-flex w-fit items-center gap-2 text-sm font-bold tracking-[0.07em] text-teal-700 ">
+          <div className="inline-flex w-fit items-center gap-2 text-sm font-bold tracking-[0.07em] text-teal-800 ">
             <span className="flex size-8 items-center justify-center rounded-full bg-teal-50">
               <MapPin className="size-[18px]" />
             </span>
             PARTOUT AU MAROC
           </div>
           <h1 className="mt-5 max-w-[680px] text-[32px] font-bold text-slate-950 sm:text-[44px] lg:text-[50px]">
-            Un Artisan Chez Vous<span className="text-teal-600">.</span>
+            Un Artisan Chez Vous<span className="text-teal-800">.</span>
             <br />
-            Vérifié Avant Votre Choix<span className="text-teal-600">.</span>
+            Vérifié Avant Votre Choix<span className="text-teal-800">.</span>
           </h1>
           <p className="mt-5 max-w-[555px] font-normal text-[18px] leading-[1.75] text-slate-800">
             Identité vérifiée, avis liés aux travaux réalisés et possibilité de
             demander une facture avant même de recevoir une réponse.
           </p>
-          <div className="mt-4 flex items-center gap-2.5 text-[16px] font-semibold text-teal-700">
+          <div className="mt-4 flex items-center gap-2.5 text-[16px] font-semibold text-teal-800">
             <ShieldCheck className="size-5" />
             On vérifie, pour que vous n&apos;ayez pas à vous inquiéter.
           </div>
@@ -240,7 +240,7 @@ export function Hero() {
             <Button
               onClick={openSignUp}
               variant="outline"
-              className="h-[60px] rounded-xl border-teal-700 bg-white/70 px-8 text-[15px] font-bold text-teal-700 transition hover:bg-teal-50"
+              className="h-[60px] rounded-xl border-teal-800 bg-white/70 px-8 text-[15px] font-bold text-teal-800 transition hover:bg-teal-50"
             >
               Devenir prestataire
             </Button>

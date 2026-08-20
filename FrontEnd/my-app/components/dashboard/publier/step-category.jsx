@@ -139,7 +139,7 @@ export function StepCategory({ defaultValues, onSubmit }) {
 
       <Button
         type="submit"
-        className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
+        className="mt-1 h-12 w-full justify-center rounded-xl bg-[#0b1730] text-[14px] font-semibold text-white hover:bg-[#142248]"
       >
         Continuer
       </Button>

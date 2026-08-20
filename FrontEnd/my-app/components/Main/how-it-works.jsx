@@ -207,7 +207,7 @@ export function HowItWorks() {
         <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
           <div className="flex items-center gap-3 sm:gap-5">
             <span className="h-px w-5 shrink-0 bg-teal-300 sm:w-7" />
-            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-700 whitespace-nowrap sm:text-sm">
+            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-800 whitespace-nowrap sm:text-sm">
               <House className="size-7 shrink-0 sm:size-10" strokeWidth={1.7} />
               COMMENT ÇA MARCHE
             </span>
@@ -236,7 +236,7 @@ export function HowItWorks() {
                   : ""
               }`}
             >
-              <span className="absolute left-5 top-5 z-20 flex size-11 items-center justify-center rounded-full bg-teal-700 text-lg font-bold text-white shadow-[0_5px_14px_rgba(15,122,117,0.2)]">
+              <span className="absolute left-5 top-5 z-20 flex size-11 items-center justify-center rounded-full bg-teal-800 text-lg font-bold text-white shadow-[0_5px_14px_rgba(15,122,117,0.2)]">
                 {step.number}
               </span>
               <div className="mx-auto size-45 sm:size-47.5 lg:size-54.5">

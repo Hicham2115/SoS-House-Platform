@@ -326,7 +326,7 @@ export function ProfileOnboarding() {
           <Button
             type="button"
             onClick={() => setOpen(true)}
-            className="h-10 shrink-0 rounded-xl bg-teal-600 px-5 text-[13px] font-semibold text-white hover:bg-teal-700"
+            className="h-10 shrink-0 rounded-xl bg-[#0b1730] px-5 text-[13px] font-semibold text-white hover:bg-[#142248]"
           >
             Compléter mon profil
             <ChevronRight className="size-4" />
@@ -440,7 +440,7 @@ export function ProfileOnboarding() {
                         <Button
                           type="button"
                           onClick={handleContinueAccountType}
-                          className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
+                          className="mt-1 h-12 w-full justify-center rounded-xl bg-[#0b1730] text-[14px] font-semibold text-white hover:bg-[#142248]"
                         >
                           Continuer
                         </Button>
@@ -547,7 +547,7 @@ export function ProfileOnboarding() {
                         <Button
                           type="button"
                           onClick={handleContinueBusinessInfo}
-                          className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
+                          className="mt-1 h-12 w-full justify-center rounded-xl bg-[#0b1730] text-[14px] font-semibold text-white hover:bg-[#142248]"
                         >
                           Continuer
                         </Button>
@@ -671,7 +671,7 @@ export function ProfileOnboarding() {
                         <Button
                           type="button"
                           onClick={handleContinueAddress}
-                          className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
+                          className="mt-1 h-12 w-full justify-center rounded-xl bg-[#0b1730] text-[14px] font-semibold text-white hover:bg-[#142248]"
                         >
                           Continuer
                         </Button>
@@ -774,7 +774,7 @@ export function ProfileOnboarding() {
                         <Button
                           type="submit"
                           disabled={completeOnboarding.isPending}
-                          className="mt-1 h-12 w-full justify-center rounded-xl bg-teal-600 text-[14px] font-semibold text-white hover:bg-teal-700"
+                          className="mt-1 h-12 w-full justify-center rounded-xl bg-[#0b1730] text-[14px] font-semibold text-white hover:bg-[#142248]"
                         >
                           Terminer
                         </Button>

@@ -39,7 +39,7 @@ export function CallToAction() {
       <div className="relative mx-auto max-w-[1500px] overflow-hidden rounded-[28px] bg-white shadow-[0_30px_60px_rgba(15,23,42,0.08)]">
         <div className="grid grid-cols-1 lg:grid-cols-[54%_46%]">
           <div className="flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-14 lg:py-16">
-            <div className="inline-flex w-fit items-center gap-2 text-sm font-bold tracking-[0.06em] text-teal-700">
+            <div className="inline-flex w-fit items-center gap-2 text-sm font-bold tracking-[0.06em] text-teal-800">
               <MapPin className="size-4" />
               PARTOUT AU MAROC, ON EST LÀ POUR VOUS
             </div>
@@ -62,7 +62,7 @@ export function CallToAction() {
               <Button
                 onClick={openSignUp}
                 variant="outline"
-                className="h-[56px] rounded-xl border-teal-700 px-7 text-[15px] font-bold text-teal-700 transition hover:bg-teal-50"
+                className="h-[56px] rounded-xl border-teal-800 px-7 text-[15px] font-bold text-teal-800 transition hover:bg-teal-50"
               >
                 Devenir prestataire
               </Button>
@@ -70,7 +70,7 @@ export function CallToAction() {
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
               {trustItems.map((item) => (
                 <div key={item.label} className="flex items-center gap-3">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-800">
                     <item.icon className="size-4.5" />
                   </span>
                   <p className="text-sm leading-snug text-slate-700">
@@ -106,7 +106,7 @@ export function CallToAction() {
 
         <div className="flex flex-col gap-6 border-t border-slate-100 bg-[#f4f3fb] px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-10">
           <div className="flex items-center gap-3">
-            <Headset className="size-6 shrink-0 text-teal-700" />
+            <Headset className="size-6 shrink-0 text-teal-800" />
             <div>
               <p className="font-bold text-slate-950">Besoin d&apos;aide ?</p>
               <p className="text-sm text-slate-600">
@@ -117,14 +117,14 @@ export function CallToAction() {
           </div>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
             <div className="flex items-center gap-2.5">
-              <Phone className="size-5 shrink-0 text-teal-700" />
+              <Phone className="size-5 shrink-0 text-teal-800" />
               <div>
                 <p className="font-bold text-slate-950">06 22 123 456</p>
                 <p className="text-xs text-slate-500">Appel national</p>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
-              <MessageCircle className="size-5 shrink-0 text-teal-700" />
+              <MessageCircle className="size-5 shrink-0 text-teal-800" />
               <div>
                 <p className="font-bold text-slate-950">Chat en direct</p>
                 <p className="text-xs text-slate-500">Réponse rapide</p>

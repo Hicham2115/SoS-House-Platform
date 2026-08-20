@@ -314,7 +314,7 @@ export default function ParametresPage() {
           <div className="mt-2 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-5">
             <Button
               type="submit"
-              className="h-11 rounded-xl bg-teal-600 px-6 text-[14px] font-semibold text-white hover:bg-teal-700"
+              className="h-11 rounded-xl bg-[#0b1730] px-6 text-[14px] font-semibold text-white hover:bg-[#142248]"
             >
               <Check className="size-4" />
               Enregistrer les modifications
@@ -414,7 +414,7 @@ export default function ParametresPage() {
           <div className="mt-2 border-t border-slate-100 pt-5">
             <Button
               type="submit"
-              className="h-11 rounded-xl bg-teal-600 px-6 text-[14px] font-semibold text-white hover:bg-teal-700"
+              className="h-11 rounded-xl bg-[#0b1730] px-6 text-[14px] font-semibold text-white hover:bg-[#142248]"
             >
               <Check className="size-4" />
               Mettre à jour le mot de passe

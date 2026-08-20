@@ -89,7 +89,7 @@ export function ForArtisans() {
         <div className="grid grid-cols-1 items-center gap-12 lg:min-h-[650px] lg:grid-cols-[48%_52%] lg:gap-0">
           <div>
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-700 whitespace-nowrap sm:text-sm">
+              <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-800 whitespace-nowrap sm:text-sm">
                 <span className="relative flex size-8 shrink-0 items-center justify-center">
                   <Hexagon className="absolute size-8" strokeWidth={1.7} />
                   <Users className="relative size-3.5" strokeWidth={2} />
@@ -109,9 +109,9 @@ export function ForArtisans() {
             <p className="mt-5 max-w-[650px] text-[17px] font-medium leading-[1.7] text-slate-700">
               SOS House vous met en relation avec des clients sérieux partout
               au Maroc. Travaillez plus, soyez payé{" "}
-              <span className="font-bold text-teal-700">à temps</span> et
+              <span className="font-bold text-teal-800">à temps</span> et
               construisez votre{" "}
-              <span className="font-bold text-teal-700">réputation</span>.
+              <span className="font-bold text-teal-800">réputation</span>.
             </p>
 
             <div className="mt-7 max-w-[520px] divide-y divide-slate-200/75">
@@ -120,7 +120,7 @@ export function ForArtisans() {
                   key={benefit.title}
                   className="flex gap-4 py-3.5 first:pt-0"
                 >
-                  <span className="flex size-[52px] shrink-0 items-center justify-center rounded-full bg-teal-700 text-white shadow-[0_8px_18px_rgba(15,122,117,0.12)]">
+                  <span className="flex size-[52px] shrink-0 items-center justify-center rounded-full bg-teal-800 text-white shadow-[0_8px_18px_rgba(15,122,117,0.12)]">
                     <benefit.Icon className="size-[23px]" strokeWidth={1.8} />
                   </span>
                   <div>
@@ -172,7 +172,7 @@ export function ForArtisans() {
             </div>
 
             <div className="absolute bottom-0 right-0 z-10 flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_20px_45px_rgba(69,64,112,0.16)] sm:-right-2 sm:-bottom-6 lg:bottom-10 lg:-right-2">
-              <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-700 text-white">
+              <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-800 text-white">
                 <ShieldCheck className="size-7" strokeWidth={1.8} />
               </span>
               <div>
@@ -193,11 +193,11 @@ export function ForArtisans() {
               key={stat.label}
               className="flex items-center gap-4 lg:px-6 lg:first:pl-0 lg:last:pr-0"
             >
-              <span className="flex size-[54px] shrink-0 items-center justify-center rounded-full bg-teal-700 text-white">
+              <span className="flex size-[54px] shrink-0 items-center justify-center rounded-full bg-teal-800 text-white">
                 <stat.Icon className="size-6" strokeWidth={1.8} />
               </span>
               <div>
-                <p className="text-[20px] font-bold text-teal-700">
+                <p className="text-[20px] font-bold text-teal-800">
                   {stat.value}
                 </p>
                 <p className="text-[13px] leading-[1.4] text-slate-600">
@@ -209,7 +209,7 @@ export function ForArtisans() {
         </div>
 
         <div className="mt-5 flex flex-col gap-4 rounded-[20px] border border-teal-100 bg-teal-50/60 px-6 py-5 sm:flex-row sm:items-center sm:gap-6 sm:px-10">
-          <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-teal-700 shadow-[0_8px_18px_rgba(15,122,117,0.12)]">
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-teal-800 shadow-[0_8px_18px_rgba(15,122,117,0.12)]">
             <Handshake className="size-6" strokeWidth={1.8} />
           </span>
           <div>

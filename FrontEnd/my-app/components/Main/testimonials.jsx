@@ -158,7 +158,7 @@ export function Testimonials() {
         <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
           <div className="flex items-center gap-3 sm:gap-5">
             <span className="h-px w-8 shrink-0 bg-teal-300 sm:w-16"/>
-            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-700 whitespace-nowrap sm:text-sm">
+            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-800 whitespace-nowrap sm:text-sm">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-teal-600">
                 <Quote className="size-3.5" strokeWidth={2.2}/>
               </span>
@@ -174,16 +174,16 @@ export function Testimonials() {
           </h2>
           <p className="mt-6 text-[17px] leading-[1.7] text-slate-800 font-medium">
             Chaque avis est laissé après un travail réalisé et{" "}
-            <span className="font-bold text-teal-700">vérifié</span> par SOS
+            <span className="font-bold text-teal-800">vérifié</span> par SOS
             House.
           </p>
         </div>
 
         <div className="relative mt-10 px-9 sm:px-0">
-          <button type="button" onClick={() => scrollByCard(-1)} aria-label="Avis précédents" className="absolute left-0 top-1/2 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-teal-700 shadow-[0_12px_28px_rgba(69,64,112,0.16)] transition hover:bg-teal-50 sm:size-11 sm:-translate-x-1/2">
+          <button type="button" onClick={() => scrollByCard(-1)} aria-label="Avis précédents" className="absolute left-0 top-1/2 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-teal-800 shadow-[0_12px_28px_rgba(69,64,112,0.16)] transition hover:bg-teal-50 sm:size-11 sm:-translate-x-1/2">
             <ArrowLeft className="size-5"/>
           </button>
-          <button type="button" onClick={() => scrollByCard(1)} aria-label="Avis suivants" className="absolute right-0 top-1/2 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-teal-700 shadow-[0_12px_28px_rgba(69,64,112,0.16)] transition hover:bg-teal-50 sm:size-11 sm:translate-x-1/2">
+          <button type="button" onClick={() => scrollByCard(1)} aria-label="Avis suivants" className="absolute right-0 top-1/2 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white text-teal-800 shadow-[0_12px_28px_rgba(69,64,112,0.16)] transition hover:bg-teal-50 sm:size-11 sm:translate-x-1/2">
             <ArrowRight className="size-5"/>
           </button>
 
@@ -222,7 +222,7 @@ export function Testimonials() {
 
                 <div className="mt-5 rounded-xl bg-teal-50/70 p-4">
                   <div className="flex gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-teal-700">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-teal-800">
                       <t.DetailIcon className="size-[18px]" strokeWidth={1.8}/>
                     </span>
                     <div className="space-y-0.5 text-[13px] leading-[1.5] text-slate-700">
@@ -244,7 +244,7 @@ export function Testimonials() {
                       </p>
                     </div>
                   </div>
-                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-teal-100 bg-white px-3 py-1 text-[12px] font-bold text-teal-700">
+                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-teal-100 bg-white px-3 py-1 text-[12px] font-bold text-teal-800">
                     {t.invoiceLabel}
                     <CheckCircle2 className="size-3.5" strokeWidth={2.2}/>
                   </span>
@@ -255,13 +255,13 @@ export function Testimonials() {
 
         <div className="mt-8 flex flex-col gap-6 rounded-[20px] bg-[#ecebfa] px-6 py-6 sm:flex-row sm:items-center sm:gap-8 sm:px-10">
           <div className="flex items-center gap-4">
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-700 text-white">
+            <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-800 text-white">
               <ShieldCheck className="size-7" strokeWidth={1.7}/>
             </span>
             <div>
               <p className="text-[17px] font-bold text-slate-950">
                 Plus de{" "}
-                <span className="text-teal-700">2 800 clients satisfaits</span>{" "}
+                <span className="text-teal-800">2 800 clients satisfaits</span>{" "}
                 partout au Maroc
               </p>
               <p className="mt-1 text-[14px] text-slate-600">
@@ -271,7 +271,7 @@ export function Testimonials() {
           </div>
           <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:ml-auto sm:flex sm:items-center sm:gap-8 sm:border-l sm:border-[#c8c5e0] sm:pl-8">
             {stats.map((stat) => (<div key={stat.label} className="flex items-center gap-2.5">
-                <stat.Icon className="size-5 shrink-0 text-teal-700" strokeWidth={1.8}/>
+                <stat.Icon className="size-5 shrink-0 text-teal-800" strokeWidth={1.8}/>
                 <div>
                   <p className="text-[15px] font-bold text-slate-950">
                     {stat.value}

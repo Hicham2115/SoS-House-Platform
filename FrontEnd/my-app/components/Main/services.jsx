@@ -90,7 +90,7 @@ export function Services() {
         <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
           <div className="flex items-center gap-3 sm:gap-5">
             <span className="h-px w-8 shrink-0 bg-teal-300 sm:w-16" />
-            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-700 whitespace-nowrap sm:text-sm">
+            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-800 whitespace-nowrap sm:text-sm">
               <span className="relative flex size-8 shrink-0 items-center justify-center">
                 <Hexagon className="absolute size-8" strokeWidth={1.7} />
                 <Wrench className="relative size-3.5" strokeWidth={2} />
@@ -128,10 +128,10 @@ export function Services() {
               </div>
               <div className="p-5">
                 <div className="flex items-center gap-3">
-                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-teal-700 text-white shadow-[0_8px_18px_rgba(15,122,117,0.4)] ring-4 ring-white transition-transform duration-300 group-hover:scale-105">
+                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-teal-800 text-white shadow-[0_8px_18px_rgba(15,122,117,0.4)] ring-4 ring-white transition-transform duration-300 group-hover:scale-105">
                     <service.Icon className="size-5" strokeWidth={2} />
                   </span>
-                  <h3 className="text-[17px] font-bold text-slate-950 transition-colors group-hover:text-teal-700">
+                  <h3 className="text-[17px] font-bold text-slate-950 transition-colors group-hover:text-teal-800">
                     {service.title}
                   </h3>
                 </div>
@@ -139,7 +139,7 @@ export function Services() {
                   <p className="text-[14px] leading-[1.5] text-slate-600">
                     {service.description}
                   </p>
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:translate-x-0.5 group-hover:bg-teal-700 group-hover:text-white">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:translate-x-0.5 group-hover:bg-teal-800 group-hover:text-white">
                     <ChevronRight className="size-4" strokeWidth={2.2} />
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export function Services() {
 
         <div className="mt-6 flex flex-col gap-5 rounded-[20px] bg-[#ecebfa] px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10">
           <div className="flex items-center gap-4">
-            <span className="flex size-11 shrink-0 items-center justify-center text-teal-700">
+            <span className="flex size-11 shrink-0 items-center justify-center text-teal-800">
               <ShieldCheck className="size-9" strokeWidth={1.5} />
             </span>
             <div>

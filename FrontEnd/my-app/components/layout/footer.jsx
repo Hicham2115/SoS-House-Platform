@@ -51,7 +51,7 @@ const legalLinks = [
 function FooterColumn({ title, children }) {
   return (
     <div>
-      <h3 className="text-sm font-bold tracking-[0.06em] text-teal-700">
+      <h3 className="text-sm font-bold tracking-[0.06em] text-teal-800">
         {title}
       </h3>
       <span className="mt-3 block h-0.5 w-6 rounded-full bg-teal-600" />
@@ -87,7 +87,7 @@ export function Footer() {
                   key={item.label}
                   className="flex items-center gap-2.5 text-sm text-slate-700"
                 >
-                  <item.icon className="size-4.5 shrink-0 text-teal-700" />
+                  <item.icon className="size-4.5 shrink-0 text-teal-800" />
                   {item.label}
                 </li>
               ))} */}
@@ -100,7 +100,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="group flex items-center gap-1.5 text-sm text-slate-700 transition-colors hover:text-teal-700"
+                    className="group flex items-center gap-1.5 text-sm text-slate-700 transition-colors hover:text-teal-800"
                   >
                     <ChevronRight className="size-3.5 shrink-0 text-teal-600 transition-transform duration-200 group-hover:translate-x-0.5" />
                     <span className="transition-transform duration-200 group-hover:translate-x-0.5">
@@ -118,7 +118,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="group flex items-center gap-1.5 text-sm text-slate-700 transition-colors hover:text-teal-700"
+                    className="group flex items-center gap-1.5 text-sm text-slate-700 transition-colors hover:text-teal-800"
                   >
                     <ChevronRight className="size-3.5 shrink-0 text-teal-600 transition-transform duration-200 group-hover:translate-x-0.5" />
                     <span className="transition-transform duration-200 group-hover:translate-x-0.5">
@@ -133,7 +133,7 @@ export function Footer() {
           <FooterColumn title="PARTOUT AU MAROC">
             <ul className="space-y-4">
               <li className="flex items-start gap-2.5 text-sm text-slate-700">
-                <MapPin className="mt-0.5 size-4.5 shrink-0 text-teal-700" />
+                <MapPin className="mt-0.5 size-4.5 shrink-0 text-teal-800" />
                 <span>
                   Présent dans tout le Maroc
                   <br />
@@ -143,7 +143,7 @@ export function Footer() {
                 </span>
               </li>
               <li className="flex items-start gap-2.5 text-sm text-slate-700">
-                <Phone className="mt-0.5 size-4.5 shrink-0 text-teal-700" />
+                <Phone className="mt-0.5 size-4.5 shrink-0 text-teal-800" />
                 <span>
                   <span className="font-bold text-slate-950">
                     06 22 123 456
@@ -153,7 +153,7 @@ export function Footer() {
                 </span>
               </li>
               <li className="flex items-center gap-2.5 text-sm text-slate-700">
-                <Mail className="size-4.5 shrink-0 text-teal-700" />
+                <Mail className="size-4.5 shrink-0 text-teal-800" />
                 contact@sos-house.ma
               </li>
               <a
@@ -161,7 +161,7 @@ export function Footer() {
                 target="__blank"
                 className="flex items-center gap-2.5 text-sm text-slate-700"
               >
-                <Globe className="size-4.5 shrink-0 text-teal-700" />
+                <Globe className="size-4.5 shrink-0 text-teal-800" />
                 www.sos-house.ma
               </a>
             </ul>
@@ -195,7 +195,7 @@ export function Footer() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="flex size-9 items-center justify-center rounded-full bg-white/10 text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-700"
+                  className="flex size-9 items-center justify-center rounded-full bg-white/10 text-white transition duration-200 hover:-translate-y-0.5 hover:bg-teal-800"
                 >
                   <social.icon className="size-4" />
                 </Link>

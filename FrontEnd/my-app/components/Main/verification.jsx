@@ -16,15 +16,15 @@ const previewCardClass =
 function SealIcon({ Icon }) {
   return (
     <span className="relative flex size-16 shrink-0 items-center justify-center">
-      <span className="absolute inset-0 rounded-2xl bg-teal-700" />
-      <span className="absolute inset-0 rotate-45 rounded-2xl bg-teal-700" />
+      <span className="absolute inset-0 rounded-2xl bg-teal-800" />
+      <span className="absolute inset-0 rotate-45 rounded-2xl bg-teal-800" />
       <Icon className="relative z-10 size-8 text-white" strokeWidth={1.8} />
     </span>
   );
 }
 function VerifiedBadge() {
   return (
-    <span className="absolute -bottom-3 -right-3 flex size-9 items-center justify-center rounded-full bg-teal-700 shadow-[0_5px_14px_rgba(15,122,117,0.25)]">
+    <span className="absolute -bottom-3 -right-3 flex size-9 items-center justify-center rounded-full bg-teal-800 shadow-[0_5px_14px_rgba(15,122,117,0.25)]">
       <CheckCircle2 className="size-5 text-white" strokeWidth={2.2} />
     </span>
   );
@@ -72,7 +72,7 @@ function StatusPreview() {
           key={label}
           className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-[0_12px_34px_rgba(69,64,112,0.08)]"
         >
-          <Icon className="size-5 shrink-0 text-teal-700" strokeWidth={1.8} />
+          <Icon className="size-5 shrink-0 text-teal-800" strokeWidth={1.8} />
           <p className="flex-1 text-[14px] font-medium text-slate-800">
             {label}
           </p>
@@ -173,7 +173,7 @@ export function Verification() {
       <div className="relative mx-auto max-w-[1320px] px-5 sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
           <div className="flex items-center gap-3 sm:gap-5">
-            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-700 whitespace-nowrap sm:text-sm">
+            <span className="flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-teal-800 whitespace-nowrap sm:text-sm">
               <ShieldCheck
                 className="size-7 shrink-0 sm:size-9"
                 strokeWidth={1.7}
@@ -190,7 +190,7 @@ export function Verification() {
             SOS House vérifie chaque prestataire en personne.
             <br />
             Vous savez qui entre chez vous, et vous pouvez{" "}
-            <span className="font-bold text-teal-700">
+            <span className="font-bold text-teal-800">
               exiger une facture
             </span>{" "}
             avant même de recevoir une réponse.
@@ -244,11 +244,11 @@ export function Verification() {
                 className="rounded-2xl border border-slate-900/5 bg-white p-6 shadow-[0_12px_34px_rgba(69,64,112,0.06)]"
               >
                 <div className="flex items-center gap-3">
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-800">
                     <level.Icon className="size-5" strokeWidth={1.8} />
                   </span>
                   <div>
-                    <p className="text-xs font-bold tracking-[0.08em] text-teal-700">
+                    <p className="text-xs font-bold tracking-[0.08em] text-teal-800">
                       {level.code}
                     </p>
                     <p className="text-[16px] font-bold text-slate-950">
@@ -263,7 +263,7 @@ export function Verification() {
             ))}
           </div>
 
-          <p className="mx-auto mt-6 max-w-2xl text-center text-[13px] font-semibold text-teal-700">
+          <p className="mx-auto mt-6 max-w-2xl text-center text-[13px] font-semibold text-teal-800">
             Un prestataire ne peut jamais acheter l&apos;accès à un niveau
             supérieur au sien : la vérification décide, pas le paiement.
           </p>

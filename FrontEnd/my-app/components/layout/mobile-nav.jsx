@@ -31,7 +31,7 @@ export function MobileNav({ navLinks, onOpenAuth, onOpenSignUp }) {
               key={link.href}
               render={<Link href={link.href} />}
               nativeButton={false}
-              className="rounded-lg px-3 py-2.5 text-[15px] font-semibold text-slate-800 transition-colors hover:bg-teal-50 hover:text-teal-700"
+              className="rounded-lg px-3 py-2.5 text-[15px] font-semibold text-slate-800 transition-colors hover:bg-teal-50 hover:text-teal-800"
             >
               {link.label}
             </SheetClose>
@@ -41,7 +41,7 @@ export function MobileNav({ navLinks, onOpenAuth, onOpenSignUp }) {
         <div className="mt-auto flex flex-col gap-3 border-t border-border p-4">
           <SheetClose
             onClick={onOpenAuth}
-            className="cursor-pointer rounded-lg px-3 py-2.5 text-center text-[15px] font-semibold text-teal-700"
+            className="cursor-pointer rounded-lg px-3 py-2.5 text-center text-[15px] font-semibold text-teal-800"
           >
             Se connecter
           </SheetClose>

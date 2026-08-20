@@ -57,7 +57,7 @@ export function DashboardSidebar() {
 
   return (
     <aside
-      className={`scrollbar-blue sticky top-0 hidden h-screen shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-[#0b1730] p-5 transition-[width] duration-200 lg:flex ${
+      className={`scrollbar-blue hidden h-full shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-[#0b1730] p-5 transition-[width] duration-200 lg:flex ${
         collapsed ? "w-40" : "w-64"
       }`}
     >

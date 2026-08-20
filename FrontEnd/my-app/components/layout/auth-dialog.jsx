@@ -18,7 +18,7 @@ import {
   User,
   Wrench,
 } from "lucide-react";
-import logo from "@/app/assets/logo.jpeg";
+import logo from "@/app/assets/logoLading.jpeg";
 import {
   Dialog,
   DialogContent,
@@ -64,7 +64,7 @@ const roleChoices = [
     title: "Je suis un client",
     description: "Je cherche un artisan vérifié pour mes travaux.",
     borderClass: "border-l-teal-600",
-    iconWrapClass: "bg-teal-50 text-teal-700",
+    iconWrapClass: "bg-teal-50 text-teal-800",
     chevronClass: "bg-teal-600 text-white",
   },
   {
@@ -221,7 +221,7 @@ export function AuthDialog() {
             {step === "role" ? (
               <>
                 Dites-nous{" "}
-                <span className="font-semibold text-teal-700">
+                <span className="font-semibold text-teal-800">
                   qui vous êtes
                 </span>{" "}
                 pour continuer.
@@ -458,7 +458,7 @@ export function AuthDialog() {
                 Déjà un compte ?{" "}
                 <button
                   type="button"
-                  className="cursor-pointer font-semibold text-teal-700 hover:text-teal-800"
+                  className="cursor-pointer font-semibold text-teal-800 hover:text-teal-800"
                   onClick={() => setMode("signin")}
                 >
                   Se connecter
@@ -469,7 +469,7 @@ export function AuthDialog() {
                 Pas de compte ?{" "}
                 <button
                   type="button"
-                  className="cursor-pointer font-semibold text-teal-700 hover:text-teal-800"
+                  className="cursor-pointer font-semibold text-teal-800 hover:text-teal-800"
                   onClick={() => {
                     setMode("signup");
                     backToRole();

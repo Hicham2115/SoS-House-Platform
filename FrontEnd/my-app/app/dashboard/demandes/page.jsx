@@ -1,13 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { format } from "date-fns";
+import Link from "next/link";
+import { format, isSameMonth } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Eye, FileText, LayoutGrid, Table2 } from "lucide-react";
+import {
+  CalendarDays,
+  Clock,
+  Eye,
+  FileText,
+  ClipboardCheck,
+  CircleCheckBig,
+  LayoutGrid,
+  Table2,
+} from "lucide-react";
+import { DemandeCard } from "@/components/dashboard/demande-card";
 import { DemandeDetailsSheet } from "@/components/dashboard/demande-details-sheet";
-import { RequestCard } from "@/components/dashboard/request-card";
+import { StatCard } from "@/components/dashboard/stat-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -21,6 +39,13 @@ import { useDemandes } from "@/hooks/use-demandes";
 import { statusStyles, urgencyStyles } from "@/lib/dashboard-data";
 import { getCategory, urgencyOptions } from "@/lib/services-catalog";
 
+const DEMANDE_STATUS = "En attente de réponses";
+
+const statusFilters = [
+  { value: "all", label: "Tous les statuts" },
+  { value: DEMANDE_STATUS, label: DEMANDE_STATUS },
+];
+
 const views = [
   { value: "cards", label: "Cartes", Icon: LayoutGrid },
   { value: "table", label: "Tableau", Icon: Table2 },
@@ -28,16 +53,16 @@ const views = [
 
 function ViewToggle({ view, onChange }) {
   return (
-    <div className="flex items-center gap-1 rounded-full bg-slate-100 p-1">
+    <div className="flex items-center gap-2">
       {views.map(({ value, label, Icon }) => (
         <button
           key={value}
           type="button"
           onClick={() => onChange(value)}
-          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold transition ${
+          className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-semibold transition ${
             view === value
-              ? "bg-white text-teal-700 shadow-sm"
-              : "text-slate-500 hover:text-slate-800"
+              ? "border-teal-200 bg-teal-50 text-teal-700"
+              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
           }`}
         >
           <Icon className="size-4" strokeWidth={1.8} />
@@ -54,12 +79,12 @@ function CardsSkeleton() {
       {Array.from({ length: 3 }).map((_, index) => (
         <div
           key={index}
-          className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+          className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5"
         >
-          <Skeleton className="size-11 shrink-0 rounded-full" />
+          <Skeleton className="size-14 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2">
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-3.5 w-28" />
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-3.5 w-32" />
           </div>
         </div>
       ))}
@@ -132,9 +157,11 @@ function EmptyState() {
 
 export default function DemandesPage() {
   const [view, setView] = useState("cards");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedDemande, setSelectedDemande] = useState(null);
   const { data: demandes, isPending } = useDemandes();
-  const requests = (demandes ?? []).map((demande) => {
+
+  const allRequests = (demandes ?? []).map((demande) => {
     const category = getCategory(demande.category);
     const subcategory = category?.subcategories.find(
       (s) => s.value === demande.subcategory,
@@ -147,13 +174,60 @@ export default function DemandesPage() {
       title: subcategory
         ? `${category.label} — ${subcategory.label}`
         : (category?.label ?? demande.category),
+      subcategoryLabel: subcategory?.label,
       subtitle: demande.ville,
       meta: `Créée le ${format(new Date(demande.created_at), "d MMMM yyyy", { locale: fr })}`,
-      status: "En attente de réponses",
+      status: DEMANDE_STATUS,
       urgency: urgencyOptions.find((u) => u.value === demande.urgency)?.label,
       urgencyValue: demande.urgency,
     };
   });
+
+  const requests =
+    statusFilter === "all"
+      ? allRequests
+      : allRequests.filter((r) => r.status === statusFilter);
+
+  const total = demandes?.length ?? 0;
+  const thisMonthCount = (demandes ?? []).filter((d) =>
+    isSameMonth(new Date(d.created_at), new Date()),
+  ).length;
+  const monthLabel = format(new Date(), "MMMM yyyy", { locale: fr });
+
+  const stats = [
+    {
+      icon: FileText,
+      value: total,
+      label: "Total des demandes",
+      tone: "blue",
+      caption: "En attente de réponse",
+      captionTone: "blue",
+    },
+    {
+      icon: CircleCheckBig,
+      value: total,
+      label: "En attente de réponse",
+      tone: "green",
+      caption: total ? "100% de vos demandes" : "Aucune demande",
+      captionTone: "green",
+    },
+    {
+      icon: Clock,
+      value: 0,
+      label: "Réponses reçues",
+      tone: "orange",
+      caption: "Ce mois-ci",
+      captionTone: "gray",
+    },
+    {
+      icon: CalendarDays,
+      value: thisMonthCount,
+      label: "Demandes ce mois",
+      tone: "purple",
+      caption: monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1),
+      captionTone: "gray",
+    },
+  ];
 
   return (
     <>
@@ -162,8 +236,27 @@ export default function DemandesPage() {
         subtitle="Suivez l'avancement de toutes vos demandes en cours."
       />
 
-      <div className="flex flex-1 flex-col gap-4 bg-slate-50 p-5 sm:p-8">
-        <div className="flex justify-end">
+      <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {stats.map((stat) => (
+            <StatCard key={stat.label} {...stat} />
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-10 w-56 rounded-full border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-700">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {statusFilters.map(({ value, label }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <ViewToggle view={view} onChange={setView} />
         </div>
 
@@ -178,11 +271,12 @@ export default function DemandesPage() {
         ) : view === "cards" ? (
           <div className="flex flex-col gap-3">
             {requests.map((request) => (
-              <RequestCard
+              <DemandeCard
                 key={request.id}
                 demande={request.demande}
                 icon={request.Icon}
                 title={request.title}
+                subcategoryLabel={request.subcategoryLabel}
                 onViewDetails={() => setSelectedDemande(request.demande)}
               />
             ))}

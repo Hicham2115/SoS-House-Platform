@@ -17,7 +17,7 @@ export default function NotFound() {
       />
 
       <div className="relative mx-auto flex max-w-[560px] flex-col items-center px-4 text-center">
-        <span className="flex size-20 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+        <span className="flex size-20 items-center justify-center rounded-full bg-teal-50 text-teal-800">
           <SearchX className="size-9" />
         </span>
         <p className="mt-6 text-[80px] font-bold leading-none text-teal-600 sm:text-[100px]">
@@ -44,7 +44,7 @@ export default function NotFound() {
             render={<Link href="/services" />}
             nativeButton={false}
             variant="outline"
-            className="h-[56px] rounded-xl border-teal-700 px-7 text-[15px] font-bold text-teal-700 transition hover:bg-teal-50"
+            className="h-[56px] rounded-xl border-teal-800 px-7 text-[15px] font-bold text-teal-800 transition hover:bg-teal-50"
           >
             Voir les services <ArrowRight className="size-5" />
           </Button>

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/app/assets/logo.jpeg";
+import logo from "@/app/assets/logoLading.jpeg";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { useAuthDialogStore } from "@/lib/store/auth-dialog";
@@ -31,7 +31,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="relative text-[14px] font-semibold text-slate-800 transition-colors hover:text-teal-700 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-teal-700 after:transition-all after:duration-300 hover:after:w-full"
+              className="relative text-[14px] font-semibold text-slate-800 transition-colors hover:text-teal-800 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-teal-800 after:transition-all after:duration-300 hover:after:w-full"
             >
               {link.label}
             </Link>
@@ -42,7 +42,7 @@ export function Header() {
           <button
             type="button"
             onClick={openSignIn}
-            className="cursor-pointer text-[14px] font-semibold text-teal-700 transition-colors hover:text-teal-800"
+            className="cursor-pointer text-[14px] font-semibold text-[#0a1830] transition-colors hover:text-teal-800"
           >
             Se connecter
           </button>
