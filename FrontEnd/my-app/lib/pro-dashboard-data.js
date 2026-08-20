@@ -102,7 +102,7 @@ export const categoryToneMeta = {
   electricite: { icon: "bg-amber-50 text-amber-600", pill: "bg-amber-50 text-amber-700" },
   nettoyage: { icon: "bg-green-50 text-green-600", pill: "bg-green-50 text-green-700" },
   peinture: { icon: "bg-violet-50 text-violet-600", pill: "bg-violet-50 text-violet-700" },
-  serrurerie: { icon: "bg-slate-100 text-slate-600", pill: "bg-slate-100 text-slate-600" },
+  serrurerie: { icon: "bg-violet-50 text-violet-600", pill: "bg-violet-50 text-violet-700" },
   bricolage: { icon: "bg-orange-50 text-orange-600", pill: "bg-orange-50 text-orange-700" },
   "lavage-auto": { icon: "bg-sky-50 text-sky-600", pill: "bg-sky-50 text-sky-700" },
 };
@@ -145,4 +145,103 @@ export const missionStatusMeta = {
     label: "En attente de confirmation",
     className: "bg-amber-50 text-amber-700",
   },
+};
+
+export const invoiceLevelShort = { n0: "N0", n1: "N1+", n2: "N2" };
+
+// Full "Mes missions" list — same demandes as availableDemandes, now
+// unlocked and tracked through their lifecycle.
+export const missions = [
+  {
+    id: "mission-1",
+    category: "plomberie",
+    title: "Réparation fuite d'eau sous évier",
+    quartier: "Maârif",
+    ville: "Casablanca",
+    distanceKm: 2.4,
+    invoiceLevel: "n1",
+    status: "en-cours",
+    statusNote: "Mission acceptée",
+    statusDate: "13 mai à 09:14",
+    publishedLabel: "Publiée le 11 mai à 15:22",
+    budget: 400,
+  },
+  {
+    id: "mission-2",
+    category: "electricite",
+    title: "Installation prise électrique",
+    quartier: "Palmier",
+    ville: "Casablanca",
+    distanceKm: 1.8,
+    invoiceLevel: "n1",
+    status: "attente-avis-prestataire",
+    statusNote: "Mission terminée",
+    statusDate: "12 mai à 18:30",
+    publishedLabel: "Publiée le 10 mai à 10:05",
+    budget: 300,
+  },
+  {
+    id: "mission-3",
+    category: "nettoyage",
+    title: "Ménage complet appartement",
+    quartier: "Ain Diab",
+    ville: "Casablanca",
+    distanceKm: 3.2,
+    invoiceLevel: "n0",
+    status: "attente-avis-client",
+    statusNote: "En attente de confirmation",
+    statusDate: "11 mai à 14:12",
+    publishedLabel: "Publiée le 9 mai à 16:40",
+    budget: 200,
+  },
+  {
+    id: "mission-4",
+    category: "peinture",
+    title: "Peinture salon + 2 chambres",
+    quartier: "Oasis",
+    ville: "Casablanca",
+    distanceKm: 4.6,
+    invoiceLevel: "n2",
+    status: "terminee",
+    statusNote: "Mission confirmée",
+    statusDate: "8 mai à 17:45",
+    publishedLabel: "Publiée le 7 mai à 09:18",
+    budget: 650,
+  },
+  {
+    id: "mission-5",
+    category: "serrurerie",
+    title: "Ouverture porte claquée",
+    quartier: "Racine",
+    ville: "Casablanca",
+    distanceKm: 2.1,
+    invoiceLevel: "n0",
+    status: "annulee",
+    statusNote: "Annulée par le client",
+    statusDate: "6 mai à 12:20",
+    publishedLabel: "Publiée le 5 mai à 11:03",
+    budget: null,
+  },
+];
+
+export const missionSummary = {
+  total: 28,
+  enCours: 6,
+  terminees: 18,
+  attenteAvis: 4,
+  annulees: 2,
+};
+
+export const missionDetailStatusMeta = {
+  "en-cours": { label: "En cours", className: "bg-teal-50 text-teal-700" },
+  "attente-avis-prestataire": {
+    label: "En attente d'avis",
+    className: "bg-green-50 text-green-700",
+  },
+  "attente-avis-client": {
+    label: "En attente d'avis client",
+    className: "bg-violet-50 text-violet-700",
+  },
+  terminee: { label: "Terminée", className: "bg-green-50 text-green-700" },
+  annulee: { label: "Annulée", className: "bg-red-50 text-red-600" },
 };

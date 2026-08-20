@@ -18,6 +18,16 @@
   --color-teal-950: #043149;
 }
 
+/* Scoped to the client + pro dashboard shells only — switches to Inter
+   (a more neutral, professional SaaS-product face than the marketing
+   site's Poppins) and softens the default font-bold (700) to 600,
+   without touching the public marketing site's type scale. */
+.dashboard-shell {
+  font-family: var(--font-dashboard), ui-sans-serif, system-ui, sans-serif;
+  --font-weight-bold: 600;
+  --font-weight-extrabold: 650;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

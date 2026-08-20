@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#fafbfc]">
+    <div className="dashboard-shell flex h-screen w-full overflow-hidden bg-[#fafbfc]">
       <DashboardSidebar />
       <div className="flex flex-1 flex-col overflow-y-auto">{children}</div>
     </div>

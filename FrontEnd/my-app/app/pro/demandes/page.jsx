@@ -12,15 +12,9 @@ import {
   SlidersHorizontal,
   Wallet,
 } from "lucide-react";
+import { FilterSelect } from "@/components/dashboard/shared/filter-select";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import {
   availableDemandes,
@@ -80,6 +74,37 @@ export default function ProDemandesPage() {
     [],
   );
 
+  const categoryOptions = useMemo(
+    () => [
+      { value: "all", label: "Toutes" },
+      ...categories.map(({ value, label, Icon }) => ({
+        value,
+        label,
+        icon: Icon,
+      })),
+    ],
+    [],
+  );
+
+  const villeOptions = useMemo(
+    () => [
+      { value: "all", label: "Toutes les villes" },
+      ...villes.map((ville) => ({ value: ville, label: ville })),
+    ],
+    [villes],
+  );
+
+  const invoiceOptions = useMemo(
+    () => [
+      { value: "all", label: "Tous" },
+      ...Object.entries(invoiceLevelMeta).map(([value, meta]) => ({
+        value,
+        label: meta.label,
+      })),
+    ],
+    [],
+  );
+
   const demandes = useMemo(() => {
     const filtered = availableDemandes.filter((demande) => {
       if (categoryFilter !== "all" && demande.category !== categoryFilter)
@@ -122,85 +147,62 @@ export default function ProDemandesPage() {
 
       <div className="flex flex-1 flex-col gap-4 bg-slate-50 p-5 sm:p-8">
         <div className="flex flex-wrap items-center gap-3">
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="h-11 w-44 rounded-full border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-700">
-              <LayoutGrid className="size-4 text-slate-400" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes</SelectItem>
-              {categories.map(({ value, label }) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            icon={LayoutGrid}
+            value={categoryFilter}
+            onValueChange={setCategoryFilter}
+            options={categoryOptions}
+            className="w-72"
+          />
 
-          <Select value={villeFilter} onValueChange={setVilleFilter}>
-            <SelectTrigger className="h-11 w-48 rounded-full border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-700">
-              <MapPin className="size-4 text-slate-400" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes les villes</SelectItem>
-              {villes.map((ville) => (
-                <SelectItem key={ville} value={ville}>
-                  {ville}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            icon={MapPin}
+            value={villeFilter}
+            onValueChange={setVilleFilter}
+            options={villeOptions}
+            neutralValue="Casablanca"
+            className="w-48"
+          />
 
-          <Select value={invoiceFilter} onValueChange={setInvoiceFilter}>
-            <SelectTrigger className="h-11 w-52 rounded-full border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-700">
-              <FileText className="size-4 text-slate-400" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous</SelectItem>
-              {Object.entries(invoiceLevelMeta).map(([value, meta]) => (
-                <SelectItem key={value} value={value}>
-                  {meta.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            icon={FileText}
+            value={invoiceFilter}
+            onValueChange={setInvoiceFilter}
+            options={invoiceOptions}
+            className="w-72"
+          />
 
-          <Select value={budgetFilter} onValueChange={setBudgetFilter}>
-            <SelectTrigger className="h-11 w-48 rounded-full border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-700">
-              <Wallet className="size-4 text-slate-400" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {budgetFilters.map(({ value, label }) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            icon={Wallet}
+            value={budgetFilter}
+            onValueChange={setBudgetFilter}
+            options={budgetFilters}
+            className="w-48"
+          />
 
-          <label className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white px-4 py-2.5">
+          <label
+            className={`flex items-center gap-2.5 rounded-full border px-4 py-2.5 transition ${
+              urgentOnly
+                ? "border-red-200 bg-red-50"
+                : "border-slate-200 bg-white"
+            }`}
+          >
             <Switch checked={urgentOnly} onCheckedChange={setUrgentOnly} />
-            <span className="text-[13px] font-semibold text-slate-700">
+            <span
+              className={`text-[13px] font-semibold ${urgentOnly ? "text-red-700" : "text-slate-700"}`}
+            >
               Uniquement urgentes
             </span>
           </label>
 
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="ml-auto h-11 w-52 rounded-full border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-700">
-              <SlidersHorizontal className="size-4 text-slate-400" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map(({ value, label }) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            icon={SlidersHorizontal}
+            value={sortBy}
+            onValueChange={setSortBy}
+            options={sortOptions}
+            neutralValue="recent"
+            className="ml-auto w-52"
+          />
         </div>
 
         <div className="flex flex-col gap-3">
