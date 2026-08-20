@@ -56,32 +56,44 @@ export const reasons = [
 
 export const conversations = [
   {
+    id: "youssef",
     name: "Youssef E.",
     avatar: avatar2,
+    type: "artisan",
+    online: true,
     subject: "Électricité • Prise défectueuse",
     preview: "Je peux passer demain matin vers 9h, ça vous convient ?",
     time: "10:24",
     unread: true,
   },
   {
+    id: "amine",
     name: "Amine B.",
     avatar: avatar3,
+    type: "artisan",
+    online: false,
     subject: "Serrurerie • Porte d'entrée bloquée",
     preview: "C'est confirmé pour mercredi 14h00.",
     time: "Hier",
     unread: true,
   },
   {
+    id: "reda",
     name: "Reda Plomberie",
     initials: "RP",
+    type: "artisan",
+    online: false,
     subject: "Peinture intérieure",
     preview: "J'ai terminé la première couche, photos envoyées.",
     time: "Lun.",
     unread: false,
   },
   {
+    id: "support",
     name: "Support SOS House",
     initials: "SH",
+    type: "support",
+    online: true,
     subject: "Votre demande #4021",
     preview: "Merci de votre retour, tout est en ordre de notre côté.",
     time: "22 mai",
@@ -89,27 +101,89 @@ export const conversations = [
   },
 ];
 
+// Client-only demo thread content — there is no messaging backend yet, so
+// this only drives the UI shell (including locally-appended replies).
+export const messagesByConversation = {
+  youssef: [
+    {
+      from: "them",
+      text: "Bonjour Hicham,\n\nJe peux passer demain matin vers 9h, ça vous convient ?",
+      time: "10:24",
+    },
+    {
+      from: "me",
+      text: "Bonjour Youssef,\n\nOui, 9h me convient parfaitement. Merci !",
+      time: "10:26",
+      read: true,
+    },
+    {
+      from: "them",
+      text: "Parfait, à demain alors !\n\nN'hésitez pas si vous avez des précisions.",
+      time: "10:27",
+    },
+  ],
+  amine: [
+    {
+      from: "them",
+      text: "Bonjour, je confirme mon passage mercredi à 14h00 pour la porte d'entrée.",
+      time: "Hier",
+    },
+    {
+      from: "me",
+      text: "Parfait, c'est noté. Merci Amine !",
+      time: "Hier",
+      read: true,
+    },
+    { from: "them", text: "C'est confirmé pour mercredi 14h00.", time: "Hier" },
+  ],
+  reda: [
+    {
+      from: "them",
+      text: "Bonjour, j'ai terminé la première couche de peinture, photos envoyées.",
+      time: "Lun.",
+    },
+  ],
+  support: [
+    {
+      from: "them",
+      text: "Bonjour Hicham, merci de votre retour, tout est en ordre de notre côté concernant votre demande #4021.",
+      time: "22 mai",
+    },
+  ],
+};
+
+// Placeholder rows for "Historique des missions" — there is no missions
+// backend yet, swap for a real endpoint once it exists.
 export const missionHistory = [
   {
     title: "Climatisation",
+    category: null,
     subtitle: "Entretien complet",
     provider: "Reda Plomberie",
-    date: "Terminée le 15 mai 2024",
+    ville: "Maarif, Casablanca",
+    date: "Terminé le 15 mai 2024",
     rating: 5,
+    credits: 50,
   },
   {
     title: "Nettoyage",
+    category: "nettoyage",
     subtitle: "Appartement • 3 pièces",
     provider: "Fatima Z.",
-    date: "Terminée le 2 mai 2024",
+    ville: "Anfa, Casablanca",
+    date: "Terminé le 2 mai 2024",
     rating: 5,
+    credits: 30,
   },
   {
     title: "Plomberie",
+    category: "plomberie",
     subtitle: "Fuite sous évier",
     provider: "Youssef E.",
-    date: "Terminée le 18 avril 2024",
+    ville: "Hay Hassani, Casablanca",
+    date: "Terminé le 18 avril 2024",
     rating: 4,
+    credits: 20,
   },
 ];
 

@@ -75,7 +75,7 @@ export function DashboardSidebar() {
           )}
         </button>
       </div>
-      <div className="mx-auto w-35">
+      <div className="mx-auto flex justify-center w-30">
         <Image src={logo} alt="SOS House" />
       </div>
 

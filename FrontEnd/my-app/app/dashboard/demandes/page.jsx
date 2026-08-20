@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { format, isSameMonth } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
@@ -9,13 +8,13 @@ import {
   Clock,
   Eye,
   FileText,
-  ClipboardCheck,
   CircleCheckBig,
   LayoutGrid,
   Table2,
 } from "lucide-react";
 import { DemandeCard } from "@/components/dashboard/demande-card";
 import { DemandeDetailsSheet } from "@/components/dashboard/demande-details-sheet";
+import { Pagination } from "@/components/dashboard/pagination";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
@@ -40,6 +39,7 @@ import { statusStyles, urgencyStyles } from "@/lib/dashboard-data";
 import { getCategory, urgencyOptions } from "@/lib/services-catalog";
 
 const DEMANDE_STATUS = "En attente de réponses";
+const PAGE_SIZE = 5;
 
 const statusFilters = [
   { value: "all", label: "Tous les statuts" },
@@ -159,6 +159,7 @@ export default function DemandesPage() {
   const [view, setView] = useState("cards");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedDemande, setSelectedDemande] = useState(null);
+  const [page, setPage] = useState(1);
   const { data: demandes, isPending } = useDemandes();
 
   const allRequests = (demandes ?? []).map((demande) => {
@@ -187,6 +188,13 @@ export default function DemandesPage() {
     statusFilter === "all"
       ? allRequests
       : allRequests.filter((r) => r.status === statusFilter);
+
+  const totalPages = Math.max(1, Math.ceil(requests.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedRequests = requests.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
   const total = demandes?.length ?? 0;
   const thisMonthCount = (demandes ?? []).filter((d) =>
@@ -244,7 +252,13 @@ export default function DemandesPage() {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => {
+              setStatusFilter(value);
+              setPage(1);
+            }}
+          >
             <SelectTrigger className="h-10 w-56 rounded-full border-slate-200 bg-white px-4 text-[13px] font-semibold text-slate-700">
               <SelectValue />
             </SelectTrigger>
@@ -270,7 +284,7 @@ export default function DemandesPage() {
           <EmptyState />
         ) : view === "cards" ? (
           <div className="flex flex-col gap-3">
-            {requests.map((request) => (
+            {paginatedRequests.map((request) => (
               <DemandeCard
                 key={request.id}
                 demande={request.demande}
@@ -302,7 +316,7 @@ export default function DemandesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {requests.map((request) => (
+                {paginatedRequests.map((request) => (
                   <TableRow
                     key={request.id}
                     className="border-slate-200 hover:bg-slate-50"
@@ -358,6 +372,14 @@ export default function DemandesPage() {
               </TableBody>
             </Table>
           </div>
+        )}
+
+        {!isPending && requests.length > 0 && (
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         )}
       </div>
 
