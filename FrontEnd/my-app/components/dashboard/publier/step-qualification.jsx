@@ -21,8 +21,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { maskContactInfo } from "@/lib/contact-mask";
-import { MAX_PHOTOS, readPhotoFile } from "@/lib/photo-upload";
+import { MAX_PHOTO_SIZE, readImageFile } from "@/lib/file-upload";
 import { propertyTypes, qualificationFields } from "@/lib/services-catalog";
+
+const MAX_PHOTOS = 5;
 
 const inputGroupClassName =
   "h-12 rounded-xl border-slate-200 bg-slate-50/70 px-1 has-[[data-slot=input-group-control]:focus-visible]:border-teal-600 has-[[data-slot=input-group-control]:focus-visible]:ring-teal-600/15";
@@ -141,7 +143,15 @@ export function StepQualification({ category, defaultValues, onSubmit }) {
     }
 
     try {
-      const dataUrls = await Promise.all(files.map(readPhotoFile));
+      const dataUrls = await Promise.all(
+        files.map((file) =>
+          readImageFile(
+            file,
+            MAX_PHOTO_SIZE,
+            "Chaque photo ne doit pas dépasser 5 Mo.",
+          ),
+        ),
+      );
       setPhotos((prev) => [...prev, ...dataUrls]);
     } catch (error) {
       toast.error(error.message);

@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { readAvatarFile } from "@/lib/avatar";
+import { MAX_AVATAR_SIZE, readImageFile } from "@/lib/file-upload";
 import { useAuthStore } from "@/lib/store/auth";
 
 const accountSchema = z.object({
@@ -104,7 +104,11 @@ export default function ParametresPage() {
     if (!file) return;
 
     try {
-      const dataUrl = await readAvatarFile(file);
+      const dataUrl = await readImageFile(
+        file,
+        MAX_AVATAR_SIZE,
+        "L'image ne doit pas dépasser 2 Mo.",
+      );
       updateUser({ avatarUrl: dataUrl });
       toast.success("Photo de profil mise à jour.");
     } catch (error) {

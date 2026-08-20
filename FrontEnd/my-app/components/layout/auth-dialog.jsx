@@ -131,7 +131,8 @@ export function AuthDialog() {
         signUpForm.reset();
         openSignIn();
       } catch (error) {
-        toast.error(error.message);
+        console.error(error);
+        toast.error("Impossible de créer votre compte. Veuillez réessayer.");
       }
     },
   });
@@ -157,7 +158,8 @@ export function AuthDialog() {
         setOpen(false);
         router.push("/dashboard");
       } catch (error) {
-        toast.error(error.message);
+        console.error(error);
+        toast.error("Email ou mot de passe incorrect.");
       }
     },
   });

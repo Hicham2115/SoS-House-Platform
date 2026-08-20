@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string(("quartier"))->nullable();
             $table->string(("adresse"))->nullable();
             $table->string(("etage"))->nullable();
+            $table->string(("notification_Channel"))->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

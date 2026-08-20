@@ -37,7 +37,7 @@ import {
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { readAvatarFile } from "@/lib/avatar";
+import { MAX_AVATAR_SIZE, readImageFile } from "@/lib/file-upload";
 import {
   accountTypes,
   getAccountType,
@@ -45,6 +45,7 @@ import {
   hasDefaultAddress,
 } from "@/lib/onboarding";
 import { useAuthStore } from "@/lib/store/auth";
+import { api } from "@/lib/axios";
 
 const STEP_ACCOUNT_TYPE = "account-type";
 const STEP_BUSINESS_INFO = "business-info";
@@ -130,17 +131,32 @@ export function ProfileOnboarding() {
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(() => getInitialStep(user));
 
-  // Stands in for a real "complete onboarding" endpoint: same
-  // mutate/isPending/onSuccess surface a network call would give us, just
-  // backed by the local auth store for now.
   const completeOnboarding = useMutation({
     mutationFn: async (patch) => {
-      updateUser(patch);
-      return patch;
+      const { data } = await api.patch("/user", {
+        account_type: patch.accountType,
+        raison_sociale: patch.raisonSociale,
+        ice: patch.ice,
+        nom_du_referant: patch.referentName,
+        ville: patch.defaultAddress?.ville,
+        quartier: patch.defaultAddress?.quartier,
+        adresse: patch.defaultAddress?.adresseComplete,
+        etage: patch.defaultAddress?.etage,
+        notification_Channel: patch.notificationChannel,
+        avatar: patch.avatarUrl?.startsWith("data:")
+          ? undefined
+          : patch.avatarUrl,
+      });
+      updateUser({ ...patch, ...data });
+      return data;
     },
     onSuccess: () => {
       toast.success("Profil complet ! Vous êtes prêt à publier.");
       setOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Impossible de mettre à jour votre profil. Veuillez réessayer.");
     },
   });
 
@@ -208,7 +224,6 @@ export function ProfileOnboarding() {
         avatarUrl: value.avatarUrl,
         onboardingCompleted: true,
       });
-      console.log("Onboarding terminé, publication du profil:", value);
     },
   });
 
@@ -221,12 +236,28 @@ export function ProfileOnboarding() {
     e.target.value = "";
     if (!file) return;
 
+    let previewUrl;
     try {
-      const dataUrl = await readAvatarFile(file);
-      form.setFieldValue("avatarUrl", dataUrl);
-      toast.success("Photo de profil ajoutée.");
+      previewUrl = await readImageFile(
+        file,
+        MAX_AVATAR_SIZE,
+        "L'image ne doit pas dépasser 2 Mo.",
+      );
     } catch (error) {
       toast.error(error.message);
+      return;
+    }
+    form.setFieldValue("avatarUrl", previewUrl);
+
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const { data } = await api.post("/user/avatar", formData);
+      form.setFieldValue("avatarUrl", data.avatar_url);
+      toast.success("Photo de profil ajoutée.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Impossible d'envoyer la photo. Veuillez réessayer.");
     }
   }
 
@@ -512,10 +543,10 @@ export function ProfileOnboarding() {
                             <div className="flex items-start gap-2.5 rounded-xl bg-amber-50 p-3.5 text-[12px] leading-[1.5] text-amber-800">
                               <Landmark className="mt-0.5 size-4 shrink-0" />
                               <span>
-                                Vos demandes exigeront toujours une facture
-                                avec TVA récupérable — ce réglage est
-                                verrouillé pour les comptes Entreprise et ne
-                                peut pas être désactivé.
+                                Vos demandes exigeront toujours une facture avec
+                                TVA récupérable — ce réglage est verrouillé pour
+                                les comptes Entreprise et ne peut pas être
+                                désactivé.
                               </span>
                             </div>
                           </>
