@@ -51,12 +51,12 @@ export function DemandeDetailsSheet({ demande, open, onOpenChange }) {
       <SheetContent className="w-full overflow-y-auto sm:max-w-md">
         {demande && (
           <>
-            <SheetHeader>
-              <SheetTitle>
+            <SheetHeader className="border-b border-slate-100 pb-4">
+              <SheetTitle className="text-xl font-bold text-slate-950">
                 {category?.label ?? demande.category}
                 {subcategory ? ` — ${subcategory.label}` : ""}
               </SheetTitle>
-              <SheetDescription>
+              <SheetDescription className="text-[13px] text-slate-500">
                 Créée le{" "}
                 {format(new Date(demande.created_at), "d MMMM yyyy", {
                   locale: fr,

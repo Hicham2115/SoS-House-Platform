@@ -12,12 +12,18 @@ import {
 } from "lucide-react";
 import avatar2 from "@/app/assets/avatars/avatar-2.png";
 import avatar3 from "@/app/assets/avatars/avatar-3.png";
-import { getCategory } from "@/lib/services-catalog";
+import { getCategory, urgencyOptions } from "@/lib/services-catalog";
 
 // Only status the backend sets today — extend alongside the backend's
 // workflow (mission accepted, in progress, done, ...) as it's built out.
 export const statusStyles = {
   "En attente de réponses": "bg-amber-50 text-amber-700",
+};
+
+export const urgencyStyles = {
+  programmee: "bg-slate-100 text-slate-600",
+  "sous-48h": "bg-amber-50 text-amber-700",
+  urgente: "bg-red-50 text-red-700",
 };
 
 // Shapes a raw demande row (from GET /demandes) into what RequestCard and
@@ -37,6 +43,8 @@ export function toRequestCard(demande) {
     subtitle: demande.ville,
     meta: `Créée le ${format(new Date(demande.created_at), "d MMMM yyyy", { locale: fr })}`,
     status: "En attente de réponses",
+    urgency: urgencyOptions.find((u) => u.value === demande.urgency)?.label,
+    urgencyValue: demande.urgency,
   };
 }
 

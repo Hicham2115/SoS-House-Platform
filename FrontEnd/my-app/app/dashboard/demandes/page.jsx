@@ -14,10 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDemandes } from "@/hooks/use-demandes";
-import { statusStyles, toRequestCard } from "@/lib/dashboard-data";
+import { statusStyles, toRequestCard, urgencyStyles } from "@/lib/dashboard-data";
 
 const views = [
   { value: "cards", label: "Cartes", Icon: LayoutGrid },
@@ -78,7 +77,7 @@ function TableSkeleton() {
               Statut
             </TableHead>
             <TableHead className="text-[12px] font-semibold text-slate-500">
-              Prestataire
+              Urgence
             </TableHead>
             <TableHead className="px-4 text-[12px] font-semibold text-slate-500">
               Date
@@ -180,7 +179,7 @@ export default function DemandesPage() {
                     Statut
                   </TableHead>
                   <TableHead className="text-[12px] font-semibold text-slate-500">
-                    Prestataire
+                    Urgence
                   </TableHead>
                   <TableHead className="px-4 text-[12px] font-semibold text-slate-500">
                     Date
@@ -217,20 +216,11 @@ export default function DemandesPage() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      {request.provider ? (
-                        <span className="flex items-center gap-1.5 text-[13px] font-medium text-slate-800">
-                          <Avatar size="sm">
-                            {request.provider.avatar && (
-                              <AvatarImage
-                                src={request.provider.avatar.src}
-                                alt={request.provider.name}
-                              />
-                            )}
-                            <AvatarFallback>
-                              {request.provider.initials}
-                            </AvatarFallback>
-                          </Avatar>
-                          {request.provider.name}
+                      {request.urgency ? (
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide uppercase ${urgencyStyles[request.urgencyValue]}`}
+                        >
+                          {request.urgency}
                         </span>
                       ) : (
                         <span className="text-[13px] text-slate-400">—</span>
