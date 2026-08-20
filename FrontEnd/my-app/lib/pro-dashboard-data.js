@@ -245,3 +245,89 @@ export const missionDetailStatusMeta = {
   terminee: { label: "Terminée", className: "bg-green-50 text-green-700" },
   annulee: { label: "Annulée", className: "bg-red-50 text-red-600" },
 };
+
+export const creditBalance = {
+  available: 85,
+  inUse: 15,
+  inUseDemandes: 3,
+  bonus: 10,
+  bonusExpiry: "25 mai 2024",
+};
+
+export const creditPackages = [
+  { id: "p20", credits: 20, price: 20 },
+  { id: "p50", credits: 50, price: 50, badge: "populaire" },
+  { id: "p100", credits: 100, price: 100 },
+  { id: "p200", credits: 200, price: 200, badge: "meilleure-valeur" },
+  { id: "p500", credits: 500, price: 500 },
+];
+
+export const paymentMethods = [
+  { id: "carte", label: "Carte bancaire", note: "Paiement sécurisé" },
+  { id: "mobile-money", label: "Mobile Money", note: "Instantané" },
+  { id: "cash-plus", label: "Cash Plus", note: "Disponible partout" },
+  { id: "wafacash", label: "Wafacash", note: "Disponible partout" },
+  { id: "barid-cash", label: "Barid Cash", note: "Instantané" },
+];
+
+export const creditOffers = [
+  {
+    id: "bienvenue",
+    title: "Bonus de bienvenue",
+    subtitle: "10 crédits offerts",
+    detail: "Valable 7 jours après votre 1ère recharge",
+  },
+  {
+    id: "pack-pro",
+    title: "Pack Pro",
+    subtitle: "+20% de crédits offerts",
+    detail: "À partir de 100 crédits achetés",
+  },
+];
+
+export const creditTransactions = [
+  {
+    date: "11 mai 2024, 15:22",
+    type: "Achat",
+    description: "Recharge de 50 crédits",
+    credits: 50,
+    amount: "50 MAD",
+    balanceAfter: 85,
+    method: "Carte bancaire",
+  },
+  {
+    date: "11 mai 2024, 15:20",
+    type: "Utilisation",
+    description: "Déverrouillage demande #DV-2024-052",
+    credits: -15,
+    amount: "—",
+    balanceAfter: 35,
+    method: "—",
+  },
+  {
+    date: "10 mai 2024, 11:05",
+    type: "Bonus mission",
+    description: "Mission terminée – avis positif",
+    credits: 10,
+    amount: "—",
+    balanceAfter: 50,
+    method: "Bonus",
+  },
+  {
+    date: "10 mai 2024, 09:41",
+    type: "Achat",
+    description: "Recharge de 20 crédits",
+    credits: 20,
+    amount: "20 MAD",
+    balanceAfter: 40,
+    method: "Cash Plus",
+  },
+];
+
+export const creditEstimate = {
+  demandesDebloquees: 12,
+  creditsUtilises: 12,
+  moyenneParDemande: 1,
+  recommendation:
+    "Rechargez 50 à 100 crédits pour ne jamais manquer une bonne opportunité.",
+};
