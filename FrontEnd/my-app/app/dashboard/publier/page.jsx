@@ -16,6 +16,7 @@ import { useUser } from "@/hooks/use-user";
 import { api } from "@/lib/axios";
 import { getInvoiceRequirement } from "@/lib/onboarding";
 import { getPriceEstimate } from "@/lib/lead-pricing";
+import { useRouter } from "next/navigation";
 
 const STEP_CATEGORY = "category";
 const STEP_QUALIFICATION = "qualification";
@@ -47,6 +48,7 @@ export default function PublierPage() {
   const queryClient = useQueryClient();
   const invoiceRequirement = getInvoiceRequirement(user?.account_type);
   const hasDefaultAddress = Boolean(user?.ville);
+  const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState(STEP_CATEGORY);
   const [draft, setDraft] = useState(() => ({
@@ -89,6 +91,7 @@ export default function PublierPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["demandes"] });
+      router.push("/dashboard/demandes");
       toast.success("Votre demande a été publiée.");
       setCurrentStep(STEP_CATEGORY);
       setDraft((d) => ({
@@ -125,7 +128,7 @@ export default function PublierPage() {
       />
 
       <div className="flex flex-1 flex-col bg-slate-50 p-5 sm:p-8">
-        <div className="w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+        <div className="w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-8">
           <div className="flex items-center gap-3">
             {activeIndex > 0 && (
               <button
@@ -148,7 +151,11 @@ export default function PublierPage() {
           </div>
 
           <div className="border-b border-slate-100 pb-5">
-            <StepProgress steps={flow} activeStep={currentStep} />
+            <StepProgress
+              steps={flow}
+              activeStep={currentStep}
+              stepLabels={stepLabels}
+            />
           </div>
 
           {currentStep === STEP_CATEGORY && (

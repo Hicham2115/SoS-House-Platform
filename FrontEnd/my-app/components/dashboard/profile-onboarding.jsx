@@ -370,7 +370,11 @@ export function ProfileOnboarding() {
                   </div>
 
                   <div className="border-b border-slate-100 pb-5">
-                    <StepProgress steps={flow} activeStep={currentStep} />
+                    <StepProgress
+                      steps={flow}
+                      activeStep={currentStep}
+                      stepLabels={stepLabels}
+                    />
                   </div>
 
                   <form
