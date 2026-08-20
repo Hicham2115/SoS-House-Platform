@@ -28,40 +28,84 @@ export const availableDemandes = [
   {
     id: "demande-1",
     category: "plomberie",
-    label: "Plomberie · Fuite d'eau · Maârif",
-    zone: "Quartier approximatif",
-    budget: "300-500 MAD",
+    title: "Réparation fuite d'eau sous évier",
+    description:
+      "Fuite d'eau sous l'évier de la cuisine, besoin d'un plombier pour identifier la source et réparer.",
+    quartier: "Maârif",
+    ville: "Casablanca",
+    distanceKm: 2.4,
+    publishedMinutesAgo: 15,
     urgency: "urgente",
+    invoiceLevel: "n1",
+    budgetMin: 300,
+    budgetMax: 500,
     credits: 15,
   },
   {
     id: "demande-2",
     category: "electricite",
-    label: "Électricité · Court-circuit · Maarif Extension",
-    zone: "Quartier approximatif",
-    budget: "200-400 MAD",
+    title: "Installation prise électrique",
+    description:
+      "Installer 3 prises électriques dans le salon et une prise extérieure.",
+    quartier: "Palmier",
+    ville: "Casablanca",
+    distanceKm: 1.8,
+    publishedMinutesAgo: 28,
     urgency: "programmee",
+    invoiceLevel: "n1",
+    budgetMin: 200,
+    budgetMax: 400,
     credits: 10,
   },
   {
     id: "demande-3",
     category: "nettoyage",
-    label: "Ménage · Nettoyage complet · Anfa",
-    zone: "Quartier approximatif",
-    budget: "150-250 MAD",
+    title: "Ménage complet appartement",
+    description:
+      "Ménage complet d'un appartement de 80m² avant état des lieux.",
+    quartier: "Ain Diab",
+    ville: "Casablanca",
+    distanceKm: 3.2,
+    publishedMinutesAgo: 45,
     urgency: "programmee",
+    invoiceLevel: "n0",
+    budgetMin: 150,
+    budgetMax: 250,
     credits: 8,
   },
   {
     id: "demande-4",
     category: "peinture",
-    label: "Peinture · Salon + 2 chambres · Bourgogne",
-    zone: "Quartier approximatif",
-    budget: "500-800 MAD",
+    title: "Peinture salon + 2 chambres",
+    description:
+      "Peinture des murs et plafonds, préparation incluse. Couleur au choix.",
+    quartier: "Oasis",
+    ville: "Casablanca",
+    distanceKm: 4.6,
+    publishedMinutesAgo: 60,
     urgency: "urgente",
+    invoiceLevel: "n2",
+    budgetMin: 500,
+    budgetMax: 800,
     credits: 20,
   },
 ];
+
+export const invoiceLevelMeta = {
+  n0: { label: "Facture non requise (N0)", className: "bg-slate-100 text-slate-600" },
+  n1: { label: "Facture simple (N1+)", className: "bg-amber-50 text-amber-700" },
+  n2: { label: "Facture avec TVA (N2)", className: "bg-violet-50 text-violet-600" },
+};
+
+export const categoryToneMeta = {
+  plomberie: { icon: "bg-teal-50 text-teal-700", pill: "bg-teal-50 text-teal-700" },
+  electricite: { icon: "bg-amber-50 text-amber-600", pill: "bg-amber-50 text-amber-700" },
+  nettoyage: { icon: "bg-green-50 text-green-600", pill: "bg-green-50 text-green-700" },
+  peinture: { icon: "bg-violet-50 text-violet-600", pill: "bg-violet-50 text-violet-700" },
+  serrurerie: { icon: "bg-slate-100 text-slate-600", pill: "bg-slate-100 text-slate-600" },
+  bricolage: { icon: "bg-orange-50 text-orange-600", pill: "bg-orange-50 text-orange-700" },
+  "lavage-auto": { icon: "bg-sky-50 text-sky-600", pill: "bg-sky-50 text-sky-700" },
+};
 
 export const missionsEnCours = [
   {

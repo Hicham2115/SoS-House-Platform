@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import {
   availableDemandes,
+  categoryToneMeta,
   missionsEnCours,
   missionStatusMeta,
   proSummary,
@@ -49,7 +50,7 @@ export default function ProDashboardPage() {
     {
       icon: Mail,
       value: proSummary.demandesReceivedThisMonth,
-      label: "Demandes reçues ce mois",
+      label: "Demandes travaillées ce mois",
       tone: "green",
       caption: proSummary.demandesReceivedTrend,
       captionTone: "green",
@@ -111,24 +112,28 @@ export default function ProDashboardPage() {
             </div>
 
             <div className="mt-4 flex flex-col gap-3">
-              {availableDemandes.map((demande) => {
+              {availableDemandes.slice(0, 3).map((demande) => {
                 const category = getCategory(demande.category);
                 const Icon = category?.Icon ?? FileText;
+                const tone = categoryToneMeta[demande.category];
                 return (
                   <div
                     key={demande.id}
                     className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center"
                   >
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+                    <span
+                      className={`flex size-11 shrink-0 items-center justify-center rounded-full ${tone?.icon ?? "bg-teal-50 text-teal-700"}`}
+                    >
                       <Icon className="size-5" strokeWidth={1.8} />
                     </span>
 
                     <div className="min-w-0 flex-1">
                       <p className="text-[14px] font-bold text-slate-950">
-                        {demande.label}
+                        {demande.title}
                       </p>
                       <p className="mt-0.5 text-[13px] text-slate-500">
-                        {demande.zone} · Budget indicatif {demande.budget}
+                        {demande.quartier}, {demande.ville} · Budget indicatif{" "}
+                        {demande.budgetMin}–{demande.budgetMax} MAD
                       </p>
                     </div>
 

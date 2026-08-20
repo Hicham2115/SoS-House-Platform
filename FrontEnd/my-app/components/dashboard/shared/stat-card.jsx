@@ -36,7 +36,9 @@ export function StatCard({
           <Icon className="size-7" strokeWidth={1.8} />
         </span>
         <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-slate-500">{label}</p>
+          <p className="text-[11px] font-semibold whitespace-nowrap text-slate-500">
+            {label}
+          </p>
           <p className="mt-1 text-[26px] font-bold text-slate-950">{value}</p>
         </div>
       </div>

@@ -33,8 +33,8 @@ const navItems = [
   { href: "/pro/missions", Icon: ListChecks, label: "Mes missions" },
   { href: "/pro/devis", Icon: FileText, label: "Devis et factures" },
   { href: "/pro/credits", Icon: CreditCard, label: "Crédits et recharge" },
-  { href: "/pro/equipe", Icon: Users, label: "Mon équipe" },
-  { href: "/pro/statistiques", Icon: BarChart3, label: "Statistiques" },
+  // { href: "/pro/equipe", Icon: Users, label: "Mon équipe" },
+  // { href: "/pro/statistiques", Icon: BarChart3, label: "Statistiques" },
   { href: "/pro/parametres", Icon: Settings, label: "Paramètres du compte" },
 ];
 
