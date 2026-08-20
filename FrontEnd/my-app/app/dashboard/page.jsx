@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { DemandeDetailsSheet } from "@/components/dashboard/demande-details-sheet";
-import { ProfileOnboarding } from "@/components/dashboard/profile-onboarding";
-import { RequestCard } from "@/components/dashboard/request-card";
-import { StatCard } from "@/components/dashboard/stat-card";
+import { DemandeDetailsSheet } from "@/components/dashboard/client/demande-details-sheet";
+import { ProfileOnboarding } from "@/components/dashboard/client/profile-onboarding";
+import { RequestCard } from "@/components/dashboard/client/request-card";
+import { StatCard } from "@/components/dashboard/shared/stat-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

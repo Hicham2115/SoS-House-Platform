@@ -15,7 +15,14 @@ import {
 import { useLogout } from "@/hooks/use-logout";
 import { useUser } from "@/hooks/use-user";
 
-export function DashboardHeader({ title, subtitle }) {
+export function DashboardHeader({
+  title,
+  subtitle,
+  ctaLabel = "+ Publier une demande",
+  ctaHref = "/dashboard/publier",
+  settingsHref = "/dashboard/parametres",
+  notificationCount = 3,
+}) {
   const { data: user } = useUser();
   const logout = useLogout();
 
@@ -38,9 +45,11 @@ export function DashboardHeader({ title, subtitle }) {
           className="relative flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
         >
           <Bell className="size-5" strokeWidth={1.8} />
-          <span className="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-            3
-          </span>
+          {notificationCount > 0 && (
+            <span className="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+              {notificationCount}
+            </span>
+          )}
         </button>
 
         <DropdownMenu>
@@ -61,7 +70,7 @@ export function DashboardHeader({ title, subtitle }) {
             className="w-52 rounded-xl border border-slate-200/80 p-1.5 shadow-[0_12px_30px_rgba(12,55,55,0.1)]"
           >
             <DropdownMenuItem
-              render={<Link href="/dashboard/parametres" />}
+              render={<Link href={settingsHref} />}
               className="gap-2 rounded-lg px-2 py-2 text-[13px] font-semibold whitespace-nowrap text-slate-700 focus:bg-slate-50 focus:text-slate-950"
             >
               <Settings className="size-4 text-slate-500" strokeWidth={1.8} />
@@ -79,13 +88,15 @@ export function DashboardHeader({ title, subtitle }) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button
-          render={<Link href="/dashboard/publier" />}
-          nativeButton={false}
-          className="h-11 shrink-0 rounded-xl bg-[#0b1730] px-5 text-[14px] font-semibold text-white shadow-[0_8px_20px_rgba(11,23,48,0.2)] transition hover:-translate-y-0.5 hover:bg-[#142248]"
-        >
-          + Publier une demande
-        </Button>
+        {ctaLabel && (
+          <Button
+            render={<Link href={ctaHref} />}
+            nativeButton={false}
+            className="h-11 shrink-0 rounded-xl bg-[#0b1730] px-5 text-[14px] font-semibold text-white shadow-[0_8px_20px_rgba(11,23,48,0.2)] transition hover:-translate-y-0.5 hover:bg-[#142248]"
+          >
+            {ctaLabel}
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Star } from "lucide-react";
 
 const toneStyles = {
@@ -23,7 +24,9 @@ export function StatCard({
   caption,
   captionTone,
   captionIcon: CaptionIcon,
+  captionHref,
 }) {
+  const captionClassName = `mt-2 flex w-fit items-center gap-1 text-[12px] font-semibold ${captionStyles[captionTone]}`;
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5">
       <div className="flex items-center gap-4">
@@ -51,14 +54,18 @@ export function StatCard({
           ))}
         </div>
       )}
-      {caption && (
-        <p
-          className={`mt-2 flex items-center gap-1 text-[12px] font-semibold ${captionStyles[captionTone]}`}
-        >
-          {CaptionIcon && <CaptionIcon className="size-3.5" />}
-          {caption}
-        </p>
-      )}
+      {caption &&
+        (captionHref ? (
+          <Link href={captionHref} className={captionClassName}>
+            {CaptionIcon && <CaptionIcon className="size-3.5" />}
+            {caption}
+          </Link>
+        ) : (
+          <p className={captionClassName}>
+            {CaptionIcon && <CaptionIcon className="size-3.5" />}
+            {caption}
+          </p>
+        ))}
       {progress != null && (
         <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
           <div

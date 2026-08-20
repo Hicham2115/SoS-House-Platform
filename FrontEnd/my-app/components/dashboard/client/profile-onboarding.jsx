@@ -20,7 +20,7 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import defaultAvatar from "@/app/assets/avatars/avatar-1.png";
-import { StepProgress } from "@/components/dashboard/step-progress";
+import { StepProgress } from "@/components/dashboard/shared/step-progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {

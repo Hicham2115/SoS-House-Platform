@@ -4,7 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { ArrowRight, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { StepIntro } from "@/components/dashboard/publier/step-intro";
+import { StepIntro } from "@/components/dashboard/client/publier/step-intro";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {

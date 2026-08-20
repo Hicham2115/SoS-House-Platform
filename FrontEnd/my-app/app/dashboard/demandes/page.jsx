@@ -12,10 +12,10 @@ import {
   LayoutGrid,
   Table2,
 } from "lucide-react";
-import { DemandeCard } from "@/components/dashboard/demande-card";
-import { DemandeDetailsSheet } from "@/components/dashboard/demande-details-sheet";
-import { Pagination } from "@/components/dashboard/pagination";
-import { StatCard } from "@/components/dashboard/stat-card";
+import { DemandeCard } from "@/components/dashboard/client/demande-card";
+import { DemandeDetailsSheet } from "@/components/dashboard/client/demande-details-sheet";
+import { Pagination } from "@/components/dashboard/shared/pagination";
+import { StatCard } from "@/components/dashboard/shared/stat-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
 import {

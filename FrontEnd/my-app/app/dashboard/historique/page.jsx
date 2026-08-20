@@ -8,8 +8,8 @@ import {
   Search,
   SlidersHorizontal,
 } from "lucide-react";
-import { Pagination } from "@/components/dashboard/pagination";
-import { StarRating } from "@/components/dashboard/star-rating";
+import { Pagination } from "@/components/dashboard/shared/pagination";
+import { StarRating } from "@/components/dashboard/shared/star-rating";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import {
   InputGroup,

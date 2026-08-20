@@ -2,20 +2,16 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
+import { ProSidebar } from "@/components/layout/pro-sidebar";
 import { useUser } from "@/hooks/use-user";
 import { useAuthStore } from "@/lib/store/auth";
 
 const emptySubscribe = () => () => {};
 
-export default function DashboardLayout({ children }) {
+export default function ProLayout({ children }) {
   const token = useAuthStore((state) => state.token);
-  const { data: user } = useUser();
+  const { data: user, isPending } = useUser();
   const router = useRouter();
-  // token is only trustworthy once React has moved past the hydration
-  // render (which must match the server and reads the pre-hydration
-  // snapshot). This flips to true on the same render pass zustand's
-  // useSyncExternalStore starts returning the real, rehydrated token.
   const mounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -25,18 +21,18 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     if (mounted && !token) {
       router.replace("/");
-    } else if (user?.role === "artisan") {
-      router.replace("/pro");
+    } else if (user && user.role !== "artisan") {
+      router.replace("/dashboard");
     }
   }, [mounted, token, user, router]);
 
-  if (!mounted || !token || user?.role === "artisan") {
+  if (!mounted || !token || isPending || user?.role !== "artisan") {
     return null;
   }
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[#fafbfc]">
-      <DashboardSidebar />
+      <ProSidebar />
       <div className="flex flex-1 flex-col overflow-y-auto">{children}</div>
     </div>
   );
