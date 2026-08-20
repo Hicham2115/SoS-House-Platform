@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   CircleHelp,
   FileText,
@@ -16,7 +16,8 @@ import {
 import avatar1 from "@/app/assets/avatars/avatar-1.png";
 import logo from "@/app/assets/logo.jpeg";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuthStore } from "@/lib/store/auth";
+import { useLogout } from "@/hooks/use-logout";
+import { useUser } from "@/hooks/use-user";
 
 const navItems = [
   { href: "/dashboard", Icon: LayoutDashboard, label: "Tableau de bord" },
@@ -47,12 +48,11 @@ const navItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
+  const { data: user } = useUser();
+  const logout = useLogout();
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white p-5 lg:flex">
+    <aside className="scrollbar-blue sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white p-5 lg:flex">
       <Image src={logo} alt="SOS House" className="w-30 mx-auto" />
 
       <nav className="mt-8 flex flex-col gap-1">
@@ -83,7 +83,7 @@ export function DashboardSidebar() {
       <div className="mt-16 flex items-center gap-3 rounded-2xl bg-slate-50 p-3.5">
         <Avatar size="lg">
           <AvatarImage
-            src={user?.avatarUrl || avatar1.src}
+            src={user?.avatar || avatar1.src}
             alt={user?.name ?? "Profil"}
           />
           <AvatarFallback className="bg-teal-100 font-bold text-teal-700">
@@ -95,19 +95,14 @@ export function DashboardSidebar() {
             {user?.name ?? "Mon profil"}
           </p>
           {user?.email && (
-            <p className="truncate text-[12px] text-slate-500">
-              {user.email}
-            </p>
+            <p className="truncate text-[12px] text-slate-500">{user.email}</p>
           )}
         </div>
       </div>
 
       <button
         type="button"
-        onClick={() => {
-          logout();
-          router.push("/");
-        }}
+        onClick={() => logout.mutate()}
         className="mt-5 flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold text-red-600 transition hover:bg-red-50"
       >
         <LogOut className="size-[18px] shrink-0" strokeWidth={1.8} />

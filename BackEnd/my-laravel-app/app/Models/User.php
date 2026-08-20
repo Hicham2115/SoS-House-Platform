@@ -45,4 +45,9 @@ class User extends Authenticatable
             "notification_Channel" => 'string',
         ];
     }
+
+    public function demandes()
+    {
+        return $this->hasMany(Demande::class);
+    }
 }

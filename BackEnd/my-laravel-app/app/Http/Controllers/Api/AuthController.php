@@ -35,6 +35,7 @@ class AuthController extends Controller
 
         return response()->json($user, 201);
     }
+
     public function login(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -56,5 +57,12 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token,
         ]);
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Déconnexion réussie.']);
     }
 }

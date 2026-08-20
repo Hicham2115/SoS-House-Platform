@@ -1,76 +1,44 @@
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import {
   BadgeCheck,
   CircleCheckBig,
-  Droplet,
   FileText,
   HeartHandshake,
   Lock,
   ShieldCheck,
   Smile,
   Star,
-  Zap,
-  Calendar,
-  PaintRoller,
 } from "lucide-react";
 import avatar2 from "@/app/assets/avatars/avatar-2.png";
 import avatar3 from "@/app/assets/avatars/avatar-3.png";
+import { getCategory } from "@/lib/services-catalog";
 
+// Only status the backend sets today — extend alongside the backend's
+// workflow (mission accepted, in progress, done, ...) as it's built out.
 export const statusStyles = {
   "En attente de réponses": "bg-amber-50 text-amber-700",
-  "Prestataire retenu": "bg-teal-50 text-teal-700",
-  "Intervention planifiée": "bg-blue-50 text-blue-700",
-  "En cours": "bg-emerald-50 text-emerald-700",
-  Terminée: "bg-slate-100 text-slate-600",
 };
 
-export const requests = [
-  {
-    Icon: Droplet,
-    title: "Fuite d'eau",
-    subtitle: "Salle de bain • Casablanca",
-    meta: "Créée le 21 mai 2024",
+// Shapes a raw demande row (from GET /demandes) into what RequestCard and
+// the demandes table expect. No provider/note/action yet — that needs the
+// missions domain, which isn't built.
+export function toRequestCard(demande) {
+  const category = getCategory(demande.category);
+  const subcategory = category?.subcategories.find(
+    (s) => s.value === demande.subcategory,
+  );
+
+  return {
+    Icon: category?.Icon ?? FileText,
+    title: subcategory
+      ? `${category.label} — ${subcategory.label}`
+      : (category?.label ?? demande.category),
+    subtitle: demande.ville,
+    meta: `Créée le ${format(new Date(demande.created_at), "d MMMM yyyy", { locale: fr })}`,
     status: "En attente de réponses",
-    note: "3 réponses reçues",
-    action: "Comparer les réponses",
-  },
-  {
-    Icon: Zap,
-    title: "Électricité",
-    subtitle: "Prise défectueuse • Salon",
-    meta: "Retenu depuis le 22 mai 2024",
-    status: "Prestataire retenu",
-    provider: { name: "Youssef E.", avatar: avatar2 },
-    action: "Message",
-  },
-  {
-    Icon: Calendar,
-    title: "Serrurerie",
-    subtitle: "Porte d'entrée bloquée",
-    meta: "Intervention planifiée",
-    status: "Intervention planifiée",
-    note: "Mer. 22 mai à 14h00",
-    provider: { name: "Amine B.", avatar: avatar3 },
-    action: "Détails",
-    secondaryAction: "Message",
-  },
-  {
-    Icon: PaintRoller,
-    title: "Peinture intérieure",
-    subtitle: "Appartement • 2 pièces",
-    meta: "Commencé le 21 mai 2024",
-    status: "En cours",
-    provider: { name: "Reda Plomberie", initials: "RP" },
-    action: "Message",
-  },
-  {
-    Icon: CircleCheckBig,
-    title: "Climatisation",
-    subtitle: "Entretien complet",
-    meta: "Terminée le 15 mai 2024",
-    status: "Terminée",
-    note: "Merci pour votre confiance !",
-  },
-];
+  };
+}
 
 export const stats = [
   { Icon: FileText, value: "4", label: "Demandes actives", tone: "teal" },

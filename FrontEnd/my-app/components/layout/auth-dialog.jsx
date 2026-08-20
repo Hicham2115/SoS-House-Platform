@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 import {
@@ -92,10 +93,11 @@ export function AuthDialog() {
   const setMode = useAuthDialogStore((state) => state.setMode);
   const selectRole = useAuthDialogStore((state) => state.selectRole);
   const backToRole = useAuthDialogStore((state) => state.backToRole);
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const setToken = useAuthStore((state) => state.setToken);
   const [showPassword, setShowPassword] = useState(false);
   const openSignIn = useAuthDialogStore((state) => state.openSignIn);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const signUpForm = useForm({
     defaultValues: {
@@ -117,8 +119,6 @@ export function AuthDialog() {
       }
 
       try {
-        console.log(" Data", parsed.data, role);
-
         await api.post("/users", {
           name: parsed.data.fullName,
           email: parsed.data.email,
@@ -150,9 +150,9 @@ export function AuthDialog() {
 
       try {
         const { data } = await api.post("/login", parsed.data);
-        console.log(" Data", data);
 
-        setAuth(data.user, data.token);
+        setToken(data.token);
+        queryClient.setQueryData(["user"], data.user);
         toast.success("Connexion réussie.");
         signInForm.reset();
         setOpen(false);

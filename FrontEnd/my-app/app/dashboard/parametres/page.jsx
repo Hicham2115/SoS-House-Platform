@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Camera, Check, KeyRound, Lock, Mail, Phone, User } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -12,8 +13,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useUser } from "@/hooks/use-user";
+import { api } from "@/lib/axios";
 import { MAX_AVATAR_SIZE, readImageFile } from "@/lib/file-upload";
-import { useAuthStore } from "@/lib/store/auth";
 
 const accountSchema = z.object({
   name: z.string().trim().min(1, "Le nom complet est requis").max(255),
@@ -54,9 +56,23 @@ function FieldRow({ Icon, id, label, helperText, children, first }) {
 }
 
 export default function ParametresPage() {
-  const user = useAuthStore((state) => state.user);
-  const updateUser = useAuthStore((state) => state.updateUser);
+  const { data: user } = useUser();
+  const queryClient = useQueryClient();
   const avatarInputRef = useRef(null);
+
+  const updateAccount = useMutation({
+    mutationFn: async (patch) => {
+      const { data } = await api.patch("/user", patch);
+      queryClient.setQueryData(["user"], data);
+      return data;
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(
+        "Impossible d'enregistrer les modifications. Veuillez réessayer.",
+      );
+    },
+  });
 
   const form = useForm({
     defaultValues: {
@@ -73,10 +89,23 @@ export default function ParametresPage() {
         return;
       }
 
-      updateUser(parsed.data);
+      await updateAccount.mutateAsync(parsed.data);
       toast.success("Modifications enregistrées.");
     },
   });
+
+  // useForm only reads defaultValues once at mount, but user arrives async
+  // from useUser() — reset once the real data lands so the fields aren't
+  // stuck showing the initial empty strings.
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        name: user.name ?? "",
+        email: user.email ?? "",
+        phone: user.phone ?? "",
+      });
+    }
+  }, [user]);
 
   const passwordForm = useForm({
     defaultValues: {
@@ -93,8 +122,17 @@ export default function ParametresPage() {
         return;
       }
 
-      passwordForm.reset();
-      toast.success("Mot de passe mis à jour.");
+      try {
+        await api.put("/user/password", {
+          current_password: parsed.data.currentPassword,
+          new_password: parsed.data.newPassword,
+        });
+        passwordForm.reset();
+        toast.success("Mot de passe mis à jour.");
+      } catch (error) {
+        console.error(error);
+        toast.error("Mot de passe actuel incorrect.");
+      }
     },
   });
 
@@ -104,20 +142,30 @@ export default function ParametresPage() {
     if (!file) return;
 
     try {
-      const dataUrl = await readImageFile(
+      await readImageFile(
         file,
         MAX_AVATAR_SIZE,
         "L'image ne doit pas dépasser 2 Mo.",
       );
-      updateUser({ avatarUrl: dataUrl });
-      toast.success("Photo de profil mise à jour.");
     } catch (error) {
       toast.error(error.message);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const { data: uploadData } = await api.post("/user/avatar", formData);
+      await updateAccount.mutateAsync({ avatar: uploadData.avatar_url });
+      toast.success("Photo de profil mise à jour.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Impossible d'envoyer la photo. Veuillez réessayer.");
     }
   }
 
-  function handleRemoveAvatar() {
-    updateUser({ avatarUrl: null });
+  async function handleRemoveAvatar() {
+    await updateAccount.mutateAsync({ avatar: null });
     toast.success("Photo de profil supprimée.");
   }
 
@@ -159,7 +207,7 @@ export default function ParametresPage() {
           <div className="relative flex items-center gap-4 border-b border-slate-100 py-5">
             <Avatar className="size-16">
               <AvatarImage
-                src={user?.avatarUrl || defaultAvatar.src}
+                src={user?.avatar}
                 alt={user?.name ?? "Photo de profil"}
               />
               <AvatarFallback className="bg-teal-100 text-lg font-bold text-teal-700">
@@ -183,7 +231,7 @@ export default function ParametresPage() {
                   <Camera className="size-4" />
                   Changer la photo
                 </Button>
-                {user?.avatarUrl && (
+                {user?.avatar && (
                   <button
                     type="button"
                     onClick={handleRemoveAvatar}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { StepProgress } from "@/components/dashboard/step-progress";
@@ -12,11 +12,10 @@ import { StepQualification } from "@/components/dashboard/publier/step-qualifica
 import { StepRecap } from "@/components/dashboard/publier/step-recap";
 import { StepUrgency } from "@/components/dashboard/publier/step-urgency";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { useUser } from "@/hooks/use-user";
+import { api } from "@/lib/axios";
 import { getInvoiceRequirement } from "@/lib/onboarding";
 import { getPriceEstimate } from "@/lib/lead-pricing";
-import { getCategory } from "@/lib/services-catalog";
-import { useAuthStore } from "@/lib/store/auth";
-import { useListingsStore } from "@/lib/store/listings";
 
 const STEP_CATEGORY = "category";
 const STEP_QUALIFICATION = "qualification";
@@ -44,10 +43,10 @@ const stepLabels = {
 };
 
 export default function PublierPage() {
-  const user = useAuthStore((state) => state.user);
-  const addListing = useListingsStore((state) => state.addListing);
-  const invoiceRequirement = getInvoiceRequirement(user?.accountType);
-  const hasDefaultAddress = Boolean(user?.defaultAddress?.ville);
+  const { data: user } = useUser();
+  const queryClient = useQueryClient();
+  const invoiceRequirement = getInvoiceRequirement(user?.account_type);
+  const hasDefaultAddress = Boolean(user?.ville);
 
   const [currentStep, setCurrentStep] = useState(STEP_CATEGORY);
   const [draft, setDraft] = useState(() => ({
@@ -57,9 +56,9 @@ export default function PublierPage() {
     qualification: {},
     photos: [],
     description: "",
-    ville: user?.defaultAddress?.ville ?? "",
-    adresseComplete: user?.defaultAddress?.adresseComplete ?? "",
-    etage: user?.defaultAddress?.etage ?? "",
+    ville: user?.ville ?? "",
+    adresseComplete: user?.adresse ?? "",
+    etage: user?.etage ?? "",
     urgency: "",
     scheduledDate: null,
     scheduledTime: "",
@@ -67,23 +66,29 @@ export default function PublierPage() {
     invoiceRequired: invoiceRequirement.value,
   }));
 
-  // Stands in for a real "publish demande" endpoint: same
-  // mutate/isPending/onSuccess surface a network call would give us, just
-  // backed by the local listings store for now.
   const publish = useMutation({
     mutationFn: async (listing) => {
-      const category = getCategory(listing.category);
-      const subcategory = category?.subcategories.find(
-        (s) => s.value === listing.subcategory,
-      );
-      addListing({
-        ...listing,
-        title: `${category?.label ?? ""} — ${subcategory?.label ?? ""}`,
-        city: listing.ville,
+      const { data } = await api.post("/demandes", {
+        category: listing.category,
+        subcategory: listing.subcategory,
+        property_type: listing.propertyType,
+        qualification: listing.qualification,
+        photos: listing.photos,
+        description: listing.description,
+        ville: listing.ville,
+        adresse: listing.adresseComplete,
+        etage: listing.etage,
+        urgency: listing.urgency,
+        scheduled_date: listing.scheduledDate,
+        scheduled_time: listing.scheduledTime,
+        budget_min: listing.budget?.[0] ?? null,
+        budget_max: listing.budget?.[1] ?? null,
+        invoice_required: listing.invoiceRequired,
       });
-      return listing;
+      return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["demandes"] });
       toast.success("Votre demande a été publiée.");
       setCurrentStep(STEP_CATEGORY);
       setDraft((d) => ({
@@ -99,6 +104,10 @@ export default function PublierPage() {
         scheduledTime: "",
         budget: null,
       }));
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Impossible de publier votre demande. Veuillez réessayer.");
     },
   });
 

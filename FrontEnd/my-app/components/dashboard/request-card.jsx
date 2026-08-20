@@ -1,9 +1,9 @@
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, Eye } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { statusStyles } from "@/lib/dashboard-data";
 
-export function RequestCard({ request }) {
+export function RequestCard({ request, onViewDetails }) {
   const {
     Icon,
     title,
@@ -51,7 +51,7 @@ export function RequestCard({ request }) {
         </div>
       </div>
 
-      {(action || secondaryAction) && (
+      {(action || secondaryAction || onViewDetails) && (
         <div className="flex shrink-0 flex-wrap gap-2">
           {secondaryAction && (
             <Button
@@ -67,6 +67,16 @@ export function RequestCard({ request }) {
               className="h-9 rounded-lg border-teal-600 px-3.5 text-[13px] font-semibold text-teal-700 hover:bg-teal-50"
             >
               {action}
+            </Button>
+          )}
+          {onViewDetails && (
+            <Button
+              variant="outline"
+              onClick={onViewDetails}
+              className="h-9 rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              <Eye className="size-4" />
+              Détails
             </Button>
           )}
         </div>

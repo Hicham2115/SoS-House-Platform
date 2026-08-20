@@ -170,6 +170,17 @@
   }
 }
 
+.scrollbar-blue {
+  scrollbar-color: var(--color-blue-500) transparent;
+}
+.scrollbar-blue::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-blue::-webkit-scrollbar-thumb {
+  background-color: var(--color-blue-500);
+  border-radius: 9999px;
+}
+
 .hero-pattern {
   background-image: linear-gradient(30deg, rgba(12, 86, 126, 0.055) 12%, transparent 12.5%, transparent 87%, rgba(12, 86, 126, 0.055) 87.5%, rgba(12, 86, 126, 0.055)), linear-gradient(150deg, rgba(12, 86, 126, 0.055) 12%, transparent 12.5%, transparent 87%, rgba(12, 86, 126, 0.055) 87.5%, rgba(12, 86, 126, 0.055));
   background-position: 0 0, 22px 38px;

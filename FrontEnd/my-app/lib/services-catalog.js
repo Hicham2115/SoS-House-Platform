@@ -101,7 +101,6 @@ export const propertyTypes = [
 // rendered generically by StepQualification rather than hardcoded per form.
 export const qualificationFields = {
   plomberie: [
-    { name: "nature", label: "Nature du problème", type: "text" },
     {
       name: "localisation",
       label: "Localisation",
@@ -116,14 +115,9 @@ export const qualificationFields = {
   ],
   electricite: [
     { name: "typePanne", label: "Panne totale ou partielle", type: "boolean", trueLabel: "Totale", falseLabel: "Partielle" },
-    { name: "anciennete", label: "Ancienneté de l'installation", type: "text" },
-    { name: "tableauAccessible", label: "Tableau accessible ?", type: "boolean" },
   ],
   serrurerie: [
     { name: "porteFermee", label: "Porte claquée ou fermée à clé ?", type: "boolean", trueLabel: "Fermée à clé", falseLabel: "Claquée" },
-    { name: "typeSerrure", label: "Type de serrure", type: "text" },
-    { name: "blindage", label: "Présence de blindage", type: "boolean" },
-    { name: "presence", label: "Personne ou animal à l'intérieur", type: "boolean" },
   ],
   bricolage: [
     { name: "typeTravaux", label: "Type de travaux", type: "text" },
@@ -140,11 +134,9 @@ export const qualificationFields = {
         { value: "mensuel", label: "Mensuel" },
       ],
     },
-    { name: "produitsFournis", label: "Produits fournis ?", type: "boolean" },
   ],
   peinture: [
     { name: "surface", label: "Surface approximative (m²)", type: "text" },
-    { name: "nombrePieces", label: "Nombre de pièces", type: "text" },
     { name: "fourniture", label: "Fourniture incluse ?", type: "boolean" },
   ],
   "lavage-auto": [
@@ -153,10 +145,10 @@ export const qualificationFields = {
       label: "Type de véhicule",
       type: "select",
       options: [
-        { value: "citadine", label: "Citadine" },
-        { value: "berline", label: "Berline" },
-        { value: "suv", label: "SUV" },
-        { value: "utilitaire", label: "Utilitaire" },
+        { value: "citadine", label: "Citadine (ex: Clio, Sandero, 208)" },
+        { value: "berline", label: "Berline (ex: Logan, 301, Fluence)" },
+        { value: "suv", label: "SUV (ex: Duster, Tucson, Sportage)" },
+        { value: "utilitaire", label: "Utilitaire (ex: Kangoo, Dokker, Hilux)" },
       ],
     },
     {
@@ -169,7 +161,6 @@ export const qualificationFields = {
         { value: "complet", label: "Complet" },
       ],
     },
-    { name: "pointEau", label: "Point d'eau disponible ?", type: "boolean" },
   ],
 };
 

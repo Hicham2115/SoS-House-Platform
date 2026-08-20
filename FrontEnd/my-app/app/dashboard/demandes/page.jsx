@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { LayoutGrid, Table2 } from "lucide-react";
+import { Eye, LayoutGrid, Table2 } from "lucide-react";
+import { DemandeDetailsSheet } from "@/components/dashboard/demande-details-sheet";
 import { RequestCard } from "@/components/dashboard/request-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -13,7 +15,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { requests, statusStyles } from "@/lib/dashboard-data";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDemandes } from "@/hooks/use-demandes";
+import { statusStyles, toRequestCard } from "@/lib/dashboard-data";
 
 const views = [
   { value: "cards", label: "Cartes", Icon: LayoutGrid },
@@ -42,8 +46,97 @@ function ViewToggle({ view, onChange }) {
   );
 }
 
+function CardsSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div
+          key={index}
+          className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+        >
+          <Skeleton className="size-11 shrink-0 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-3.5 w-28" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TableSkeleton() {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white">
+      <Table>
+        <TableHeader>
+          <TableRow className="border-slate-200 hover:bg-transparent">
+            <TableHead className="px-4 text-[12px] font-semibold text-slate-500">
+              Demande
+            </TableHead>
+            <TableHead className="text-[12px] font-semibold text-slate-500">
+              Statut
+            </TableHead>
+            <TableHead className="text-[12px] font-semibold text-slate-500">
+              Prestataire
+            </TableHead>
+            <TableHead className="px-4 text-[12px] font-semibold text-slate-500">
+              Date
+            </TableHead>
+            <TableHead className="px-4 text-[12px] font-semibold text-slate-500" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <TableRow key={index} className="border-slate-200">
+              <TableCell className="px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="size-9 shrink-0 rounded-full" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-5 w-24 rounded-full" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-4 w-20" />
+              </TableCell>
+              <TableCell className="px-4">
+                <Skeleton className="h-4 w-24" />
+              </TableCell>
+              <TableCell className="px-4">
+                <Skeleton className="h-8 w-20 rounded-lg" />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center gap-1 rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
+      <p className="text-[15px] font-bold text-slate-950">
+        Aucune demande pour le moment
+      </p>
+      <p className="text-[13px] text-slate-500">
+        Publiez une demande pour la voir apparaître ici.
+      </p>
+    </div>
+  );
+}
+
 export default function DemandesPage() {
   const [view, setView] = useState("cards");
+  const [selectedDemande, setSelectedDemande] = useState(null);
+  const { data: demandes, isPending } = useDemandes();
+  const requests = (demandes ?? []).map((demande) => ({
+    id: demande.id,
+    demande,
+    ...toRequestCard(demande),
+  }));
 
   return (
     <>
@@ -57,10 +150,22 @@ export default function DemandesPage() {
           <ViewToggle view={view} onChange={setView} />
         </div>
 
-        {view === "cards" ? (
+        {isPending ? (
+          view === "cards" ? (
+            <CardsSkeleton />
+          ) : (
+            <TableSkeleton />
+          )
+        ) : requests.length === 0 ? (
+          <EmptyState />
+        ) : view === "cards" ? (
           <div className="flex flex-col gap-3">
             {requests.map((request) => (
-              <RequestCard key={request.title} request={request} />
+              <RequestCard
+                key={request.id}
+                request={request}
+                onViewDetails={() => setSelectedDemande(request.demande)}
+              />
             ))}
           </div>
         ) : (
@@ -80,12 +185,13 @@ export default function DemandesPage() {
                   <TableHead className="px-4 text-[12px] font-semibold text-slate-500">
                     Date
                   </TableHead>
+                  <TableHead className="px-4 text-[12px] font-semibold text-slate-500" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {requests.map((request) => (
                   <TableRow
-                    key={request.title}
+                    key={request.id}
                     className="border-slate-200 hover:bg-slate-50"
                   >
                     <TableCell className="px-4 py-3">
@@ -133,6 +239,16 @@ export default function DemandesPage() {
                     <TableCell className="px-4 text-[13px] text-slate-600">
                       {request.meta}
                     </TableCell>
+                    <TableCell className="px-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setSelectedDemande(request.demande)}
+                        className="h-8 rounded-lg border-slate-200 px-3 text-[12px] font-semibold text-slate-700 hover:bg-slate-50"
+                      >
+                        <Eye className="size-3.5" />
+                        Détails
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -140,6 +256,12 @@ export default function DemandesPage() {
           </div>
         )}
       </div>
+
+      <DemandeDetailsSheet
+        demande={selectedDemande}
+        open={Boolean(selectedDemande)}
+        onOpenChange={(open) => !open && setSelectedDemande(null)}
+      />
     </>
   );
 }

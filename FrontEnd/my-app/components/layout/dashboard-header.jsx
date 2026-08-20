@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Bell, ChevronDown, LogOut, Settings, User } from "lucide-react";
 import avatar1 from "@/app/assets/avatars/avatar-1.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,12 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuthStore } from "@/lib/store/auth";
+import { useLogout } from "@/hooks/use-logout";
+import { useUser } from "@/hooks/use-user";
 
 export function DashboardHeader({ title, subtitle }) {
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-  const router = useRouter();
+  const { data: user } = useUser();
+  const logout = useLogout();
 
   const displayName = user?.name ?? "Mon compte";
   const initials = user?.name?.[0]?.toUpperCase() ?? "U";
@@ -47,42 +46,34 @@ export function DashboardHeader({ title, subtitle }) {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-full py-1 pr-2 outline-none hover:bg-slate-50">
             <Avatar>
-              <AvatarImage
-                src={user?.avatarUrl || avatar1.src}
-                alt={displayName}
-              />
-              <AvatarFallback>{initials}</AvatarFallback>
+              <AvatarImage src={user?.avatar} alt={displayName} />
+              <AvatarFallback className="bg-teal-100 text-lg font-bold text-teal-700">
+                {initials}
+              </AvatarFallback>
             </Avatar>
             <span className="text-[14px] font-semibold text-slate-800">
               {displayName}
             </span>
             <ChevronDown className="size-4 text-slate-500" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuItem
-              render={<Link href="/dashboard/profil" />}
-              className="gap-2.5 py-2"
-            >
-              <User className="size-4 text-slate-500" />
-              Mon profil
-            </DropdownMenuItem>
+          <DropdownMenuContent
+            align="end"
+            className="w-52 rounded-xl border border-slate-200/80 p-1.5 shadow-[0_12px_30px_rgba(12,55,55,0.1)]"
+          >
             <DropdownMenuItem
               render={<Link href="/dashboard/parametres" />}
-              className="gap-2.5 py-2"
+              className="gap-2 rounded-lg px-2 py-2 text-[13px] font-semibold whitespace-nowrap text-slate-700 focus:bg-slate-50 focus:text-slate-950"
             >
-              <Settings className="size-4 text-slate-500" />
+              <Settings className="size-4 text-slate-500" strokeWidth={1.8} />
               Paramètres du compte
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="my-1" />
             <DropdownMenuItem
               variant="destructive"
-              className="gap-2.5 py-2"
-              onClick={() => {
-                logout();
-                router.push("/");
-              }}
+              className="gap-2 rounded-lg px-2 py-2 text-[13px] font-semibold"
+              onClick={() => logout.mutate()}
             >
-              <LogOut className="size-4" />
+              <LogOut className="size-4" strokeWidth={1.8} />
               Se déconnecter
             </DropdownMenuItem>
           </DropdownMenuContent>

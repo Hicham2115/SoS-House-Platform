@@ -42,33 +42,31 @@ export function getInvoiceRequirement(accountTypeValue) {
   return { value: "aucune", editable: true };
 }
 
-export function hasDefaultAddress(address) {
-  return Boolean(
-    address?.ville && address?.quartier && address?.adresseComplete,
-  );
+export function hasDefaultAddress(user) {
+  return Boolean(user?.ville && user?.quartier && user?.adresse);
 }
 
 export function isOnboardingRequirementsMet(user) {
-  return Boolean(user?.accountType) && hasDefaultAddress(user?.defaultAddress);
+  return Boolean(user?.account_type) && hasDefaultAddress(user);
 }
 
 // Weighted so the two hard requirements (account type, address) already
 // carry most of the bar — email/photo/notification only top it off.
 const COMPLETION_WEIGHTS = {
-  accountType: 40,
+  account_type: 40,
   address: 40,
   email: 10,
   avatar: 5,
-  notificationChannel: 5,
+  notification_Channel: 5,
 };
 
 export function getProfileCompletionPct(user) {
   let pct = 0;
-  if (user?.accountType) pct += COMPLETION_WEIGHTS.accountType;
-  if (hasDefaultAddress(user?.defaultAddress))
-    pct += COMPLETION_WEIGHTS.address;
+  if (user?.account_type) pct += COMPLETION_WEIGHTS.account_type;
+  if (hasDefaultAddress(user)) pct += COMPLETION_WEIGHTS.address;
   if (user?.email) pct += COMPLETION_WEIGHTS.email;
-  if (user?.avatarUrl) pct += COMPLETION_WEIGHTS.avatar;
-  if (user?.notificationChannel) pct += COMPLETION_WEIGHTS.notificationChannel;
+  if (user?.avatar) pct += COMPLETION_WEIGHTS.avatar;
+  if (user?.notification_Channel)
+    pct += COMPLETION_WEIGHTS.notification_Channel;
   return Math.min(pct, 100);
 }

@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { api } from "@/lib/axios";
 import { maskContactInfo } from "@/lib/contact-mask";
 import { MAX_PHOTO_SIZE, readImageFile } from "@/lib/file-upload";
 import { propertyTypes, qualificationFields } from "@/lib/services-catalog";
@@ -143,7 +144,7 @@ export function StepQualification({ category, defaultValues, onSubmit }) {
     }
 
     try {
-      const dataUrls = await Promise.all(
+      await Promise.all(
         files.map((file) =>
           readImageFile(
             file,
@@ -152,9 +153,24 @@ export function StepQualification({ category, defaultValues, onSubmit }) {
           ),
         ),
       );
-      setPhotos((prev) => [...prev, ...dataUrls]);
     } catch (error) {
       toast.error(error.message);
+      return;
+    }
+
+    try {
+      const uploadedUrls = await Promise.all(
+        files.map(async (file) => {
+          const formData = new FormData();
+          formData.append("photo", file);
+          const { data } = await api.post("/demandes/photos", formData);
+          return data.photo_url;
+        }),
+      );
+      setPhotos((prev) => [...prev, ...uploadedUrls]);
+    } catch (error) {
+      console.error(error);
+      toast.error("Impossible d'envoyer les photos. Veuillez réessayer.");
     }
   }
 
@@ -228,7 +244,7 @@ export function StepQualification({ category, defaultValues, onSubmit }) {
               key={index}
               className="group relative size-20 overflow-hidden rounded-xl border border-slate-200"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element -- data URL preview, not a next/image-eligible remote asset */}
+              {/* eslint-disable-next-line @next/next/no-img-element -- backend-hosted URL, not configured as a next/image remote pattern */}
               <img
                 src={photo}
                 alt={`Photo ${index + 1}`}

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Accordion,
   AccordionContent,
@@ -7,9 +9,16 @@ import {
 import { ProfileOnboarding } from "@/components/dashboard/profile-onboarding";
 import { RequestCard } from "@/components/dashboard/request-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
-import { reasons, requests, stats } from "@/lib/dashboard-data";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDemandes } from "@/hooks/use-demandes";
+import { stats, toRequestCard } from "@/lib/dashboard-data";
 
 export default function DashboardPage() {
+  const { data: demandes, isPending } = useDemandes();
+  const requests = (demandes ?? [])
+    .slice(0, 3)
+    .map((demande) => ({ id: demande.id, ...toRequestCard(demande) }));
+
   return (
     <>
       <DashboardHeader
@@ -64,14 +73,33 @@ export default function DashboardPage() {
                 Demandes actives
               </h2>
               <span className="text-[13px] font-semibold text-teal-700">
-                Voir toutes (4) →
+                Voir toutes ({demandes?.length ?? 0}) →
               </span>
             </div>
 
             <div className="mt-4 flex flex-col gap-3">
-              {requests.map((request) => (
-                <RequestCard key={request.title} request={request} />
-              ))}
+              {isPending ? (
+                Array.from({ length: 2 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+                  >
+                    <Skeleton className="size-11 shrink-0 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-3.5 w-28" />
+                    </div>
+                  </div>
+                ))
+              ) : requests.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-[13px] text-slate-500">
+                  Aucune demande pour le moment.
+                </p>
+              ) : (
+                requests.map((request) => (
+                  <RequestCard key={request.id} request={request} />
+                ))
+              )}
             </div>
           </div>
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Building2,
   Camera,
@@ -37,14 +37,15 @@ import {
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useUser } from "@/hooks/use-user";
 import { MAX_AVATAR_SIZE, readImageFile } from "@/lib/file-upload";
 import {
   accountTypes,
   getAccountType,
   getProfileCompletionPct,
   hasDefaultAddress,
+  isOnboardingRequirementsMet,
 } from "@/lib/onboarding";
-import { useAuthStore } from "@/lib/store/auth";
 import { api } from "@/lib/axios";
 
 const STEP_ACCOUNT_TYPE = "account-type";
@@ -70,8 +71,8 @@ const inputGroupClassName =
 
 // The business-info step only exists for Professionnel/Entreprise accounts,
 // so the flow length depends on the account type chosen in step one.
-function getStepFlow(accountTypeValue) {
-  const type = getAccountType(accountTypeValue);
+function getStepFlow(accountType) {
+  const type = getAccountType(accountType);
   const flow = [STEP_ACCOUNT_TYPE];
   if (type?.requiresRaisonSociale) flow.push(STEP_BUSINESS_INFO);
   flow.push(STEP_ADDRESS, STEP_NOTIFICATIONS);
@@ -79,12 +80,12 @@ function getStepFlow(accountTypeValue) {
 }
 
 function getInitialStep(user) {
-  if (!user?.accountType) return STEP_ACCOUNT_TYPE;
-  const type = getAccountType(user.accountType);
-  if (type?.requiresRaisonSociale && !user.raisonSociale) {
+  if (!user?.account_type) return STEP_ACCOUNT_TYPE;
+  const type = getAccountType(user.account_type);
+  if (type?.requiresRaisonSociale && !user.raison_sociale) {
     return STEP_BUSINESS_INFO;
   }
-  if (!hasDefaultAddress(user?.defaultAddress)) return STEP_ADDRESS;
+  if (!hasDefaultAddress(user)) return STEP_ADDRESS;
   return STEP_NOTIFICATIONS;
 }
 
@@ -93,7 +94,7 @@ function showValidationError(error) {
 }
 
 const accountTypeSchema = z.object({
-  accountType: z.enum(["particulier", "professionnel", "entreprise"], {
+  account_type: z.enum(["particulier", "professionnel", "entreprise"], {
     message: "Choisissez un type de compte",
   }),
 });
@@ -102,13 +103,13 @@ const accountTypeSchema = z.object({
 // fields are required depends on it.
 function getBusinessInfoSchema(type) {
   return z.object({
-    raisonSociale: type?.requiresRaisonSociale
+    raison_sociale: type?.requiresRaisonSociale
       ? z.string().trim().min(1, "La raison sociale est requise")
       : z.string().trim().optional(),
     ice: type?.requiresIce
       ? z.string().trim().min(1, "L'ICE est requis pour un compte Entreprise")
       : z.string().trim().optional(),
-    referentName: type?.requiresReferent
+    nom_du_referant: type?.requiresReferent
       ? z.string().trim().min(1, "Le nom du référent est requis")
       : z.string().trim().optional(),
   });
@@ -117,37 +118,27 @@ function getBusinessInfoSchema(type) {
 const addressSchema = z.object({
   ville: z.string().trim().min(1, "La ville est requise"),
   quartier: z.string().trim().min(1, "Le quartier est requis"),
-  adresseComplete: z.string().trim().min(1, "L'adresse complète est requise"),
+  adresse: z.string().trim().min(1, "L'adresse complète est requise"),
   etage: z.string().trim().optional(),
 });
 
 const notificationSchema = z.object({
-  notificationChannel: z.enum(["whatsapp", "email"]),
+  notification_Channel: z.enum(["whatsapp", "email"]),
 });
 
 export function ProfileOnboarding() {
-  const user = useAuthStore((state) => state.user);
-  const updateUser = useAuthStore((state) => state.updateUser);
+  const { data: user } = useUser();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(() => getInitialStep(user));
 
   const completeOnboarding = useMutation({
     mutationFn: async (patch) => {
       const { data } = await api.patch("/user", {
-        account_type: patch.accountType,
-        raison_sociale: patch.raisonSociale,
-        ice: patch.ice,
-        nom_du_referant: patch.referentName,
-        ville: patch.defaultAddress?.ville,
-        quartier: patch.defaultAddress?.quartier,
-        adresse: patch.defaultAddress?.adresseComplete,
-        etage: patch.defaultAddress?.etage,
-        notification_Channel: patch.notificationChannel,
-        avatar: patch.avatarUrl?.startsWith("data:")
-          ? undefined
-          : patch.avatarUrl,
+        ...patch,
+        avatar: patch.avatar?.startsWith("data:") ? undefined : patch.avatar,
       });
-      updateUser({ ...patch, ...data });
+      queryClient.setQueryData(["user"], data);
       return data;
     },
     onSuccess: () => {
@@ -156,7 +147,9 @@ export function ProfileOnboarding() {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Impossible de mettre à jour votre profil. Veuillez réessayer.");
+      toast.error(
+        "Impossible de mettre à jour votre profil. Veuillez réessayer.",
+      );
     },
   });
 
@@ -165,20 +158,20 @@ export function ProfileOnboarding() {
   // advancing; the final Terminer button runs the real submit below.
   const form = useForm({
     defaultValues: {
-      accountType: user?.accountType ?? "",
-      raisonSociale: user?.raisonSociale ?? "",
+      account_type: user?.account_type ?? "",
+      raison_sociale: user?.raison_sociale ?? "",
       ice: user?.ice ?? "",
-      referentName: user?.referentName ?? "",
-      ville: user?.defaultAddress?.ville ?? "",
-      quartier: user?.defaultAddress?.quartier ?? "",
-      adresseComplete: user?.defaultAddress?.adresseComplete ?? "",
-      etage: user?.defaultAddress?.etage ?? "",
-      notificationChannel: user?.notificationChannel ?? "whatsapp",
-      avatarUrl: user?.avatarUrl ?? null,
+      nom_du_referant: user?.nom_du_referant ?? "",
+      ville: user?.ville ?? "",
+      quartier: user?.quartier ?? "",
+      adresse: user?.adresse ?? "",
+      etage: user?.etage ?? "",
+      notification_Channel: user?.notification_Channel ?? "whatsapp",
+      avatar: user?.avatar ?? null,
     },
     onSubmit: async ({ value }) => {
       const accountTypeResult = accountTypeSchema.safeParse({
-        accountType: value.accountType,
+        account_type: value.account_type,
       });
       if (!accountTypeResult.success) {
         showValidationError(accountTypeResult.error);
@@ -186,11 +179,11 @@ export function ProfileOnboarding() {
       }
 
       const businessResult = getBusinessInfoSchema(
-        getAccountType(value.accountType),
+        getAccountType(value.account_type),
       ).safeParse({
-        raisonSociale: value.raisonSociale,
+        raison_sociale: value.raison_sociale,
         ice: value.ice,
-        referentName: value.referentName,
+        nom_du_referant: value.nom_du_referant,
       });
       if (!businessResult.success) {
         showValidationError(businessResult.error);
@@ -200,7 +193,7 @@ export function ProfileOnboarding() {
       const addressResult = addressSchema.safeParse({
         ville: value.ville,
         quartier: value.quartier,
-        adresseComplete: value.adresseComplete,
+        adresse: value.adresse,
         etage: value.etage,
       });
       if (!addressResult.success) {
@@ -209,7 +202,7 @@ export function ProfileOnboarding() {
       }
 
       const notificationResult = notificationSchema.safeParse({
-        notificationChannel: value.notificationChannel,
+        notification_Channel: value.notification_Channel,
       });
       if (!notificationResult.success) {
         showValidationError(notificationResult.error);
@@ -219,15 +212,14 @@ export function ProfileOnboarding() {
       completeOnboarding.mutate({
         ...accountTypeResult.data,
         ...businessResult.data,
-        defaultAddress: addressResult.data,
+        ...addressResult.data,
         ...notificationResult.data,
-        avatarUrl: value.avatarUrl,
-        onboardingCompleted: true,
+        avatar: value.avatar,
       });
     },
   });
 
-  if (!user || user.onboardingCompleted) return null;
+  if (!user || isOnboardingRequirementsMet(user)) return null;
 
   const pct = getProfileCompletionPct(user);
 
@@ -247,13 +239,13 @@ export function ProfileOnboarding() {
       toast.error(error.message);
       return;
     }
-    form.setFieldValue("avatarUrl", previewUrl);
+    form.setFieldValue("avatar", previewUrl);
 
     try {
       const formData = new FormData();
       formData.append("avatar", file);
       const { data } = await api.post("/user/avatar", formData);
-      form.setFieldValue("avatarUrl", data.avatar_url);
+      form.setFieldValue("avatar", data.avatar_url);
       toast.success("Photo de profil ajoutée.");
     } catch (error) {
       console.error(error);
@@ -263,24 +255,24 @@ export function ProfileOnboarding() {
 
   function handleContinueAccountType() {
     const result = accountTypeSchema.safeParse({
-      accountType: form.state.values.accountType,
+      account_type: form.state.values.account_type,
     });
     if (!result.success) {
       showValidationError(result.error);
       return;
     }
-    const type = getAccountType(result.data.accountType);
+    const type = getAccountType(result.data.account_type);
     setCurrentStep(
       type?.requiresRaisonSociale ? STEP_BUSINESS_INFO : STEP_ADDRESS,
     );
   }
 
   function handleContinueBusinessInfo() {
-    const type = getAccountType(form.state.values.accountType);
+    const type = getAccountType(form.state.values.account_type);
     const result = getBusinessInfoSchema(type).safeParse({
-      raisonSociale: form.state.values.raisonSociale,
+      raison_sociale: form.state.values.raison_sociale,
       ice: form.state.values.ice,
-      referentName: form.state.values.referentName,
+      nom_du_referant: form.state.values.nom_du_referant,
     });
     if (!result.success) {
       showValidationError(result.error);
@@ -293,7 +285,7 @@ export function ProfileOnboarding() {
     const result = addressSchema.safeParse({
       ville: form.state.values.ville,
       quartier: form.state.values.quartier,
-      adresseComplete: form.state.values.adresseComplete,
+      adresse: form.state.values.adresse,
       etage: form.state.values.etage,
     });
     if (!result.success) {
@@ -344,7 +336,7 @@ export function ProfileOnboarding() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="w-[calc(100%-2rem)] max-w-[520px] gap-0 rounded-[18px] border-slate-200/80 bg-white p-6 shadow-[0_30px_80px_rgba(12,55,55,0.22)] sm:max-w-[520px] max-h-[85vh] overflow-y-auto">
-          <form.Subscribe selector={(state) => state.values.accountType}>
+          <form.Subscribe selector={(state) => state.values.account_type}>
             {(accountType) => {
               const flow = getStepFlow(accountType);
               const activeIndex = flow.indexOf(currentStep);
@@ -390,7 +382,7 @@ export function ProfileOnboarding() {
                   >
                     {currentStep === STEP_ACCOUNT_TYPE && (
                       <>
-                        <form.Field name="accountType">
+                        <form.Field name="account_type">
                           {(field) => (
                             <RadioGroup
                               value={field.state.value}
@@ -457,11 +449,11 @@ export function ProfileOnboarding() {
 
                     {currentStep === STEP_BUSINESS_INFO && (
                       <>
-                        <form.Field name="raisonSociale">
+                        <form.Field name="raison_sociale">
                           {(field) => (
                             <div className="flex flex-col gap-1.5">
                               <Label
-                                htmlFor="raisonSociale"
+                                htmlFor="raison_sociale"
                                 className="text-[13px] text-slate-700"
                               >
                                 Raison sociale
@@ -471,7 +463,7 @@ export function ProfileOnboarding() {
                                   <Building2 />
                                 </InputGroupAddon>
                                 <InputGroupInput
-                                  id="raisonSociale"
+                                  id="raison_sociale"
                                   value={field.state.value}
                                   onBlur={field.handleBlur}
                                   onChange={(e) =>
@@ -514,11 +506,11 @@ export function ProfileOnboarding() {
 
                         {businessAccountType?.requiresReferent && (
                           <>
-                            <form.Field name="referentName">
+                            <form.Field name="nom_du_referant">
                               {(field) => (
                                 <div className="flex flex-col gap-1.5">
                                   <Label
-                                    htmlFor="referentName"
+                                    htmlFor="nom_du_referant"
                                     className="text-[13px] text-slate-700"
                                   >
                                     Nom du référent
@@ -528,7 +520,7 @@ export function ProfileOnboarding() {
                                       <User />
                                     </InputGroupAddon>
                                     <InputGroupInput
-                                      id="referentName"
+                                      id="nom_du_referant"
                                       value={field.state.value}
                                       onBlur={field.handleBlur}
                                       onChange={(e) =>
@@ -618,11 +610,11 @@ export function ProfileOnboarding() {
                           )}
                         </form.Field>
 
-                        <form.Field name="adresseComplete">
+                        <form.Field name="adresse">
                           {(field) => (
                             <div className="flex flex-col gap-1.5">
                               <Label
-                                htmlFor="adresseComplete"
+                                htmlFor="adresse"
                                 className="text-[13px] text-slate-700"
                               >
                                 Adresse complète
@@ -632,7 +624,7 @@ export function ProfileOnboarding() {
                                   <MapPin />
                                 </InputGroupAddon>
                                 <InputGroupInput
-                                  id="adresseComplete"
+                                  id="adresse"
                                   placeholder="N°, rue, résidence..."
                                   value={field.state.value}
                                   onBlur={field.handleBlur}
@@ -688,7 +680,7 @@ export function ProfileOnboarding() {
 
                     {currentStep === STEP_NOTIFICATIONS && (
                       <>
-                        <form.Field name="avatarUrl">
+                        <form.Field name="avatar">
                           {(field) => (
                             <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
                               <Avatar className="size-14">
@@ -723,7 +715,7 @@ export function ProfileOnboarding() {
                           )}
                         </form.Field>
 
-                        <form.Field name="notificationChannel">
+                        <form.Field name="notification_Channel">
                           {(field) => (
                             <div className="flex flex-col gap-1.5">
                               <Label className="text-[13px] text-slate-700">
