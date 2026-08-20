@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   Coins,
@@ -11,6 +12,12 @@ import {
   Unlock,
   Wallet,
 } from "lucide-react";
+import { ProviderOnboardingBanner } from "@/components/dashboard/pro/provider-onboarding-banner";
+import {
+  ProviderOnboardingModal,
+  computeOnboardingPct,
+  initialProviderOnboardingData,
+} from "@/components/dashboard/pro/provider-onboarding-modal";
 import { StatCard } from "@/components/dashboard/shared/stat-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
@@ -36,6 +43,19 @@ const urgencyLabels = {
 
 export default function ProDashboardPage() {
   const { data: user } = useUser();
+
+  // TODO: replace with GET /api/provider/onboarding — status and formData
+  // both come from the backend once onboarding is wired up.
+  const [onboardingStatus, setOnboardingStatus] = useState("blocking");
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [onboardingData, setOnboardingData] = useState(
+    initialProviderOnboardingData,
+  );
+  const onboardingProgress = computeOnboardingPct(onboardingData);
+
+  function updateOnboardingField(key, value) {
+    setOnboardingData((prev) => ({ ...prev, [key]: value }));
+  }
 
   const stats = [
     {
@@ -88,6 +108,12 @@ export default function ProDashboardPage() {
       />
 
       <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
+        <ProviderOnboardingBanner
+          status={onboardingStatus}
+          progress={onboardingProgress}
+          onOpenModal={() => setOnboardingOpen(true)}
+        />
+
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
           {stats.map((stat) => (
             <StatCard key={stat.label} {...stat} />
@@ -243,6 +269,14 @@ export default function ProDashboardPage() {
           </div>
         </div>
       </div>
+
+      <ProviderOnboardingModal
+        open={onboardingOpen}
+        onOpenChange={setOnboardingOpen}
+        formData={onboardingData}
+        updateField={updateOnboardingField}
+        onFinish={() => setOnboardingStatus("pending_review")}
+      />
     </>
   );
 }
