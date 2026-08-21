@@ -63,7 +63,7 @@ function PublierPageContent() {
   const [currentStep, setCurrentStep] = useState(STEP_CATEGORY);
   const [draft, setDraft] = useState(() => ({
     category: "",
-    subcategory: "",
+    // subcategory: "", // temporarily disabled — see step-category.jsx
     propertyType: "",
     qualification: {},
     photos: [],
@@ -85,7 +85,7 @@ function PublierPageContent() {
     setHydratedFor(editDemande.id);
     setDraft({
       category: editDemande.category,
-      subcategory: editDemande.subcategory,
+      // subcategory: editDemande.subcategory, // temporarily disabled — see step-category.jsx
       propertyType: editDemande.property_type ?? "",
       qualification: editDemande.qualification ?? {},
       photos: editDemande.photos ?? [],
@@ -117,7 +117,7 @@ function PublierPageContent() {
     mutationFn: async (listing) => {
       const payload = {
         category: listing.category,
-        subcategory: listing.subcategory,
+        // subcategory: listing.subcategory, // temporarily disabled — see step-category.jsx
         property_type: listing.propertyType,
         qualification: listing.qualification,
         photos: listing.photos,
@@ -151,7 +151,7 @@ function PublierPageContent() {
         setDraft((d) => ({
           ...d,
           category: "",
-          subcategory: "",
+          // subcategory: "", // temporarily disabled — see step-category.jsx
           propertyType: "",
           qualification: {},
           photos: [],

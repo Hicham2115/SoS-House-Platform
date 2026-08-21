@@ -32,9 +32,10 @@ function RecapRow({ label, value }) {
 
 export function StepRecap({ draft, isPending, isEditing, onSubmit }) {
   const category = getCategory(draft.category);
-  const subcategory = category?.subcategories.find(
-    (s) => s.value === draft.subcategory,
-  );
+  // Subcategory temporarily disabled — see step-category.jsx
+  // const subcategory = category?.subcategories.find(
+  //   (s) => s.value === draft.subcategory,
+  // );
   const propertyType = propertyTypes.find(
     (t) => t.value === draft.propertyType,
   );
@@ -51,7 +52,7 @@ export function StepRecap({ draft, isPending, isEditing, onSubmit }) {
         </div>
         <div className="divide-y divide-slate-100">
           <RecapRow label="Catégorie" value={category?.label} />
-          <RecapRow label="Sous-catégorie" value={subcategory?.label} />
+          {/* <RecapRow label="Sous-catégorie" value={subcategory?.label} /> */}
           <RecapRow label="Type de bien" value={propertyType?.label} />
           {fields.map((field) => (
             <RecapRow

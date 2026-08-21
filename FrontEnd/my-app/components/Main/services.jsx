@@ -14,8 +14,16 @@ import {
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { ZelligeCorner } from "@/components/Main/zellige-corner";
 import { useAuthDialogStore } from "@/lib/store/auth-dialog";
+import { cn } from "@/lib/utils";
+import { categories } from "@/lib/professions";
 import plombier from "@/app/assets/services/plombier.jpg";
 import electricity from "@/app/assets/services/electricity.jpg";
 import serrurerie from "@/app/assets/services/serrurerie.jpg";
@@ -68,8 +76,61 @@ const services = [
   },
 ];
 
+const allServices = [...services, ...categories.map((title) => ({ title }))];
+const INITIAL_COUNT = 8;
+
+function ServiceCard({ Icon, title, description, image }) {
+  return (
+    <div className="group w-full overflow-hidden rounded-2xl border border-slate-900/5 bg-white shadow-[0_12px_34px_rgba(69,64,112,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(69,64,112,0.16)]">
+      <div className="relative h-[170px] w-full overflow-hidden bg-slate-100">
+        {image && (
+          <>
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-14 bg-linear-to-t from-black/25 to-transparent" />
+          </>
+        )}
+      </div>
+      <div className="p-5">
+        <div className="flex items-center gap-3">
+          {Icon && (
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-teal-800 text-white shadow-[0_8px_18px_rgba(15,122,117,0.4)] ring-4 ring-white transition-transform duration-300 group-hover:scale-105">
+              <Icon className="size-5" strokeWidth={2} />
+            </span>
+          )}
+          <h3 className="text-[17px] font-bold text-slate-950 transition-colors group-hover:text-teal-800">
+            {title}
+          </h3>
+        </div>
+        <div className="mt-3 flex items-end justify-between gap-3">
+          {description && (
+            <p className="text-[14px] leading-[1.5] text-slate-600">
+              {description}
+            </p>
+          )}
+          <span
+            className={cn(
+              "flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:translate-x-0.5 group-hover:bg-teal-800 group-hover:text-white",
+              !description && "ml-auto",
+            )}
+          >
+            <ChevronRight className="size-4" strokeWidth={2.2} />
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Services() {
   const openSignUp = useAuthDialogStore((state) => state.openSignUp);
+  const visibleServices = allServices.slice(0, INITIAL_COUNT);
+  const restServices = allServices.slice(INITIAL_COUNT);
   return (
     <section
       id="services"
@@ -106,47 +167,39 @@ export function Services() {
           <p className="mt-6 text-[17px] leading-[1.7] text-slate-800 font-medium">
             Trouvez rapidement le bon artisan près de chez vous,
             <br />
-            partout au Maroc, pour tous vos besoins du quotidien.
+            partout à Casablanca, pour tous vos besoins du quotidien.
           </p>
         </div>
 
-        <div className="mt-10 flex flex-wrap justify-center gap-6">
-          {services.map((service) => (
-            <div
-              key={service.title}
-              className="group w-full overflow-hidden rounded-2xl border border-slate-900/5 bg-white shadow-[0_12px_34px_rgba(69,64,112,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(69,64,112,0.16)] sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
-            >
-              <div className="relative h-[170px] w-full overflow-hidden">
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  fill
-                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-x-0 bottom-0 h-14 bg-linear-to-t from-black/25 to-transparent" />
-              </div>
-              <div className="p-5">
-                <div className="flex items-center gap-3">
-                  <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-teal-800 text-white shadow-[0_8px_18px_rgba(15,122,117,0.4)] ring-4 ring-white transition-transform duration-300 group-hover:scale-105">
-                    <service.Icon className="size-5" strokeWidth={2} />
-                  </span>
-                  <h3 className="text-[17px] font-bold text-slate-950 transition-colors group-hover:text-teal-800">
-                    {service.title}
-                  </h3>
-                </div>
-                <div className="mt-3 flex items-end justify-between gap-3">
-                  <p className="text-[14px] leading-[1.5] text-slate-600">
-                    {service.description}
-                  </p>
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-300 group-hover:translate-x-0.5 group-hover:bg-teal-800 group-hover:text-white">
-                    <ChevronRight className="size-4" strokeWidth={2.2} />
-                  </span>
-                </div>
-              </div>
-            </div>
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {visibleServices.map((service) => (
+            <ServiceCard key={service.title} {...service} />
           ))}
         </div>
+
+        {restServices.length > 0 && (
+          <Accordion className="mt-1">
+            <AccordionItem value="more-services" className="border-none">
+              <AccordionContent className="pb-0">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                  {restServices.map((service) => (
+                    <ServiceCard key={service.title} {...service} />
+                  ))}
+                </div>
+              </AccordionContent>
+              <div className="mt-6 flex justify-center">
+                <AccordionTrigger className="w-fit rounded-full border border-teal-800/20 px-6 py-2.5 text-[14px] font-bold text-teal-800 hover:bg-teal-50 hover:no-underline">
+                  <span className="group-aria-expanded/accordion-trigger:hidden">
+                    Voir plus de services
+                  </span>
+                  <span className="hidden group-aria-expanded/accordion-trigger:inline">
+                    Voir moins
+                  </span>
+                </AccordionTrigger>
+              </div>
+            </AccordionItem>
+          </Accordion>
+        )}
 
         <div className="mt-6 flex flex-col gap-5 rounded-[20px] bg-[#ecebfa] px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10">
           <div className="flex items-center gap-4">

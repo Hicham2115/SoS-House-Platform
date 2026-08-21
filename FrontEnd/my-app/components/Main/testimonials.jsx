@@ -169,7 +169,7 @@ export function Testimonials() {
           <h2 className="mt-6 text-[31px] font-bold leading-[1.2] tracking-[-0.04em] text-slate-950 sm:text-[40px] lg:text-[46px]">
             Des avis liés à de vrais travaux.
             <br />
-            De vrais clients partout au Maroc
+            De vrais clients partout à Casablanca
             <span className="text-teal-600">.</span>
           </h2>
           <p className="mt-6 text-[17px] leading-[1.7] text-slate-800 font-medium">
@@ -262,7 +262,7 @@ export function Testimonials() {
               <p className="text-[17px] font-bold text-slate-950">
                 Plus de{" "}
                 <span className="text-teal-800">2 800 clients satisfaits</span>{" "}
-                partout au Maroc
+                partout à Casablanca
               </p>
               <p className="mt-1 text-[14px] text-slate-600">
                 Des travaux réalisés, des factures émises, des clients rassurés.

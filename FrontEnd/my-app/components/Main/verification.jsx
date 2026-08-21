@@ -53,7 +53,7 @@ function IdentityPreview() {
             className="size-3.5 shrink-0 text-teal-600"
             strokeWidth={2.2}
           />
-          Maroc
+          Casablanca
         </p>
       </div>
       <VerifiedBadge />

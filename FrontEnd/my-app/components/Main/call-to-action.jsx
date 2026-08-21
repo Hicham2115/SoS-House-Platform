@@ -41,7 +41,7 @@ export function CallToAction() {
           <div className="flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-14 lg:py-16">
             <div className="inline-flex w-fit items-center gap-2 text-sm font-bold tracking-[0.06em] text-teal-800">
               <MapPin className="size-4" />
-              PARTOUT AU MAROC, ON EST LÀ POUR VOUS
+              PARTOUT À CASABLANCA, ON EST LÀ POUR VOUS
             </div>
             <h2 className="mt-6 text-[34px] font-bold leading-[1.15] text-slate-950 sm:text-[42px] lg:text-[46px]">
               Besoin d&apos;un artisan en toute{" "}
@@ -111,7 +111,7 @@ export function CallToAction() {
               <p className="font-bold text-slate-950">Besoin d&apos;aide ?</p>
               <p className="text-sm text-slate-600">
                 Notre équipe est disponible 7j/7 pour vous
-                accompagner, partout au Maroc.
+                accompagner, partout à Casablanca.
               </p>
             </div>
           </div>

@@ -1,8 +1,11 @@
+"use client";
 import Link from "next/link";
-import { ArrowRight, House, SearchX } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, House, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ZelligeCorner } from "@/components/Main/zellige-corner";
 export default function NotFound() {
+  const router = useRouter();
   return (
     <section className="relative flex flex-1 items-center overflow-hidden bg-[#f4f3fb] px-4 py-20 sm:px-8">
       <ZelligeCorner
@@ -28,8 +31,8 @@ export default function NotFound() {
         </h1>
         <p className="mt-4 text-[16px] leading-[1.7] text-slate-600">
           La page que vous cherchez n&apos;existe pas ou a été déplacée.
-          Retournez à l&apos;accueil pour trouver un artisan vérifié partout au
-          Maroc.
+          Retournez à l&apos;accueil pour trouver un artisan vérifié partout à
+          Casablanca.
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
           <Button
@@ -41,12 +44,11 @@ export default function NotFound() {
             Retour à l&apos;accueil
           </Button>
           <Button
-            render={<Link href="/services" />}
-            nativeButton={false}
+            onClick={() => router.back()}
             variant="outline"
             className="h-[56px] rounded-xl border-teal-800 px-7 text-[15px] font-bold text-teal-800 transition hover:bg-teal-50"
           >
-            Voir les services <ArrowRight className="size-5" />
+            <ArrowLeft className="size-5" /> Retour
           </Button>
         </div>
       </div>

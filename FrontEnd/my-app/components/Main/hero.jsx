@@ -69,10 +69,10 @@ function ProviderCard() {
             </p>
             <ShieldCheck className="size-7 shrink-0 fill-teal-600 text-white" />
           </div>
-          <p className="mt-1 text-sm text-slate-600">Plombier</p>
+          <p className="mt-1 text-sm text-slate-600">Artisan</p>
           <p className="mt-1 flex items-center gap-1 text-sm text-slate-500">
             <MapPin className="size-3.5" />
-            Maroc
+            Casablanca
           </p>
         </div>
       </div>
@@ -181,7 +181,7 @@ function AvatarsRow() {
         <span className="font-semibold text-slate-900">
           +2 500 travaux réalisés
         </span>{" "}
-        partout au Maroc
+        partout à Casablanca
         <br />
         par des{" "}
         <span className="font-medium text-teal-800 underline decoration-teal-400 decoration-2 underline-offset-4">
@@ -215,7 +215,7 @@ export function Hero() {
             <span className="flex size-8 items-center justify-center rounded-full bg-teal-50">
               <MapPin className="size-[18px]" />
             </span>
-            PARTOUT AU MAROC
+            PARTOUT À CASABLANCA
           </div>
           <h1 className="mt-5 max-w-[680px] text-[32px] font-bold text-slate-950 sm:text-[44px] lg:text-[50px]">
             Un Artisan Chez Vous<span className="text-teal-800">.</span>

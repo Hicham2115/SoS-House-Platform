@@ -22,12 +22,6 @@ import { useAuthDialogStore } from "@/lib/store/auth-dialog";
 import { ZelligeCorner } from "@/components/Main/zellige-corner";
 const benefits = [
   {
-    Icon: MessageCircle,
-    title: "Recevez vos demandes sur WhatsApp",
-    description:
-      "Dès qu'une demande correspond à votre catégorie et votre zone, vous êtes prévenu là où vous êtes déjà.",
-  },
-  {
     Icon: Users,
     title: "Débloquez les demandes avec vos crédits",
     description:
@@ -55,11 +49,11 @@ const benefits = [
     Icon: Headset,
     title: "Un support local, humain et réactif",
     description:
-      "Une équipe basée au Maroc, disponible quand vous avez besoin d'aide.",
+      "Une équipe basée à Casablanca, disponible quand vous avez besoin d'aide.",
   },
 ];
 const stats = [
-  { Icon: Users, value: "+2 500", label: "artisans vérifiés partout au Maroc" },
+  { Icon: Users, value: "+2 500", label: "artisans vérifiés partout à Casablanca" },
   { Icon: FileText, value: "+18 000", label: "demandes traitées chaque mois" },
   { Icon: Star, value: "4,8 / 5", label: "note moyenne des artisans" },
   {
@@ -107,8 +101,8 @@ export function ForArtisans() {
             </h2>
 
             <p className="mt-5 max-w-[650px] text-[17px] font-medium leading-[1.7] text-slate-700">
-              SOS House vous met en relation avec des clients sérieux partout
-              au Maroc. Travaillez plus, soyez payé{" "}
+              SOS House vous met en relation avec des clients sérieux partout à
+              Casablanca. Travaillez plus, soyez payé{" "}
               <span className="font-bold text-teal-800">à temps</span> et
               construisez votre{" "}
               <span className="font-bold text-teal-800">réputation</span>.
@@ -149,7 +143,7 @@ export function ForArtisans() {
 
             <div className="absolute left-0 top-1/2 z-10 w-[78%] max-w-[320px] -translate-x-3 -translate-y-1/2 rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_20px_45px_rgba(69,64,112,0.16)] sm:-translate-x-12 lg:w-[320px]">
               <Quote
-                className="size-7 fill-teal-100 text-teal-100"
+                className="size-7 fill-teal-600 text-teal-100"
                 strokeWidth={0}
               />
               <p className="mt-3 text-[16px] leading-[1.7] text-slate-700">
@@ -214,14 +208,13 @@ export function ForArtisans() {
           </span>
           <div>
             <p className="text-[16px] font-bold text-slate-950">
-              Le module Équipes : facturez pour ceux qui n&apos;ont pas
-              encore leur propre statut
+              Le module Équipes : facturez pour ceux qui n&apos;ont pas encore
+              leur propre statut
             </p>
             <p className="mt-1 text-[14px] leading-[1.6] text-slate-600">
-              Vous êtes une société vérifiée ? Rattachez jusqu&apos;à 5
-              artisans indépendants à votre facture et à votre
-              responsabilité, le temps qu&apos;ils formalisent leur propre
-              statut.
+              Vous êtes une société vérifiée ? Rattachez jusqu&apos;à 5 artisans
+              indépendants à votre facture et à votre responsabilité, le temps
+              qu&apos;ils formalisent leur propre statut.
             </p>
           </div>
         </div>

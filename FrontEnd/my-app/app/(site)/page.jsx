@@ -15,7 +15,7 @@ export default function Home() {
       <Verification />
       <ForArtisans />
       <Services />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <CallToAction />
       <AuthDialog />
     </>

@@ -7,14 +7,18 @@ import { toast } from "sonner";
 import { z } from "zod";
 import {
   BadgeCheck,
+  Briefcase,
+  Building2,
   ChevronLeft,
   ChevronRight,
   Eye,
   EyeOff,
+  IdCard,
   Lock,
   Mail,
   Phone,
   ShieldCheck,
+  Upload,
   User,
   Wrench,
 } from "lucide-react";
@@ -32,10 +36,18 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/axios";
 import { useAuthStore } from "@/lib/store/auth";
 import { useAuthDialogStore } from "@/lib/store/auth-dialog";
+import { professions } from "@/lib/professions";
 import { useRouter } from "next/navigation";
 
 const inputGroupClassName =
@@ -45,12 +57,35 @@ const clientSignUpSchema = z.object({
   fullName: z.string().trim().min(1, "Le nom complet est requis"),
   email: z.string().trim().email("Adresse e-mail invalide"),
   password: z.string().min(8, "8 caractères minimum"),
-  phone: z.string().trim().optional(),
+  phone: z.string().trim().min(1, "Le téléphone est requis"),
 });
 
 const artisanSignUpSchema = clientSignUpSchema.extend({
   profession: z.string().trim().min(1, "Le métier est requis"),
 });
+
+// Provider verification tier collected at signup — mirrors the backend's
+// `niveau` column (n0 particulier / n1 auto-entrepreneur / n2 société).
+const niveauChoices = [
+  {
+    value: "n0",
+    Icon: User,
+    title: "Particulier",
+    description: "Activité informelle, sans statut déclaré.",
+  },
+  {
+    value: "n1",
+    Icon: Briefcase,
+    title: "Auto-entrepreneur",
+    description: "Statut auto-entrepreneur déclaré.",
+  },
+  {
+    value: "n2",
+    Icon: Building2,
+    title: "Société",
+    description: "Entreprise ou société enregistrée.",
+  },
+];
 
 const signInSchema = z.object({
   email: z.string().trim().email("Adresse e-mail invalide"),
@@ -84,6 +119,22 @@ const trustBadges = [
   { Icon: Lock, label: "Vos données sont sécurisées" },
 ];
 
+function FileField({ label, file, onChange }) {
+  return (
+    <label className="flex h-12 w-full cursor-pointer items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3 text-[14px] text-slate-600 transition hover:border-teal-600">
+      <Upload className="size-4 shrink-0 text-slate-400" />
+      <span className="flex-1 truncate">{file ? file.name : label}</span>
+      {file && <BadgeCheck className="size-4 shrink-0 text-teal-600" />}
+      <input
+        type="file"
+        accept="image/*,.pdf"
+        className="hidden"
+        onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+      />
+    </label>
+  );
+}
+
 export function AuthDialog() {
   const open = useAuthDialogStore((state) => state.open);
   const mode = useAuthDialogStore((state) => state.mode);
@@ -92,7 +143,10 @@ export function AuthDialog() {
   const setOpen = useAuthDialogStore((state) => state.setOpen);
   const setMode = useAuthDialogStore((state) => state.setMode);
   const selectRole = useAuthDialogStore((state) => state.selectRole);
-  const backToRole = useAuthDialogStore((state) => state.backToRole);
+  const selectNiveau = useAuthDialogStore((state) => state.selectNiveau);
+  const goToDocuments = useAuthDialogStore((state) => state.goToDocuments);
+  const back = useAuthDialogStore((state) => state.back);
+  const resetToRole = useAuthDialogStore((state) => state.resetToRole);
   const setToken = useAuthStore((state) => state.setToken);
   const [showPassword, setShowPassword] = useState(false);
   const openSignIn = useAuthDialogStore((state) => state.openSignIn);
@@ -106,6 +160,14 @@ export function AuthDialog() {
       password: "",
       phone: "",
       profession: "",
+      niveau: "",
+      rc: "",
+      secteurActivite: "",
+      nomCommercial: "",
+      carteAutoEntrepreneur: null,
+      cinRecto: null,
+      cinVerso: null,
+      selfie: null,
     },
     onSubmit: async ({ value }) => {
       const schema =
@@ -118,15 +180,60 @@ export function AuthDialog() {
         return;
       }
 
+      const needsDocuments = role === "artisan" && value.niveau !== "n0";
+      if (role === "artisan") {
+        if (!value.niveau) {
+          toast.error("Choisissez votre statut.");
+          return;
+        }
+        if (needsDocuments && (!value.cinRecto || !value.cinVerso || !value.selfie)) {
+          toast.error("Merci d'ajouter votre CIN (recto/verso) et un selfie.");
+          return;
+        }
+        if (value.niveau === "n1" && !value.carteAutoEntrepreneur) {
+          toast.error("Merci d'ajouter votre carte auto-entrepreneur.");
+          return;
+        }
+        if (
+          value.niveau === "n2" &&
+          (!value.rc.trim() || !value.secteurActivite.trim() || !value.nomCommercial.trim())
+        ) {
+          toast.error(
+            "Merci de renseigner le RC, le secteur d'activité et le nom commercial.",
+          );
+          return;
+        }
+      }
+
       try {
-        await api.post("/users", {
-          name: parsed.data.fullName,
-          email: parsed.data.email,
-          password: parsed.data.password,
-          phone: parsed.data.phone,
-          profession: parsed.data.profession,
-          role,
-        });
+        const formData = new FormData();
+        formData.append("name", parsed.data.fullName);
+        formData.append("email", parsed.data.email);
+        formData.append("password", parsed.data.password);
+        formData.append("phone", parsed.data.phone);
+        formData.append("role", role);
+        if (role === "artisan") {
+          formData.append("profession", parsed.data.profession);
+          formData.append("niveau", value.niveau);
+          if (value.niveau === "n1") {
+            formData.append(
+              "carte_auto_entrepreneur",
+              value.carteAutoEntrepreneur,
+            );
+          }
+          if (value.niveau === "n2") {
+            formData.append("rc", value.rc);
+            formData.append("secteur_activite", value.secteurActivite);
+            formData.append("nom_commercial", value.nomCommercial);
+          }
+          if (needsDocuments) {
+            formData.append("cin_recto", value.cinRecto);
+            formData.append("cin_verso", value.cinVerso);
+            formData.append("selfie", value.selfie);
+          }
+        }
+
+        await api.post("/users", formData);
         toast.success("Compte créé avec succès.");
         signUpForm.reset();
         openSignIn();
@@ -136,6 +243,18 @@ export function AuthDialog() {
       }
     },
   });
+
+  function validateBasics() {
+    const schema = role === "artisan" ? artisanSignUpSchema : clientSignUpSchema;
+    const parsed = schema.safeParse(signUpForm.state.values);
+    if (!parsed.success) {
+      toast.error(
+        parsed.error.issues[0]?.message ?? "Veuillez vérifier les champs.",
+      );
+      return false;
+    }
+    return true;
+  }
 
   const signInForm = useForm({
     defaultValues: { email: "", password: "" },
@@ -191,10 +310,10 @@ export function AuthDialog() {
         className="w-[calc(100%-2rem)] max-w-[580px] sm:max-w-[580px] gap-0 rounded-[18px] border-slate-200/80 bg-white p-7 shadow-[0_30px_80px_rgba(12,55,55,0.22)] sm:p-8"
       >
         <div className="flex items-center gap-3">
-          {step === "form" && (
+          {(step === "form" || step === "niveau" || step === "documents") && (
             <button
               type="button"
-              onClick={backToRole}
+              onClick={back}
               aria-label="Retour"
               className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
             >
@@ -208,13 +327,17 @@ export function AuthDialog() {
           <DialogTitle className="text-2xl font-bold text-slate-950">
             {step === "role"
               ? "Bienvenue sur SOS House"
-              : mode === "signup"
-                ? role === "artisan"
-                  ? "Créer mon compte artisan"
-                  : "Créer un compte"
-                : "Se connecter"}
+              : step === "niveau"
+                ? "Quel est votre statut ?"
+                : step === "documents"
+                  ? "Documents de vérification"
+                  : mode === "signup"
+                    ? role === "artisan"
+                      ? "Créer mon compte artisan"
+                      : "Créer un compte"
+                    : "Se connecter"}
           </DialogTitle>
-          {step === "role" && (
+          {(step === "role" || step === "niveau") && (
             <span className="h-1 w-10 rounded-full bg-teal-600" />
           )}
           <DialogDescription className="text-[15px] text-slate-600">
@@ -226,6 +349,10 @@ export function AuthDialog() {
                 </span>{" "}
                 pour continuer.
               </>
+            ) : step === "niveau" ? (
+              "Cela détermine les documents à fournir pour votre vérification."
+            ) : step === "documents" ? (
+              "Dernière étape avant de recevoir des demandes."
             ) : mode === "signup" ? (
               role === "artisan" ? (
                 "Recevez des demandes de clients vérifiés près de chez vous."
@@ -294,12 +421,173 @@ export function AuthDialog() {
               ))}
             </div>
           </>
+        ) : step === "niveau" ? (
+          <div className="mt-6 flex flex-col gap-3">
+            {niveauChoices.map(({ value, Icon, title, description }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => {
+                  signUpForm.setFieldValue("niveau", value);
+                  selectNiveau();
+                }}
+                className="group flex cursor-pointer items-center gap-4 rounded-2xl border border-l-4 border-l-teal-600 border-slate-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.1)]"
+              >
+                <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-800">
+                  <Icon className="size-5" strokeWidth={1.8} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[15px] font-bold text-slate-950">
+                    {title}
+                  </p>
+                  <p className="mt-0.5 text-[13px] leading-[1.5] text-slate-600">
+                    {description}
+                  </p>
+                </div>
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-teal-600 text-white transition group-hover:translate-x-0.5">
+                  <ChevronRight className="size-4" />
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : step === "documents" ? (
+          <form
+            className="mt-6 flex flex-col gap-3.5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              signUpForm.handleSubmit();
+            }}
+          >
+            <signUpForm.Subscribe selector={(state) => state.values.niveau}>
+              {(niveau) => (
+                <>
+                  {niveau === "n2" && (
+                    <>
+                      <signUpForm.Field name="rc">
+                        {(field) => (
+                          <InputGroup className={inputGroupClassName}>
+                            <InputGroupAddon>
+                              <IdCard />
+                            </InputGroupAddon>
+                            <InputGroupInput
+                              placeholder="RC (registre de commerce)"
+                              value={field.state.value}
+                              onBlur={field.handleBlur}
+                              onChange={(e) =>
+                                field.handleChange(e.target.value)
+                              }
+                            />
+                          </InputGroup>
+                        )}
+                      </signUpForm.Field>
+
+                      <signUpForm.Field name="secteurActivite">
+                        {(field) => (
+                          <InputGroup className={inputGroupClassName}>
+                            <InputGroupAddon>
+                              <Briefcase />
+                            </InputGroupAddon>
+                            <InputGroupInput
+                              placeholder="Secteur d'activité"
+                              value={field.state.value}
+                              onBlur={field.handleBlur}
+                              onChange={(e) =>
+                                field.handleChange(e.target.value)
+                              }
+                            />
+                          </InputGroup>
+                        )}
+                      </signUpForm.Field>
+
+                      <signUpForm.Field name="nomCommercial">
+                        {(field) => (
+                          <InputGroup className={inputGroupClassName}>
+                            <InputGroupAddon>
+                              <Building2 />
+                            </InputGroupAddon>
+                            <InputGroupInput
+                              placeholder="Nom commercial"
+                              value={field.state.value}
+                              onBlur={field.handleBlur}
+                              onChange={(e) =>
+                                field.handleChange(e.target.value)
+                              }
+                            />
+                          </InputGroup>
+                        )}
+                      </signUpForm.Field>
+                    </>
+                  )}
+
+                  {niveau === "n1" && (
+                    <signUpForm.Field name="carteAutoEntrepreneur">
+                      {(field) => (
+                        <FileField
+                          label="Carte auto-entrepreneur"
+                          file={field.state.value}
+                          onChange={field.handleChange}
+                        />
+                      )}
+                    </signUpForm.Field>
+                  )}
+
+                  <signUpForm.Field name="cinRecto">
+                    {(field) => (
+                      <FileField
+                        label="CIN — recto"
+                        file={field.state.value}
+                        onChange={field.handleChange}
+                      />
+                    )}
+                  </signUpForm.Field>
+
+                  <signUpForm.Field name="cinVerso">
+                    {(field) => (
+                      <FileField
+                        label="CIN — verso"
+                        file={field.state.value}
+                        onChange={field.handleChange}
+                      />
+                    )}
+                  </signUpForm.Field>
+
+                  <signUpForm.Field name="selfie">
+                    {(field) => (
+                      <FileField
+                        label="Selfie"
+                        file={field.state.value}
+                        onChange={field.handleChange}
+                      />
+                    )}
+                  </signUpForm.Field>
+                </>
+              )}
+            </signUpForm.Subscribe>
+
+            <Button
+              type="submit"
+              className="mt-2 h-[52px] justify-center rounded-xl bg-[#ffa514] text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
+            >
+              Créer mon compte artisan
+            </Button>
+          </form>
         ) : mode === "signup" ? (
           <form
             className="mt-6 flex flex-col gap-3.5"
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
+
+              if (role === "artisan") {
+                const niveau = signUpForm.state.values.niveau;
+                if (niveau && niveau !== "n0") {
+                  if (!validateBasics()) return;
+                  goToDocuments();
+                  return;
+                }
+              }
+
               signUpForm.handleSubmit();
             }}
           >
@@ -322,17 +610,24 @@ export function AuthDialog() {
             {role === "artisan" && (
               <signUpForm.Field name="profession">
                 {(field) => (
-                  <InputGroup className={inputGroupClassName}>
-                    <InputGroupAddon>
-                      <Wrench />
-                    </InputGroupAddon>
-                    <InputGroupInput
-                      placeholder="Métier (ex : Plombier)"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                  </InputGroup>
+                  <Select
+                    value={field.state.value}
+                    onValueChange={(value) => field.handleChange(value)}
+                  >
+                    <SelectTrigger className="h-12 w-full rounded-xl border-slate-200 bg-slate-50/70 px-3 data-[state=open]:border-teal-600">
+                      <span className="flex flex-1 items-center gap-2.5 overflow-hidden text-slate-700">
+                        <Wrench className="size-4 shrink-0 text-slate-500" />
+                        <SelectValue placeholder="Métier (ex : Plombier)" />
+                      </span>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {professions.map((profession) => (
+                        <SelectItem key={profession} value={profession}>
+                          {profession}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               </signUpForm.Field>
             )}
@@ -380,7 +675,7 @@ export function AuthDialog() {
                   </InputGroupAddon>
                   <InputGroupInput
                     type="tel"
-                    placeholder="Téléphone (optionnel)"
+                    placeholder="Téléphone"
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
@@ -393,9 +688,17 @@ export function AuthDialog() {
               type="submit"
               className="mt-2 h-[52px] justify-center rounded-xl bg-[#ffa514] text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
             >
-              {role === "artisan"
-                ? "Créer mon compte artisan"
-                : "Créer mon compte"}
+              {role === "artisan" ? (
+                <signUpForm.Subscribe selector={(state) => state.values.niveau}>
+                  {(niveau) =>
+                    niveau && niveau !== "n0"
+                      ? "Continuer"
+                      : "Créer mon compte artisan"
+                  }
+                </signUpForm.Subscribe>
+              ) : (
+                "Créer mon compte"
+              )}
             </Button>
           </form>
         ) : (
@@ -472,7 +775,7 @@ export function AuthDialog() {
                   className="cursor-pointer font-semibold text-teal-800 hover:text-teal-800"
                   onClick={() => {
                     setMode("signup");
-                    backToRole();
+                    resetToRole();
                   }}
                 >
                   Créer un compte

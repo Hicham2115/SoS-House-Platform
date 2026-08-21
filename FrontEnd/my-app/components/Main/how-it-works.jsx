@@ -220,7 +220,7 @@ export function HowItWorks() {
             <span className="text-teal-600">.</span>
           </h2>
           <p className="mt-6 text-[17px] leading-[1.7] text-slate-800 font-medium">
-            SOS House vous connecte avec des artisans vérifiés partout au Maroc.
+            SOS House vous connecte avec des artisans vérifiés partout à Casablanca.
             <br />
             Vous comparez, vous choisissez, ils s&apos;occupent du reste.
           </p>

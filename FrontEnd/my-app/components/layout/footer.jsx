@@ -74,7 +74,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <FooterColumn title="À PROPOS DE SOS HOUSE">
             <p className="text-sm leading-relaxed text-slate-600">
-              SOS House est la plateforme marocaine qui connecte les
+              SOS House est la plateforme casablancaise qui connecte les
               particuliers et les entreprises avec des artisans vérifiés.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
@@ -130,12 +130,12 @@ export function Footer() {
             </ul>
           </FooterColumn>
 
-          <FooterColumn title="PARTOUT AU MAROC">
+          <FooterColumn title="PARTOUT À CASABLANCA">
             <ul className="space-y-4">
               <li className="flex items-start gap-2.5 text-sm text-slate-700">
                 <MapPin className="mt-0.5 size-4.5 shrink-0 text-teal-800" />
                 <span>
-                  Présent dans tout le Maroc
+                  Présent dans tout Casablanca
                   <br />
                   <span className="text-slate-500">
                     Au service de toutes les villes
@@ -179,7 +179,7 @@ export function Footer() {
           <div className="flex items-center gap-3 lg:pr-8">
             <MapPin className="size-5 shrink-0 text-teal-400" />
             <p className="text-sm font-semibold text-white">
-              Fiers d&apos;être marocains.
+              Fiers de servir Casablanca.
               <br />
               Fiers de servir tout le pays.
             </p>

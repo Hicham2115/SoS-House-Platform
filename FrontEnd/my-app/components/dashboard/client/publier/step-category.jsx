@@ -14,18 +14,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories, getCategory } from "@/lib/services-catalog";
+import { categories } from "@/lib/services-catalog";
+// getCategory is only needed by the subcategory picker below, currently disabled.
 
 const categorySchema = z.object({
   category: z.string().min(1, "Choisissez une catégorie"),
-  subcategory: z.string().min(1, "Choisissez une sous-catégorie"),
+  // Subcategory selection temporarily disabled — see the commented field below.
+  // subcategory: z.string().min(1, "Choisissez une sous-catégorie"),
 });
 
 export function StepCategory({ defaultValues, onSubmit }) {
   const form = useForm({
     defaultValues: {
       category: defaultValues.category,
-      subcategory: defaultValues.subcategory,
+      // subcategory: defaultValues.subcategory,
     },
     onSubmit: async ({ value }) => {
       const parsed = categorySchema.safeParse(value);
@@ -49,7 +51,7 @@ export function StepCategory({ defaultValues, onSubmit }) {
       <StepIntro
         icon={Tag}
         title="Choisissez la catégorie de votre demande"
-        description="Sélectionnez la catégorie et sous-catégorie qui correspondent le mieux à votre besoin."
+        description="Sélectionnez la catégorie qui correspond le mieux à votre besoin."
       />
 
       <div className="mt-6 flex flex-col gap-5">
@@ -66,7 +68,7 @@ export function StepCategory({ defaultValues, onSubmit }) {
                 value={field.state.value}
                 onValueChange={(value) => {
                   field.handleChange(value);
-                  form.setFieldValue("subcategory", "");
+                  // form.setFieldValue("subcategory", "");
                 }}
               >
                 <SelectTrigger
@@ -107,6 +109,7 @@ export function StepCategory({ defaultValues, onSubmit }) {
           )}
         </form.Field>
 
+        {/* Subcategory picker temporarily disabled — for now clients only pick a category.
         <form.Subscribe selector={(state) => state.values.category}>
           {(categoryValue) => {
             const subcategories =
@@ -154,6 +157,7 @@ export function StepCategory({ defaultValues, onSubmit }) {
             );
           }}
         </form.Subscribe>
+        */}
       </div>
 
       <div className="mt-6 flex justify-end border-t border-slate-100 pt-5">

@@ -54,6 +54,10 @@ class DemandeController extends Controller
     {
         $validated = $request->validate($this->rules());
 
+        // Subcategory picker is temporarily disabled on the frontend, but the
+        // column is still NOT NULL in the DB — default it until it's re-enabled.
+        $validated['subcategory'] = $validated['subcategory'] ?? '';
+
         $demande = $request->user()->demandes()->create($validated);
 
         return response()->json($demande, 201);
@@ -90,7 +94,8 @@ class DemandeController extends Controller
     {
         return [
             'category' => ['required', 'string', 'max:255'],
-            'subcategory' => ['required', 'string', 'max:255'],
+            // Subcategory selection temporarily disabled on the frontend.
+            // 'subcategory' => ['required', 'string', 'max:255'],
             'property_type' => ['nullable', 'string', 'max:255'],
             'qualification' => ['nullable', 'array'],
             'photos' => ['nullable', 'array'],

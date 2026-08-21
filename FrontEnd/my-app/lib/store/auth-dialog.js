@@ -15,6 +15,19 @@ export const useAuthDialogStore = create((set) => ({
   setOpen: (open) => set(open ? { open } : { open, step: "role", role: null }),
 
   setMode: (mode) => set({ mode }),
-  selectRole: (role) => set({ role, step: "form" }),
-  backToRole: () => set({ step: "role", role: null }),
+  selectRole: (role) =>
+    set({ role, step: role === "artisan" ? "niveau" : "form" }),
+  selectNiveau: () => set({ step: "form" }),
+  goToDocuments: () => set({ step: "documents" }),
+  back: () =>
+    set((state) => {
+      if (state.step === "documents") return { step: "form" };
+      if (state.step === "form") {
+        return state.role === "artisan"
+          ? { step: "niveau" }
+          : { step: "role", role: null };
+      }
+      return { step: "role", role: null };
+    }),
+  resetToRole: () => set({ step: "role", role: null }),
 }));

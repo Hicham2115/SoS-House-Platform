@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
@@ -29,7 +30,24 @@ class AuthController extends Controller
             'adresse' => ['string', 'max:255'],
             'etage' => ['string', 'max:255'],
             'nom_du_referant' => ['string', 'max:255'],
+
+            // Provider verification tier: n0 particulier / n1 auto-entrepreneur / n2 société.
+            'niveau' => ['nullable', 'string', 'in:n0,n1,n2'],
+            'rc' => ['required_if:niveau,n2', 'string', 'max:255'],
+            'secteur_activite' => ['required_if:niveau,n2', 'string', 'max:255'],
+            'nom_commercial' => ['required_if:niveau,n2', 'string', 'max:255'],
+            'carte_auto_entrepreneur' => ['required_if:niveau,n1', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'cin_recto' => ['required_if:niveau,n1,n2', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'cin_verso' => ['required_if:niveau,n1,n2', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'selfie' => ['required_if:niveau,n1,n2', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ]);
+
+        foreach (['carte_auto_entrepreneur', 'cin_recto', 'cin_verso', 'selfie'] as $field) {
+            if ($request->hasFile($field)) {
+                $path = $request->file($field)->store('verification-documents', 'public');
+                $validated[$field] = Storage::disk('public')->url($path);
+            }
+        }
 
         $user = User::create($validated);
 

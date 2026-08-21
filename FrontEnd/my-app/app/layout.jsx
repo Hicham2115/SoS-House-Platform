@@ -22,7 +22,7 @@ const inter = Inter({
 export const metadata = {
   title: "SOS House — Services à domicile",
   description:
-    "Trouvez un artisan vérifié près de chez vous, partout au Maroc. Identité vérifiée, avis liés aux travaux réalisés, facture disponible avant votre choix.",
+    "Trouvez un artisan vérifié près de chez vous, partout à Casablanca. Identité vérifiée, avis liés aux travaux réalisés, facture disponible avant votre choix.",
 };
 
 export default function RootLayout({ children }) {
