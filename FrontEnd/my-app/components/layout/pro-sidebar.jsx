@@ -15,9 +15,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
-  Users,
 } from "lucide-react";
-import avatar1 from "@/app/assets/avatars/avatar-1.png";
 import logo from "@/app/assets/logo.jpeg";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLogout } from "@/hooks/use-logout";
@@ -33,7 +31,6 @@ const navItems = [
   { href: "/pro/missions", Icon: ListChecks, label: "Mes missions" },
   { href: "/pro/devis", Icon: FileText, label: "Devis et factures" },
   { href: "/pro/credits", Icon: CreditCard, label: "Crédits et recharge" },
-  { href: "/pro/equipe", Icon: Users, label: "Mon équipe" },
   { href: "/pro/statistiques", Icon: BarChart3, label: "Statistiques" },
   { href: "/pro/parametres", Icon: Settings, label: "Paramètres du compte" },
 ];
@@ -98,10 +95,7 @@ export function ProSidebar() {
         }`}
       >
         <Avatar size="lg">
-          <AvatarImage
-            src={user?.avatar || avatar1.src}
-            alt={user?.name ?? "Profil"}
-          />
+          <AvatarImage src={user?.avatar} alt={user?.name ?? "Profil"} />
           <AvatarFallback className="bg-teal-100 font-bold text-teal-700">
             {user?.name?.[0]?.toUpperCase() ?? "U"}
           </AvatarFallback>

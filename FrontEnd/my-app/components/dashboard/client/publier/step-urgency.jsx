@@ -51,9 +51,6 @@ const urgencySchema = z
 const urgencyIcons = { "sous-48h": Clock, urgente: Zap };
 
 export function StepUrgency({ defaultValues, priceRange, onSubmit }) {
-  const [budgetEnabled, setBudgetEnabled] = useState(
-    Boolean(defaultValues.budget),
-  );
   const min = priceRange?.min ?? 0;
   const max = priceRange?.max ?? 20000;
   const [budget, setBudget] = useState(defaultValues.budget ?? [min, max]);
@@ -78,7 +75,7 @@ export function StepUrgency({ defaultValues, priceRange, onSubmit }) {
           parsed.data.urgency === "programmee" ? parsed.data.scheduledDate : null,
         scheduledTime:
           parsed.data.urgency === "programmee" ? parsed.data.scheduledTime : "",
-        budget: budgetEnabled ? budget : null,
+        budget,
       });
     },
   });
@@ -224,32 +221,20 @@ export function StepUrgency({ defaultValues, priceRange, onSubmit }) {
       </form.Subscribe>
 
       <div className="flex flex-col gap-2.5 rounded-xl border border-slate-200 p-3.5">
-        <label className="flex cursor-pointer items-center justify-between gap-2">
-          <span className="text-[13px] font-semibold text-slate-700">
-            Budget indicatif (optionnel)
-          </span>
-          <input
-            type="checkbox"
-            checked={budgetEnabled}
-            onChange={(e) => setBudgetEnabled(e.target.checked)}
-            className="size-4 accent-teal-600"
-          />
-        </label>
-        {budgetEnabled && (
-          <>
-            <Slider
-              value={budget}
-              onValueChange={setBudget}
-              min={min}
-              max={max}
-              step={50}
-              className="[&_[data-slot=slider-range]]:bg-teal-600 [&_[data-slot=slider-thumb]]:border-teal-600"
-            />
-            <p className="text-[12px] text-slate-500">
-              {budget[0]} MAD — {budget[1]} MAD
-            </p>
-          </>
-        )}
+        <span className="text-[13px] font-semibold text-slate-700">
+          Budget indicatif
+        </span>
+        <Slider
+          value={budget}
+          onValueChange={setBudget}
+          min={min}
+          max={max}
+          step={50}
+          className="[&_[data-slot=slider-range]]:bg-teal-600 [&_[data-slot=slider-thumb]]:border-teal-600"
+        />
+        <p className="text-[12px] text-slate-500">
+          {budget[0]} MAD — {budget[1]} MAD
+        </p>
       </div>
 
       <Button

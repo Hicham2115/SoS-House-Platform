@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { Camera, Mail, MessageCircle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Camera, Mail, MessageCircle, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { dayOptions } from "@/lib/pro-onboarding-data";
 
 export function StepProfil({ formData, updateField, onFinish, isPending }) {
+  const [specialiteInput, setSpecialiteInput] = useState("");
+
+  function addSpecialite() {
+    const value = specialiteInput.trim();
+    if (!value || formData.specialites.includes(value)) return;
+    updateField("specialites", [...formData.specialites, value]);
+    setSpecialiteInput("");
+  }
+
+  function removeSpecialite(value) {
+    updateField(
+      "specialites",
+      formData.specialites.filter((s) => s !== value),
+    );
+  }
+
   function toggleDay(value) {
     updateField(
       "disponibiliteJours",
@@ -96,27 +112,27 @@ export function StepProfil({ formData, updateField, onFinish, isPending }) {
             <RadioGroupItem value="whatsapp" id="canal-whatsapp" />
           </label>
           <label
-            htmlFor="canal-sms"
+            htmlFor="canal-email"
             className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)]"
           >
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
               <Mail className="size-[18px]" strokeWidth={1.8} />
             </span>
             <span className="flex-1 text-[14px] font-semibold text-slate-950">
-              SMS
+              Email
             </span>
-            <RadioGroupItem value="sms" id="canal-sms" />
+            <RadioGroupItem value="email" id="canal-email" />
           </label>
         </RadioGroup>
       </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="bio" className="text-[13px] text-slate-700">
-          Bio
+          Bio détaillée
         </Label>
         <Textarea
           id="bio"
-          placeholder="Décrivez votre expérience..."
+          placeholder="Décrivez votre parcours, votre expérience, ce qui vous distingue..."
           value={formData.bio}
           onChange={(e) => updateField("bio", e.target.value)}
           className="min-h-24 rounded-xl border-slate-200 bg-slate-50/70 px-3.5 py-3"
@@ -135,6 +151,54 @@ export function StepProfil({ formData, updateField, onFinish, isPending }) {
           onChange={(e) => updateField("anneesExperience", e.target.value)}
           className="h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
         />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label className="text-[13px] text-slate-700">
+          Spécialités particulières
+        </Label>
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Ex : Fuites, chauffe-eau, cuisine..."
+            value={specialiteInput}
+            onChange={(e) => setSpecialiteInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addSpecialite();
+              }
+            }}
+            className="h-11 flex-1 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={addSpecialite}
+            className="h-11 shrink-0 rounded-xl border-slate-200 px-4 text-[13px] font-semibold text-slate-700"
+          >
+            Ajouter
+          </Button>
+        </div>
+        {formData.specialites.length > 0 && (
+          <div className="mt-1 flex flex-wrap gap-1.5">
+            {formData.specialites.map((specialite) => (
+              <span
+                key={specialite}
+                className="flex items-center gap-1.5 rounded-full bg-teal-50 py-1 pl-3 pr-1.5 text-[12px] font-semibold text-teal-800"
+              >
+                {specialite}
+                <button
+                  type="button"
+                  onClick={() => removeSpecialite(specialite)}
+                  aria-label={`Retirer ${specialite}`}
+                  className="flex size-4 items-center justify-center rounded-full hover:bg-teal-100"
+                >
+                  <X className="size-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">

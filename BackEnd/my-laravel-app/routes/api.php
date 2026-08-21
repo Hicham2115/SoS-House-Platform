@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DemandeController;
+use App\Http\Controllers\Api\ProviderPortfolioController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,4 +29,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/demandes/{demande}', [DemandeController::class, 'destroy']);
 
     Route::post('/contacts', [ContactController::class, 'store']);
+
+    Route::get('/provider/portfolio', [ProviderPortfolioController::class, 'index']);
+    Route::post('/provider/certifications', [ProviderPortfolioController::class, 'storeCertification']);
+    Route::delete('/provider/certifications/{certification}', [ProviderPortfolioController::class, 'destroyCertification']);
+    Route::post('/provider/realisations', [ProviderPortfolioController::class, 'storeRealisation']);
+    Route::delete('/provider/realisations/{realisation}', [ProviderPortfolioController::class, 'destroyRealisation']);
+    Route::post('/provider/travaux-photos', [ProviderPortfolioController::class, 'storeTravauxPhoto']);
+    Route::delete('/provider/travaux-photos/{travauxPhoto}', [ProviderPortfolioController::class, 'destroyTravauxPhoto']);
 });

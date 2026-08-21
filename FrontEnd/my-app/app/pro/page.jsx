@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import {
   Coins,
   FileText,
@@ -25,8 +23,8 @@ import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAvailableDemandes } from "@/hooks/use-available-demandes";
+import { useProviderPortfolio } from "@/hooks/use-provider-portfolio";
 import { useUser } from "@/hooks/use-user";
-import { api } from "@/lib/axios";
 import { mapDemandeToCard } from "@/lib/demande-display";
 import {
   categoryToneMeta,
@@ -50,42 +48,59 @@ const urgencyLabels = {
 
 export default function ProDashboardPage() {
   const { data: user } = useUser();
-  const queryClient = useQueryClient();
   const { data: rawDemandes, isPending: demandesPending } =
     useAvailableDemandes();
   const availableDemandes = (rawDemandes ?? []).map(mapDemandeToCard);
 
-  // TODO: replace with GET /api/provider/onboarding — status and formData
-  // both come from the backend once onboarding is wired up. Niveau itself
-  // is already persisted server-side (PATCH /user) and drives which
-  // demandes /demandes/disponibles returns.
+  // Niveau and identity documents are already collected and persisted at
+  // signup — see components/layout/auth-dialog.jsx. Zone/Profil fields and
+  // the portfolio come from the user record and GET /provider/portfolio.
+  const { data: portfolio } = useProviderPortfolio();
   const [onboardingStatus, setOnboardingStatus] = useState("blocking");
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [onboardingData, setOnboardingData] = useState(
     initialProviderOnboardingData,
   );
-  const onboardingProgress = computeOnboardingPct(onboardingData);
+  const [hydratedForUserId, setHydratedForUserId] = useState(null);
+
+  // Adjusting state during render (React's supported pattern for deriving
+  // local state from a prop/query that just arrived) instead of an effect —
+  // avoids an extra render pass once the user record loads.
+  if (user && hydratedForUserId !== user.id) {
+    setHydratedForUserId(user.id);
+    setOnboardingData((prev) => ({
+      ...prev,
+      ville: user.ville ?? prev.ville,
+      radiusKm: user.radius_km ?? prev.radiusKm,
+      categories: user.provider_categories ?? prev.categories,
+      disponibiliteJours: user.disponibilite_jours ?? prev.disponibiliteJours,
+      heureDebut: user.heure_debut ?? prev.heureDebut,
+      heureFin: user.heure_fin ?? prev.heureFin,
+      canalNotification: user.notification_Channel ?? prev.canalNotification,
+      bio: user.bio ?? prev.bio,
+      anneesExperience:
+        user.annees_experience != null
+          ? String(user.annees_experience)
+          : prev.anneesExperience,
+      specialites: user.specialites ?? prev.specialites,
+    }));
+    if (user.ville) setOnboardingStatus("optional");
+  }
+
+  const portfolioCount =
+    (portfolio?.certifications?.length ?? 0) +
+    (portfolio?.realisations?.length ?? 0) +
+    (portfolio?.travaux_photos?.length ?? 0);
+  const onboardingProgress = computeOnboardingPct(
+    onboardingData,
+    portfolioCount,
+  );
 
   function updateOnboardingField(key, value) {
     setOnboardingData((prev) => ({ ...prev, [key]: value }));
   }
 
-  const saveNiveau = useMutation({
-    mutationFn: async (niveau) => {
-      const { data } = await api.patch("/user", { niveau });
-      queryClient.setQueryData(["user"], data);
-      queryClient.invalidateQueries({ queryKey: ["demandes", "disponibles"] });
-      return data;
-    },
-    onError: () => {
-      toast.error("Impossible d'enregistrer votre niveau. Veuillez réessayer.");
-    },
-  });
-
-  async function handleOnboardingFinish() {
-    if (onboardingData.niveau) {
-      await saveNiveau.mutateAsync(onboardingData.niveau);
-    }
+  function handleOnboardingFinish() {
     setOnboardingStatus("pending_review");
   }
 
@@ -208,9 +223,9 @@ export default function ProDashboardPage() {
                           {demande.title}
                         </p>
                         <p className="mt-0.5 text-[13px] text-slate-500">
-                          {demande.quartier}, {demande.ville} · Budget
-                          indicatif{" "}
-                          {demande.budgetMin != null && demande.budgetMax != null
+                          {demande.quartier}, {demande.ville} · Budget indicatif{" "}
+                          {demande.budgetMin != null &&
+                          demande.budgetMax != null
                             ? `${demande.budgetMin}–${demande.budgetMax} MAD`
                             : "non précisé"}
                         </p>

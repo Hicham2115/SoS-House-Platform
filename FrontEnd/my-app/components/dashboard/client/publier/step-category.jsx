@@ -93,9 +93,8 @@ export function StepCategory({ defaultValues, onSubmit }) {
                   </span>
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map(({ value, label, Icon }) => (
+                  {categories.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
-                      <Icon className="size-4 text-teal-700" />
                       {label}
                     </SelectItem>
                   ))}

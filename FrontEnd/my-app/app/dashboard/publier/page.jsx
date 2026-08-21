@@ -47,7 +47,7 @@ const stepLabels = {
 function PublierPageContent() {
   const { data: user } = useUser();
   const queryClient = useQueryClient();
-  const invoiceRequirement = getInvoiceRequirement(user?.account_type);
+  const invoiceRequirement = getInvoiceRequirement();
   const hasDefaultAddress = Boolean(user?.ville);
   const router = useRouter();
   const searchParams = useSearchParams();

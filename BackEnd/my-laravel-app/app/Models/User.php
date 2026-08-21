@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'role', 'profession', 'phone', 'avatar', 'account_type', 'raison_sociale', 'ice', 'ville', 'nom_du_referant', 'quartier', 'adresse', 'etage', 'notification_Channel', 'niveau', 'rc', 'secteur_activite', 'nom_commercial', 'carte_auto_entrepreneur', 'cin_recto', 'cin_verso', 'selfie'])]
+#[Fillable(['name', 'email', 'password', 'role', 'profession', 'phone', 'avatar', 'account_type', 'raison_sociale', 'ice', 'ville', 'nom_du_referant', 'quartier', 'adresse', 'etage', 'notification_Channel', 'niveau', 'rc', 'secteur_activite', 'nom_commercial', 'carte_auto_entrepreneur', 'cin_recto', 'cin_verso', 'selfie', 'radius_km', 'provider_categories', 'disponibilite_jours', 'heure_debut', 'heure_fin', 'bio', 'annees_experience', 'specialites'])]
 
 #[Hidden(['password', 'remember_token'])]
 
@@ -51,6 +51,14 @@ class User extends Authenticatable
             "cin_recto" => 'string',
             "cin_verso" => 'string',
             "selfie" => 'string',
+            "radius_km" => 'integer',
+            "provider_categories" => 'array',
+            "disponibilite_jours" => 'array',
+            "heure_debut" => 'string',
+            "heure_fin" => 'string',
+            "bio" => 'string',
+            "annees_experience" => 'integer',
+            "specialites" => 'array',
         ];
     }
 
@@ -62,5 +70,20 @@ class User extends Authenticatable
     public function contacts()
     {
         return $this->hasMany(Contact::class);
+    }
+
+    public function certifications()
+    {
+        return $this->hasMany(ProviderCertification::class);
+    }
+
+    public function realisations()
+    {
+        return $this->hasMany(ProviderRealisation::class);
+    }
+
+    public function travauxPhotos()
+    {
+        return $this->hasMany(ProviderTravauxPhoto::class);
     }
 }

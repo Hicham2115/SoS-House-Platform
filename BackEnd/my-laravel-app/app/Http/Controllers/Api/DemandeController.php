@@ -107,8 +107,8 @@ class DemandeController extends Controller
             'urgency' => ['required', 'string', 'in:programmee,sous-48h,urgente'],
             'scheduled_date' => ['nullable', 'date'],
             'scheduled_time' => ['nullable', 'string', 'max:255'],
-            'budget_min' => ['nullable', 'integer', 'min:0'],
-            'budget_max' => ['nullable', 'integer', 'min:0'],
+            'budget_min' => ['required', 'integer', 'min:0'],
+            'budget_max' => ['required', 'integer', 'min:0', 'gte:budget_min'],
             'invoice_required' => ['required', 'string', 'in:aucune,simple,tva'],
         ];
     }

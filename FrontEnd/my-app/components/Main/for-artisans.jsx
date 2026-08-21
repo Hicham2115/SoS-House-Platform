@@ -93,6 +93,11 @@ export function ForArtisans() {
               <span className="h-px w-8 shrink-0 bg-teal-300 sm:w-16" />
             </div>
 
+            <span className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#ffa514]/10 px-3 py-1 text-[12px] font-bold text-[#a35d00]">
+              <ShieldCheck className="size-3.5" strokeWidth={2} />
+              14 jours d&apos;essai gratuit, sans engagement
+            </span>
+
             <h2 className="mt-6 text-[38px] font-bold leading-[1.12] tracking-[-0.055em] text-slate-950 sm:text-[48px] lg:text-[54px]">
               Développez votre activité.
               <br />
@@ -243,7 +248,7 @@ export function ForArtisans() {
             </Button>
             <p className="flex items-center gap-1.5 text-[12px] text-teal-100">
               <ShieldCheck className="size-3.5" strokeWidth={2} />
-              Inscription gratuite · Vérification rapide
+              Inscription gratuite · 14 jours d&apos;essai offerts
             </p>
           </div>
         </div>

@@ -1,12 +1,11 @@
 import { MapPin } from "lucide-react";
-import { FileUploadField } from "@/components/dashboard/pro/onboarding/file-upload-field";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { categories } from "@/lib/services-catalog";
 
-export function StepSocle({ formData, updateField, onContinue }) {
+export function StepZone({ formData, updateField, onContinue, isPending }) {
   function toggleCategory(value) {
     updateField(
       "categories",
@@ -18,25 +17,6 @@ export function StepSocle({ formData, updateField, onContinue }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <FileUploadField
-        id="cin-recto"
-        label="CIN recto"
-        file={formData.cinRecto}
-        onChange={(e) => updateField("cinRecto", e.target.files?.[0] ?? null)}
-      />
-      <FileUploadField
-        id="cin-verso"
-        label="CIN verso"
-        file={formData.cinVerso}
-        onChange={(e) => updateField("cinVerso", e.target.files?.[0] ?? null)}
-      />
-      <FileUploadField
-        id="selfie"
-        label="Selfie"
-        file={formData.selfie}
-        onChange={(e) => updateField("selfie", e.target.files?.[0] ?? null)}
-      />
-
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="zone-ville" className="text-[13px] text-slate-700">
           Zone d&apos;intervention
@@ -62,8 +42,8 @@ export function StepSocle({ formData, updateField, onContinue }) {
           </span>
         </div>
         <Slider
-          value={[formData.radiusKm]}
-          onValueChange={([value]) => updateField("radiusKm", value)}
+          value={formData.radiusKm}
+          onValueChange={(value) => updateField("radiusKm", value)}
           min={1}
           max={50}
           step={1}
@@ -105,6 +85,7 @@ export function StepSocle({ formData, updateField, onContinue }) {
       <Button
         type="button"
         onClick={onContinue}
+        disabled={isPending}
         className="mt-1 h-12 w-full justify-center rounded-xl bg-[#0b1730] text-[14px] font-semibold text-white hover:bg-[#142248]"
       >
         Continuer

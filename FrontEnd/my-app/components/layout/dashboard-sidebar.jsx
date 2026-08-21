@@ -16,7 +16,6 @@ import {
   PanelLeftOpen,
   Settings,
 } from "lucide-react";
-import avatar1 from "@/app/assets/avatars/avatar-1.png";
 import logo from "@/app/assets/logo.jpeg";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLogout } from "@/hooks/use-logout";
@@ -113,10 +112,7 @@ export function DashboardSidebar() {
         }`}
       >
         <Avatar size="lg">
-          <AvatarImage
-            src={user?.avatar || avatar1.src}
-            alt={user?.name ?? "Profil"}
-          />
+          <AvatarImage src={user?.avatar} alt={user?.name ?? "Profil"} />
           <AvatarFallback className="bg-teal-100 font-bold text-teal-700">
             {user?.name?.[0]?.toUpperCase() ?? "U"}
           </AvatarFallback>

@@ -5,10 +5,24 @@ import {
   KeyRound,
   PaintRoller,
   Sparkles,
+  Wrench,
   Zap,
 } from "lucide-react";
+import { categories as landingCategories } from "@/lib/professions";
 
-export const categories = [
+function slugify(label) {
+  return label
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+// The 7 core categories carry real subcategories/qualification fields; the
+// rest of the landing page's category list is appended below so every
+// service shown publicly is also selectable when publishing a demande.
+const coreCategories = [
   {
     value: "plomberie",
     label: "Plomberie",
@@ -86,6 +100,15 @@ export const categories = [
   },
 ];
 
+const extraCategories = landingCategories.map((label) => ({
+  value: slugify(label),
+  label,
+  Icon: Wrench,
+  subcategories: [],
+}));
+
+export const categories = [...coreCategories, ...extraCategories];
+
 export function getCategory(value) {
   return categories.find((category) => category.value === value) ?? null;
 }
@@ -139,29 +162,30 @@ export const qualificationFields = {
     { name: "surface", label: "Surface approximative (m²)", type: "text" },
     { name: "fourniture", label: "Fourniture incluse ?", type: "boolean" },
   ],
-  "lavage-auto": [
-    {
-      name: "typeVehicule",
-      label: "Type de véhicule",
-      type: "select",
-      options: [
-        { value: "citadine", label: "Citadine (ex: Clio, Sandero, 208)" },
-        { value: "berline", label: "Berline (ex: Logan, 301, Fluence)" },
-        { value: "suv", label: "SUV (ex: Duster, Tucson, Sportage)" },
-        { value: "utilitaire", label: "Utilitaire (ex: Kangoo, Dokker, Hilux)" },
-      ],
-    },
-    {
-      name: "formule",
-      label: "Intérieur, extérieur ou complet",
-      type: "select",
-      options: [
-        { value: "interieur", label: "Intérieur" },
-        { value: "exterieur", label: "Extérieur" },
-        { value: "complet", label: "Complet" },
-      ],
-    },
-  ],
+  // Temporarily disabled — additional lavage-auto qualification questions.
+  // "lavage-auto": [
+  //   {
+  //     name: "typeVehicule",
+  //     label: "Type de véhicule",
+  //     type: "select",
+  //     options: [
+  //       { value: "citadine", label: "Citadine (ex: Clio, Sandero, 208)" },
+  //       { value: "berline", label: "Berline (ex: Logan, 301, Fluence)" },
+  //       { value: "suv", label: "SUV (ex: Duster, Tucson, Sportage)" },
+  //       { value: "utilitaire", label: "Utilitaire (ex: Kangoo, Dokker, Hilux)" },
+  //     ],
+  //   },
+  //   {
+  //     name: "formule",
+  //     label: "Intérieur, extérieur ou complet",
+  //     type: "select",
+  //     options: [
+  //       { value: "interieur", label: "Intérieur" },
+  //       { value: "exterieur", label: "Extérieur" },
+  //       { value: "complet", label: "Complet" },
+  //     ],
+  //   },
+  // ],
 };
 
 export const urgencyOptions = [

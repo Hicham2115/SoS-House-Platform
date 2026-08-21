@@ -1,44 +1,9 @@
-export const accountTypes = [
-  {
-    value: "particulier",
-    label: "Particulier",
-    description: "Je publie des demandes pour mon usage personnel.",
-    requiresRaisonSociale: false,
-    requiresIce: false,
-    requiresReferent: false,
-  },
-  {
-    value: "professionnel",
-    label: "Professionnel",
-    description: "TPE, commerce, syndic — facture simple.",
-    requiresRaisonSociale: true,
-    requiresIce: false,
-    requiresReferent: false,
-  },
-  {
-    value: "entreprise",
-    label: "Entreprise",
-    description: "Société immatriculée — facture avec TVA récupérable.",
-    requiresRaisonSociale: true,
-    requiresIce: true,
-    requiresReferent: true,
-  },
-];
-
-export function getAccountType(value) {
-  return accountTypes.find((type) => type.value === value) ?? null;
-}
-
-// "aucune" = no invoice needed, "simple" = editable invoice without VAT,
-// "tva" = VAT invoice, locked per the cahier des charges (5.2): a
-// collaborator on an Entreprise account must never be able to disable it.
-export function getInvoiceRequirement(accountTypeValue) {
-  if (accountTypeValue === "entreprise") {
-    return { value: "tva", editable: false };
-  }
-  if (accountTypeValue === "professionnel") {
-    return { value: "simple", editable: true };
-  }
+// Invoice requirement is now chosen per-demande (see StepInvoice in the
+// publier flow) rather than derived from a client account type — every
+// client can freely pick "aucune" (n0) / "simple" (n1) / "tva" (n2), which
+// map directly onto the artisan niveau ranks used by
+// DemandeController::available() to gate which demandes an artisan sees.
+export function getInvoiceRequirement() {
   return { value: "aucune", editable: true };
 }
 
@@ -47,22 +12,20 @@ export function hasDefaultAddress(user) {
 }
 
 export function isOnboardingRequirementsMet(user) {
-  return Boolean(user?.account_type) && hasDefaultAddress(user);
+  return hasDefaultAddress(user);
 }
 
-// Weighted so the two hard requirements (account type, address) already
-// carry most of the bar — email/photo/notification only top it off.
+// Weighted so the one hard requirement (address) carries most of the bar —
+// email/photo/notification only top it off.
 const COMPLETION_WEIGHTS = {
-  account_type: 40,
-  address: 40,
+  address: 70,
   email: 10,
-  avatar: 5,
-  notification_Channel: 5,
+  avatar: 10,
+  notification_Channel: 10,
 };
 
 export function getProfileCompletionPct(user) {
   let pct = 0;
-  if (user?.account_type) pct += COMPLETION_WEIGHTS.account_type;
   if (hasDefaultAddress(user)) pct += COMPLETION_WEIGHTS.address;
   if (user?.email) pct += COMPLETION_WEIGHTS.email;
   if (user?.avatar) pct += COMPLETION_WEIGHTS.avatar;

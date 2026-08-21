@@ -30,6 +30,19 @@ class UserController extends Controller
             'notification_Channel' => ['nullable', 'string', 'in:whatsapp,email'],
             'avatar' => ['nullable', 'string', 'max:255'],
             'niveau' => ['nullable', 'string', 'in:n0,n1,n2'],
+
+            // Provider onboarding — Zone and Profil steps.
+            'radius_km' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'provider_categories' => ['nullable', 'array'],
+            'provider_categories.*' => ['string', 'max:255'],
+            'disponibilite_jours' => ['nullable', 'array'],
+            'disponibilite_jours.*' => ['string', 'max:255'],
+            'heure_debut' => ['nullable', 'string', 'max:255'],
+            'heure_fin' => ['nullable', 'string', 'max:255'],
+            'bio' => ['nullable', 'string', 'max:2000'],
+            'annees_experience' => ['nullable', 'integer', 'min:0', 'max:80'],
+            'specialites' => ['nullable', 'array'],
+            'specialites.*' => ['string', 'max:255'],
         ]);
 
         $user = $request->user();

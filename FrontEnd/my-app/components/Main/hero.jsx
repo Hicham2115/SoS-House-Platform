@@ -245,6 +245,9 @@ export function Hero() {
               Devenir prestataire
             </Button>
           </div>
+          <p className="mt-3 text-[13px] font-semibold text-teal-800">
+            Artisans : 14 jours d&apos;essai gratuit, sans engagement.
+          </p>
         </div>
 
         <div className="relative z-10 mt-8 xl:col-start-2 xl:row-span-2 xl:mt-0 xl:flex xl:items-center xl:justify-center">

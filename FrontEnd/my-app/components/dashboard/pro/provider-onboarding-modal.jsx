@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { StepProgress } from "@/components/dashboard/shared/step-progress";
-import { StepCompetence } from "@/components/dashboard/pro/onboarding/step-competence";
-import { StepNiveau } from "@/components/dashboard/pro/onboarding/step-niveau";
-import { StepPlan } from "@/components/dashboard/pro/onboarding/step-plan";
+import { StepPortfolio } from "@/components/dashboard/pro/onboarding/step-portfolio";
 import { StepProfil } from "@/components/dashboard/pro/onboarding/step-profil";
-import { StepSocle } from "@/components/dashboard/pro/onboarding/step-socle";
+import { StepZone } from "@/components/dashboard/pro/onboarding/step-zone";
 import {
   Dialog,
   DialogContent,
@@ -16,84 +15,59 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { api } from "@/lib/axios";
+import { useProviderPortfolio } from "@/hooks/use-provider-portfolio";
 
-const STEP_SOCLE = "socle";
-const STEP_NIVEAU = "niveau";
-const STEP_COMPETENCE = "competence";
-const STEP_PLAN = "plan";
+const STEP_ZONE = "zone";
+const STEP_PORTFOLIO = "portfolio";
 const STEP_PROFIL = "profil";
 
-const flow = [STEP_SOCLE, STEP_NIVEAU, STEP_COMPETENCE, STEP_PLAN, STEP_PROFIL];
+const flow = [STEP_ZONE, STEP_PORTFOLIO, STEP_PROFIL];
 
 const stepLabels = {
-  [STEP_SOCLE]: "Socle",
-  [STEP_NIVEAU]: "Niveau",
-  [STEP_COMPETENCE]: "Compétence",
-  [STEP_PLAN]: "Plan",
+  [STEP_ZONE]: "Zone",
+  [STEP_PORTFOLIO]: "Portfolio",
   [STEP_PROFIL]: "Profil",
 };
 
 export const initialProviderOnboardingData = {
-  // Step 1 — Socle
-  cinRecto: null,
-  cinVerso: null,
-  selfie: null,
+  // Step 1 — Zone. Identity (CIN/selfie) and verification tier (niveau) are
+  // already collected at signup — see components/layout/auth-dialog.jsx.
   ville: "",
   radiusKm: 15,
   categories: [],
 
-  // Step 2 — Niveau
-  niveau: "n0",
-  carteAutoEntrepreneur: null,
-  attestationInscription: null,
-  ribN1: null,
-  modeleJ: null,
-  ice: "",
-  identifiantFiscal: "",
-  ribSociete: null,
-  pieceRepresentant: null,
-
-  // Step 3 — Compétence
-  competenceFiles: [],
-
-  // Step 4 — Plan
-  plan: "decouverte",
-
-  // Step 5 — Profil
+  // Step 3 — Profil
   disponibiliteJours: [],
   heureDebut: "08:00",
   heureFin: "18:00",
   canalNotification: "whatsapp",
   bio: "",
   anneesExperience: "",
+  specialites: [],
   photoProfil: null,
 };
 
-// Rough client-side weighting — steps 1-2 (required) count more than the
-// optional steps 3-5. Swap for a real completion % from the backend later.
-export function computeOnboardingPct(formData) {
+// Rough client-side weighting — step 1 (required) counts more than the
+// optional steps 2-3. `portfolioCount` is the total number of saved
+// certifications/réalisations/photos, fetched separately from the backend.
+export function computeOnboardingPct(formData, portfolioCount = 0) {
   let filled = 0;
   let total = 0;
 
-  const socleFields = [formData.cinRecto, formData.cinVerso, formData.selfie, formData.ville];
-  total += socleFields.length * 2;
-  filled += socleFields.filter(Boolean).length * 2;
+  total += 2;
+  filled += formData.ville ? 2 : 0;
   total += 2;
   filled += formData.categories.length > 0 ? 2 : 0;
 
-  total += 2;
-  filled += formData.niveau ? 2 : 0;
-
   total += 1;
-  filled += formData.competenceFiles.length > 0 ? 1 : 0;
-
-  total += 1;
-  filled += formData.plan ? 1 : 0;
+  filled += portfolioCount > 0 ? 1 : 0;
 
   const profilFields = [formData.bio, formData.anneesExperience, formData.photoProfil];
-  total += profilFields.length + 1;
+  total += profilFields.length + 2;
   filled += profilFields.filter(Boolean).length;
   filled += formData.disponibiliteJours.length > 0 ? 1 : 0;
+  filled += formData.specialites.length > 0 ? 1 : 0;
 
   return Math.round((filled / total) * 100);
 }
@@ -105,53 +79,68 @@ export function ProviderOnboardingModal({
   updateField,
   onFinish,
 }) {
-  const [currentStep, setCurrentStep] = useState(STEP_SOCLE);
-  const [isPending, setIsPending] = useState(false);
+  const [currentStep, setCurrentStep] = useState(STEP_ZONE);
+  const queryClient = useQueryClient();
+  const { data: portfolio } = useProviderPortfolio();
 
   const activeIndex = flow.indexOf(currentStep);
 
-  function goBack() {
-    if (activeIndex > 0) setCurrentStep(flow[activeIndex - 1]);
+  function saveUser(payload) {
+    return api.patch("/user", payload).then(({ data }) => {
+      queryClient.setQueryData(["user"], data);
+      return data;
+    });
   }
 
-  function goToStep(step) {
-    // TODO: wire to POST /api/provider/onboarding/step-{n} with the
-    // current step's slice of formData before advancing.
-    toast.success("Étape enregistrée");
-    setCurrentStep(step);
-  }
+  const saveZone = useMutation({
+    mutationFn: () =>
+      saveUser({
+        ville: formData.ville,
+        radius_km: formData.radiusKm,
+        provider_categories: formData.categories,
+      }),
+    onSuccess: () => {
+      toast.success("Étape enregistrée");
+      setCurrentStep(STEP_PORTFOLIO);
+    },
+    onError: () => {
+      toast.error("Impossible d'enregistrer cette étape. Veuillez réessayer.");
+    },
+  });
 
-  function handleContinueSocle() {
-    goToStep(STEP_NIVEAU);
-  }
+  const finishOnboarding = useMutation({
+    mutationFn: async () => {
+      let avatarUrl;
+      if (formData.photoProfil) {
+        const avatarForm = new FormData();
+        avatarForm.append("avatar", formData.photoProfil);
+        const { data } = await api.post("/user/avatar", avatarForm);
+        avatarUrl = data.avatar_url;
+      }
 
-  function handleContinueNiveau() {
-    goToStep(STEP_COMPETENCE);
-  }
-
-  function handleContinueCompetence() {
-    goToStep(STEP_PLAN);
-  }
-
-  function handleSkipCompetence() {
-    goToStep(STEP_PLAN);
-  }
-
-  function handleContinuePlan() {
-    goToStep(STEP_PROFIL);
-  }
-
-  function handleFinish() {
-    // TODO: wire to POST /api/provider/onboarding/complete (or a final
-    // step-5 call) with the full formData payload, including real file
-    // uploads for cinRecto/cinVerso/selfie/photoProfil/etc.
-    setIsPending(true);
-    setTimeout(() => {
-      setIsPending(false);
+      return saveUser({
+        disponibilite_jours: formData.disponibiliteJours,
+        heure_debut: formData.heureDebut,
+        heure_fin: formData.heureFin,
+        notification_Channel: formData.canalNotification,
+        bio: formData.bio,
+        annees_experience: formData.anneesExperience || null,
+        specialites: formData.specialites,
+        ...(avatarUrl ? { avatar: avatarUrl } : {}),
+      });
+    },
+    onSuccess: (data) => {
       toast.success("Profil prestataire complété !");
       onOpenChange(false);
-      onFinish?.(formData);
-    }, 400);
+      onFinish?.(data);
+    },
+    onError: () => {
+      toast.error("Impossible d'enregistrer votre profil. Veuillez réessayer.");
+    },
+  });
+
+  function goBack() {
+    if (activeIndex > 0) setCurrentStep(flow[activeIndex - 1]);
   }
 
   return (
@@ -187,36 +176,20 @@ export function ProviderOnboardingModal({
         </div>
 
         <div className="mt-5">
-          {currentStep === STEP_SOCLE && (
-            <StepSocle
+          {currentStep === STEP_ZONE && (
+            <StepZone
               formData={formData}
               updateField={updateField}
-              onContinue={handleContinueSocle}
+              onContinue={() => saveZone.mutate()}
+              isPending={saveZone.isPending}
             />
           )}
 
-          {currentStep === STEP_NIVEAU && (
-            <StepNiveau
-              formData={formData}
-              updateField={updateField}
-              onContinue={handleContinueNiveau}
-            />
-          )}
-
-          {currentStep === STEP_COMPETENCE && (
-            <StepCompetence
-              formData={formData}
-              updateField={updateField}
-              onContinue={handleContinueCompetence}
-              onSkip={handleSkipCompetence}
-            />
-          )}
-
-          {currentStep === STEP_PLAN && (
-            <StepPlan
-              formData={formData}
-              updateField={updateField}
-              onContinue={handleContinuePlan}
+          {currentStep === STEP_PORTFOLIO && (
+            <StepPortfolio
+              portfolio={portfolio}
+              onContinue={() => setCurrentStep(STEP_PROFIL)}
+              onSkip={() => setCurrentStep(STEP_PROFIL)}
             />
           )}
 
@@ -224,8 +197,8 @@ export function ProviderOnboardingModal({
             <StepProfil
               formData={formData}
               updateField={updateField}
-              onFinish={handleFinish}
-              isPending={isPending}
+              onFinish={() => finishOnboarding.mutate()}
+              isPending={finishOnboarding.isPending}
             />
           )}
         </div>
