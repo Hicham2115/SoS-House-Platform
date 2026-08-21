@@ -23,23 +23,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useUser } from "@/hooks/use-user";
 import { api } from "@/lib/axios";
 import { MAX_AVATAR_SIZE, readImageFile } from "@/lib/file-upload";
 import { profileVerification } from "@/lib/pro-dashboard-data";
-
-const accountTypes = [
-  { value: "particulier", label: "Particulier" },
-  { value: "professionnel", label: "Auto-entrepreneur" },
-  { value: "entreprise", label: "Entreprise" },
-];
 
 const accountSchema = z.object({
   name: z.string().trim().min(1, "Le nom complet est requis").max(255),
@@ -49,7 +36,6 @@ const accountSchema = z.object({
 
 const proSchema = z.object({
   profession: z.string().trim().max(255).optional(),
-  accountType: z.string().optional(),
   raisonSociale: z.string().trim().max(255).optional(),
   ice: z.string().trim().max(255).optional(),
 });
@@ -159,7 +145,6 @@ export default function ProParametresPage() {
   const proForm = useForm({
     defaultValues: {
       profession: user?.profession ?? "",
-      accountType: user?.account_type ?? "particulier",
       raisonSociale: user?.raison_sociale ?? "",
       ice: user?.ice ?? "",
     },
@@ -173,7 +158,6 @@ export default function ProParametresPage() {
       }
       await updateAccount.mutateAsync({
         profession: parsed.data.profession,
-        account_type: parsed.data.accountType,
         raison_sociale: parsed.data.raisonSociale,
         ice: parsed.data.ice,
       });
@@ -240,7 +224,6 @@ export default function ProParametresPage() {
     });
     proForm.reset({
       profession: user.profession ?? "",
-      accountType: user.account_type ?? "particulier",
       raisonSociale: user.raison_sociale ?? "",
       ice: user.ice ?? "",
     });
@@ -491,74 +474,38 @@ export default function ProParametresPage() {
             )}
           </proForm.Field>
 
-          <proForm.Field name="accountType">
+          <proForm.Field name="raisonSociale">
             {(field) => (
               <FieldRow
                 Icon={Briefcase}
-                id="accountType"
-                label="Type de compte"
+                id="raisonSociale"
+                label="Raison sociale"
+                helperText="Optionnel — pour les sociétés."
               >
-                <Select
+                <Input
+                  id="raisonSociale"
+                  className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
                   value={field.state.value}
-                  onValueChange={(value) => field.handleChange(value)}
-                >
-                  <SelectTrigger
-                    id="accountType"
-                    className="mt-2 h-12 w-full rounded-xl border-slate-200 bg-slate-50/70 px-3 data-[state=open]:border-teal-600"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {accountTypes.map(({ value, label }) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
               </FieldRow>
             )}
           </proForm.Field>
 
-          <proForm.Subscribe selector={(state) => state.values.accountType}>
-            {(accountType) =>
-              accountType === "entreprise" && (
-                <>
-                  <proForm.Field name="raisonSociale">
-                    {(field) => (
-                      <FieldRow
-                        Icon={Briefcase}
-                        id="raisonSociale"
-                        label="Raison sociale"
-                      >
-                        <Input
-                          id="raisonSociale"
-                          className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                        />
-                      </FieldRow>
-                    )}
-                  </proForm.Field>
-
-                  <proForm.Field name="ice">
-                    {(field) => (
-                      <FieldRow Icon={Briefcase} id="ice" label="ICE">
-                        <Input
-                          id="ice"
-                          className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                        />
-                      </FieldRow>
-                    )}
-                  </proForm.Field>
-                </>
-              )
-            }
-          </proForm.Subscribe>
+          <proForm.Field name="ice">
+            {(field) => (
+              <FieldRow Icon={Briefcase} id="ice" label="ICE">
+                <Input
+                  id="ice"
+                  className="mt-2 h-12 rounded-xl border-slate-200 bg-slate-50/70 px-3.5"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              </FieldRow>
+            )}
+          </proForm.Field>
 
           <div className="mt-2 border-t border-slate-100 pt-5">
             <Button

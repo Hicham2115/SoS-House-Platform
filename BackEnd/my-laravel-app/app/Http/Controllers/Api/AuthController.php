@@ -22,7 +22,6 @@ class AuthController extends Controller
             'role' => ['required', 'string', 'in:admin,client,artisan'],
             'profession' => ['string', 'max:255'],
             'avatar' => ['string', 'max:255'],
-            'account_type' => ['string', 'in:particulier,entreprise'],
             'raison_sociale' => ['string', 'max:255'],
             'ice' => ['string', 'max:255'],
             'ville' => ['string', 'max:255'],

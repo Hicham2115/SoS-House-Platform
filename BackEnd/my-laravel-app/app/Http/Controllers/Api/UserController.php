@@ -19,7 +19,6 @@ class UserController extends Controller
             'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($request->user()->id)],
             'phone' => ['nullable', 'string', 'max:20'],
             'profession' => ['nullable', 'string', 'max:255'],
-            'account_type' => ['nullable', 'string', 'in:particulier,professionnel,entreprise'],
             'raison_sociale' => ['nullable', 'string', 'max:255'],
             'ice' => ['nullable', 'string', 'max:255'],
             'nom_du_referant' => ['nullable', 'string', 'max:255'],
