@@ -29,6 +29,7 @@ class UserController extends Controller
             'etage' => ['nullable', 'string', 'max:255'],
             'notification_Channel' => ['nullable', 'string', 'in:whatsapp,email'],
             'avatar' => ['nullable', 'string', 'max:255'],
+            'niveau' => ['nullable', 'string', 'in:n0,n1,n2'],
         ]);
 
         $user = $request->user();

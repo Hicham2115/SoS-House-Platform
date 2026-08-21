@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Demande;
+
 
 class DemandeController extends Controller
 {
@@ -14,6 +16,25 @@ class DemandeController extends Controller
         return response()->json(
             $request->user()->demandes()->latest()->get()
         );
+    }
+
+    // Higher rank sees everything a lower rank sees, plus its own tier.
+    private const NIVEAU_RANK = ['n0' => 0, 'n1' => 1, 'n2' => 2];
+
+    // Minimum provider niveau required to see a demande with this invoice_required.
+    private const INVOICE_MIN_RANK = ['aucune' => 0, 'simple' => 1, 'tva' => 2];
+
+    public function available(Request $request): JsonResponse
+    {
+        abort_unless($request->user()->role === 'artisan', 403);
+
+        $userRank = self::NIVEAU_RANK[$request->user()->niveau] ?? 0;
+
+        $demandes = Demande::latest()->get()->filter(
+            fn (Demande $demande) => $userRank >= (self::INVOICE_MIN_RANK[$demande->invoice_required] ?? 0)
+        )->values();
+
+        return response()->json($demandes);
     }
 
     public function uploadPhoto(Request $request): JsonResponse

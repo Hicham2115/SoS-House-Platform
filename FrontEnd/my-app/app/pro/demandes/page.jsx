@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bookmark,
   CalendarDays,
@@ -15,21 +15,22 @@ import {
 import { FilterSelect } from "@/components/dashboard/shared/filter-select";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
-import {
-  availableDemandes,
-  categoryToneMeta,
-  invoiceLevelMeta,
-} from "@/lib/pro-dashboard-data";
+import { useAvailableDemandes } from "@/hooks/use-available-demandes";
+import { mapDemandeToCard } from "@/lib/demande-display";
+import { categoryToneMeta, invoiceLevelMeta } from "@/lib/pro-dashboard-data";
 import { categories, getCategory } from "@/lib/services-catalog";
 
 const urgencyBadgeStyles = {
   urgente: "bg-red-50 text-red-600",
+  "sous-48h": "bg-amber-50 text-amber-700",
   programmee: "bg-teal-50 text-teal-700",
 };
 
 const urgencyLabels = {
   urgente: "Urgent",
+  "sous-48h": "Sous 48h",
   programmee: "Programmée",
 };
 
@@ -55,23 +56,30 @@ function publishedLabel(minutesAgo) {
 function matchesBudget(demande, filter) {
   if (filter === "all") return true;
   if (filter === "low") return demande.budgetMax < 300;
-  if (filter === "mid") return demande.budgetMin >= 300 && demande.budgetMax <= 600;
+  if (filter === "mid")
+    return demande.budgetMin >= 300 && demande.budgetMax <= 600;
   if (filter === "high") return demande.budgetMax > 600;
   return true;
 }
 
 export default function ProDemandesPage() {
+  const { data: rawDemandes, isPending } = useAvailableDemandes();
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [villeFilter, setVilleFilter] = useState("Casablanca");
+  const [villeFilter, setVilleFilter] = useState("all");
   const [invoiceFilter, setInvoiceFilter] = useState("all");
   const [budgetFilter, setBudgetFilter] = useState("all");
   const [urgentOnly, setUrgentOnly] = useState(false);
   const [sortBy, setSortBy] = useState("recent");
   const [savedIds, setSavedIds] = useState([]);
 
+  const availableDemandes = useMemo(
+    () => (rawDemandes ?? []).map(mapDemandeToCard),
+    [rawDemandes],
+  );
+
   const villes = useMemo(
     () => Array.from(new Set(availableDemandes.map((d) => d.ville))),
-    [],
+    [availableDemandes],
   );
 
   const categoryOptions = useMemo(
@@ -126,7 +134,15 @@ export default function ProDemandesPage() {
       sorted.sort((a, b) => a.credits - b.credits);
     }
     return sorted;
-  }, [categoryFilter, villeFilter, invoiceFilter, budgetFilter, urgentOnly, sortBy]);
+  }, [
+    availableDemandes,
+    categoryFilter,
+    villeFilter,
+    invoiceFilter,
+    budgetFilter,
+    urgentOnly,
+    sortBy,
+  ]);
 
   function toggleSaved(id) {
     setSavedIds((prev) =>
@@ -160,7 +176,7 @@ export default function ProDemandesPage() {
             value={villeFilter}
             onValueChange={setVilleFilter}
             options={villeOptions}
-            neutralValue="Casablanca"
+            neutralValue="all"
             className="w-48"
           />
 
@@ -206,7 +222,20 @@ export default function ProDemandesPage() {
         </div>
 
         <div className="flex flex-col gap-3">
-          {demandes.length === 0 ? (
+          {isPending ? (
+            Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+              >
+                <Skeleton className="size-11 shrink-0 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-48" />
+                  <Skeleton className="h-3.5 w-32" />
+                </div>
+              </div>
+            ))
+          ) : demandes.length === 0 ? (
             <p className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-10 text-center text-[13px] text-slate-500">
               Aucune demande ne correspond à vos filtres.
             </p>
@@ -235,8 +264,8 @@ export default function ProDemandesPage() {
                     </p>
                     <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[12px] text-slate-500">
                       <MapPin className="size-3.5 shrink-0" />
-                      {demande.quartier}, {demande.ville} · {demande.distanceKm} km
-                      <span className="text-slate-300">·</span>
+                      {demande.quartier}, {demande.ville}
+                      <span className="text-slate-600">·</span>
                       <CalendarDays className="size-3.5 shrink-0" />
                       {publishedLabel(demande.publishedMinutesAgo)}
                     </p>
@@ -271,7 +300,9 @@ export default function ProDemandesPage() {
                         Budget indicatif
                       </p>
                       <p className="text-[14px] font-bold text-teal-700">
-                        {demande.budgetMin} – {demande.budgetMax} MAD
+                        {demande.budgetMin != null && demande.budgetMax != null
+                          ? `${demande.budgetMin} – ${demande.budgetMax} MAD`
+                          : "Non précisé"}
                       </p>
                     </div>
 
@@ -309,7 +340,7 @@ export default function ProDemandesPage() {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4">
+        {/* <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4">
           <div className="flex items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
               <ShieldCheck className="size-5" strokeWidth={1.8} />
@@ -327,7 +358,7 @@ export default function ProDemandesPage() {
           <span className="shrink-0 text-[13px] font-semibold text-teal-700">
             En savoir plus →
           </span>
-        </div>
+        </div> */}
       </div>
     </>
   );

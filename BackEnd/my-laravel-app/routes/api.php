@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/demandes', [DemandeController::class, 'index']);
+    Route::get('/demandes/disponibles', [DemandeController::class, 'available']);
     Route::post('/demandes', [DemandeController::class, 'store']);
     Route::post('/demandes/photos', [DemandeController::class, 'uploadPhoto']);
 

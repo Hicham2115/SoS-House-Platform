@@ -57,7 +57,7 @@ export function DashboardSidebar() {
 
   return (
     <aside
-      className={`scrollbar-blue hidden h-full shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-[#0b1730] p-5 transition-[width] duration-200 lg:flex ${
+      className={`hidden h-full shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-[#0b1730] p-4 transition-[width] duration-200 lg:flex ${
         collapsed ? "w-40" : "w-64"
       }`}
     >
@@ -75,11 +75,9 @@ export function DashboardSidebar() {
           )}
         </button>
       </div>
-      <div className="mx-auto flex justify-center w-30">
-        <Image src={logo} alt="SOS House" />
-      </div>
+      <Image src={logo} alt="SOS House" className="w-24 mx-auto mt-2" />
 
-      <nav className="mt-2 flex flex-col gap-1">
+      <nav className="mt-4 flex flex-col gap-0.5">
         {navItems.map(({ href, Icon, label, badge }) => {
           const active = pathname === href;
           return (
@@ -87,11 +85,11 @@ export function DashboardSidebar() {
               key={href}
               href={href}
               title={collapsed ? label : undefined}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[14px] font-semibold transition ${
+              className={`flex items-center gap-3 rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition ${
                 collapsed ? "justify-center" : ""
               } ${
                 active
-                  ? "bg-[#063fb4] text-white shadow-[0_8px_20px_rgba(11,146,218,0.3)]"
+                  ? "bg-teal-600 text-white shadow-[0_8px_20px_rgba(11,146,218,0.3)]"
                   : "text-slate-300 hover:bg-white/5 hover:text-white"
               }`}
             >
@@ -110,7 +108,7 @@ export function DashboardSidebar() {
       </nav>
 
       <div
-        className={`mt-16 flex items-center gap-3 rounded-2xl bg-white/5 p-3.5 ${
+        className={`mt-6 flex items-center gap-3 rounded-2xl bg-white/5 p-3 ${
           collapsed ? "justify-center" : ""
         }`}
       >
@@ -141,7 +139,7 @@ export function DashboardSidebar() {
         type="button"
         title={collapsed ? "Se déconnecter" : undefined}
         onClick={() => logout.mutate()}
-        className={`mt-5 flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 px-3 py-2.5 text-left text-[14px] font-semibold text-slate-300 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400 ${
+        className={`mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 px-3 py-2 text-left text-[14px] font-semibold text-slate-300 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400 ${
           collapsed ? "justify-center" : ""
         }`}
       >
