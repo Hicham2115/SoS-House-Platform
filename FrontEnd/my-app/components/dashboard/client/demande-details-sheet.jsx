@@ -2,7 +2,10 @@
 
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { MapPin, Tag } from "lucide-react";
+import Link from "next/link";
+import { MapPin, Pencil, Tag, Trash2 } from "lucide-react";
+import { DeleteDemandeDialog } from "@/components/dashboard/client/delete-demande-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -35,7 +38,13 @@ function DetailRow({ label, value }) {
   );
 }
 
-export function DemandeDetailsSheet({ demande, open, onOpenChange }) {
+export function DemandeDetailsSheet({
+  demande,
+  open,
+  onOpenChange,
+  onDelete,
+  isDeleting,
+}) {
   const category = demande ? getCategory(demande.category) : null;
   const subcategory = category?.subcategories.find(
     (s) => s.value === demande?.subcategory,
@@ -156,6 +165,32 @@ export function DemandeDetailsSheet({ demande, open, onOpenChange }) {
                     value={invoiceLabels[demande.invoice_required]}
                   />
                 </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  render={<Link href={`/dashboard/publier?edit=${demande.id}`} />}
+                  className="h-9 flex-1 rounded-lg border-slate-200 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <Pencil className="size-4" />
+                  Modifier
+                </Button>
+
+                <DeleteDemandeDialog
+                  isDeleting={isDeleting}
+                  onConfirm={() => onDelete?.(demande.id)}
+                  trigger={
+                    <Button
+                      variant="outline"
+                      disabled={isDeleting}
+                      className="h-9 flex-1 rounded-lg border-red-200 text-[13px] font-semibold text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="size-4" />
+                      Supprimer
+                    </Button>
+                  }
+                />
               </div>
             </div>
           </>

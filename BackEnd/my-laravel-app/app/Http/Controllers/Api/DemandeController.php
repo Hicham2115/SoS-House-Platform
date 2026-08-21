@@ -52,7 +52,43 @@ class DemandeController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        $validated = $request->validate($this->rules());
+
+        $demande = $request->user()->demandes()->create($validated);
+
+        return response()->json($demande, 201);
+    }
+
+    public function show(Request $request, Demande $demande): JsonResponse
+    {
+        abort_unless($demande->user_id === $request->user()->id, 403);
+
+        return response()->json($demande);
+    }
+
+    public function update(Request $request, Demande $demande): JsonResponse
+    {
+        abort_unless($demande->user_id === $request->user()->id, 403);
+
+        $validated = $request->validate($this->rules());
+
+        $demande->update($validated);
+
+        return response()->json($demande);
+    }
+
+    public function destroy(Request $request, Demande $demande): JsonResponse
+    {
+        abort_unless($demande->user_id === $request->user()->id, 403);
+
+        $demande->delete();
+
+        return response()->json(['message' => 'Demande supprimée.']);
+    }
+
+    private function rules(): array
+    {
+        return [
             'category' => ['required', 'string', 'max:255'],
             'subcategory' => ['required', 'string', 'max:255'],
             'property_type' => ['nullable', 'string', 'max:255'],
@@ -69,10 +105,6 @@ class DemandeController extends Controller
             'budget_min' => ['nullable', 'integer', 'min:0'],
             'budget_max' => ['nullable', 'integer', 'min:0'],
             'invoice_required' => ['required', 'string', 'in:aucune,simple,tva'],
-        ]);
-
-        $demande = $request->user()->demandes()->create($validated);
-
-        return response()->json($demande, 201);
+        ];
     }
 }

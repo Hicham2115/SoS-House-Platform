@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, isSameMonth } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
@@ -10,8 +12,12 @@ import {
   FileText,
   CircleCheckBig,
   LayoutGrid,
+  Pencil,
   Table2,
+  Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
+import { DeleteDemandeDialog } from "@/components/dashboard/client/delete-demande-dialog";
 import { DemandeCard } from "@/components/dashboard/client/demande-card";
 import { DemandeDetailsSheet } from "@/components/dashboard/client/demande-details-sheet";
 import { Pagination } from "@/components/dashboard/shared/pagination";
@@ -35,6 +41,7 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDemandes } from "@/hooks/use-demandes";
+import { api } from "@/lib/axios";
 import { statusStyles, urgencyStyles } from "@/lib/dashboard-data";
 import { getCategory, urgencyOptions } from "@/lib/services-catalog";
 
@@ -161,6 +168,23 @@ export default function DemandesPage() {
   const [selectedDemande, setSelectedDemande] = useState(null);
   const [page, setPage] = useState(1);
   const { data: demandes, isPending } = useDemandes();
+  const queryClient = useQueryClient();
+
+  const deleteDemande = useMutation({
+    mutationFn: async (id) => {
+      await api.delete(`/demandes/${id}`);
+      return id;
+    },
+    onSuccess: (id) => {
+      queryClient.invalidateQueries({ queryKey: ["demandes"] });
+      if (selectedDemande?.id === id) setSelectedDemande(null);
+      toast.success("Demande supprimée.");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Impossible de supprimer la demande. Veuillez réessayer.");
+    },
+  });
 
   const allRequests = (demandes ?? []).map((demande) => {
     const category = getCategory(demande.category);
@@ -292,6 +316,8 @@ export default function DemandesPage() {
                 title={request.title}
                 subcategoryLabel={request.subcategoryLabel}
                 onViewDetails={() => setSelectedDemande(request.demande)}
+                onDelete={(id) => deleteDemande.mutate(id)}
+                isDeleting={deleteDemande.isPending}
               />
             ))}
           </div>
@@ -358,14 +384,44 @@ export default function DemandesPage() {
                       {request.meta}
                     </TableCell>
                     <TableCell className="px-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => setSelectedDemande(request.demande)}
-                        className="h-8 rounded-lg border-slate-200 px-3 text-[12px] font-semibold text-slate-700 hover:bg-slate-50"
-                      >
-                        <Eye className="size-3.5" />
-                        Détails
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setSelectedDemande(request.demande)}
+                          className="h-8 rounded-lg border-slate-200 px-3 text-[12px] font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          <Eye className="size-3.5" />
+                          Détails
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          render={
+                            <Link
+                              href={`/dashboard/publier?edit=${request.id}`}
+                            />
+                          }
+                          className="h-8 rounded-lg border-slate-200 px-3 text-[12px] font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          <Pencil className="size-3.5" />
+                          Modifier
+                        </Button>
+
+                        <DeleteDemandeDialog
+                          isDeleting={deleteDemande.isPending}
+                          onConfirm={() => deleteDemande.mutate(request.id)}
+                          trigger={
+                            <Button
+                              variant="outline"
+                              disabled={deleteDemande.isPending}
+                              className="h-8 rounded-lg border-red-200 px-3 text-[12px] font-semibold text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="size-3.5" />
+                              Supprimer
+                            </Button>
+                          }
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -387,6 +443,8 @@ export default function DemandesPage() {
         demande={selectedDemande}
         open={Boolean(selectedDemande)}
         onOpenChange={(open) => !open && setSelectedDemande(null)}
+        onDelete={(id) => deleteDemande.mutate(id)}
+        isDeleting={deleteDemande.isPending}
       />
     </>
   );

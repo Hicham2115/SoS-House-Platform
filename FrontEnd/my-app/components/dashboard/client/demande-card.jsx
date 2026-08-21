@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CalendarDays, ChevronRight, Eye, MapPin, Tag } from "lucide-react";
+import Link from "next/link";
+import { CalendarDays, ChevronRight, Eye, MapPin, Pencil, Tag, Trash2 } from "lucide-react";
+import { DeleteDemandeDialog } from "@/components/dashboard/client/delete-demande-dialog";
 import { Button } from "@/components/ui/button";
 import { statusStyles, urgencyStyles } from "@/lib/dashboard-data";
 import { urgencyOptions } from "@/lib/services-catalog";
@@ -17,6 +19,8 @@ export function DemandeCard({
   title,
   subcategoryLabel,
   onViewDetails,
+  onDelete,
+  isDeleting,
 }) {
   const budget =
     demande.budget_min && demande.budget_max
@@ -98,17 +102,49 @@ export function DemandeCard({
             </span>
           </div>
         )}
-        <Button
-          variant="outline"
-          onClick={(e) => {
-            e.stopPropagation();
-            onViewDetails();
-          }}
-          className="h-9 w-fit rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
-        >
-          <Eye className="size-4" />
-          Détails
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetails();
+            }}
+            className="h-9 w-fit rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            <Eye className="size-4" />
+            Détails
+          </Button>
+
+          <Button
+            variant="outline"
+            render={
+              <Link
+                href={`/dashboard/publier?edit=${demande.id}`}
+                onClick={(e) => e.stopPropagation()}
+              />
+            }
+            className="h-9 w-fit rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            <Pencil className="size-4" />
+            Modifier
+          </Button>
+
+          <DeleteDemandeDialog
+            isDeleting={isDeleting}
+            onConfirm={() => onDelete?.(demande.id)}
+            trigger={
+              <Button
+                variant="outline"
+                onClick={(e) => e.stopPropagation()}
+                disabled={isDeleting}
+                className="h-9 w-fit rounded-lg border-red-200 px-3.5 text-[13px] font-semibold text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="size-4" />
+                Supprimer
+              </Button>
+            }
+          />
+        </div>
       </div>
 
       <ChevronRight className="absolute top-1/2 right-4 size-5 -translate-y-1/2 text-slate-300" />

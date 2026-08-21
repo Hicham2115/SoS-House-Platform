@@ -23,6 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/demandes/disponibles', [DemandeController::class, 'available']);
     Route::post('/demandes', [DemandeController::class, 'store']);
     Route::post('/demandes/photos', [DemandeController::class, 'uploadPhoto']);
+    Route::get('/demandes/{demande}', [DemandeController::class, 'show']);
+    Route::put('/demandes/{demande}', [DemandeController::class, 'update']);
+    Route::delete('/demandes/{demande}', [DemandeController::class, 'destroy']);
 
     Route::post('/contacts', [ContactController::class, 'store']);
 });

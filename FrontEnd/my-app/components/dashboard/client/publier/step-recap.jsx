@@ -30,7 +30,7 @@ function RecapRow({ label, value }) {
   );
 }
 
-export function StepRecap({ draft, isPending, onSubmit }) {
+export function StepRecap({ draft, isPending, isEditing, onSubmit }) {
   const category = getCategory(draft.category);
   const subcategory = category?.subcategories.find(
     (s) => s.value === draft.subcategory,
@@ -132,7 +132,7 @@ export function StepRecap({ draft, isPending, onSubmit }) {
         className="mt-1 h-12 w-full justify-center rounded-xl bg-[#0b1730] text-[14px] font-bold text-white shadow-[0_13px_25px_rgba(11,23,48,0.25)] transition hover:-translate-y-0.5 hover:bg-[#142248]"
       >
         <BadgePlus className="size-4" />
-        Publier ma demande
+        {isEditing ? "Enregistrer les modifications" : "Publier ma demande"}
       </Button>
     </div>
   );
