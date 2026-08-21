@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Bookmark,
   CalendarDays,
+  Eye,
   FileText,
   LayoutGrid,
   Lock,
@@ -12,6 +13,7 @@ import {
   SlidersHorizontal,
   Wallet,
 } from "lucide-react";
+import { DemandeDetailsSheet } from "@/components/dashboard/shared/demande-details-sheet";
 import { FilterSelect } from "@/components/dashboard/shared/filter-select";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
@@ -71,6 +73,9 @@ export default function ProDemandesPage() {
   const [urgentOnly, setUrgentOnly] = useState(false);
   const [sortBy, setSortBy] = useState("recent");
   const [savedIds, setSavedIds] = useState([]);
+  const [selectedDemandeId, setSelectedDemandeId] = useState(null);
+  const selectedDemande =
+    (rawDemandes ?? []).find((d) => d.id === selectedDemandeId) ?? null;
 
   const availableDemandes = useMemo(
     () => (rawDemandes ?? []).map(mapDemandeToCard),
@@ -306,7 +311,15 @@ export default function ProDemandesPage() {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setSelectedDemandeId(demande.id)}
+                        className="h-9 shrink-0 rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
+                      >
+                        <Eye className="size-4" />
+                        Détails
+                      </Button>
                       <span className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-700">
                         <Lock className="size-4 text-slate-400" />
                         {demande.credits} crédits
@@ -360,6 +373,12 @@ export default function ProDemandesPage() {
           </span>
         </div> */}
       </div>
+
+      <DemandeDetailsSheet
+        demande={selectedDemande}
+        open={Boolean(selectedDemande)}
+        onOpenChange={(open) => !open && setSelectedDemandeId(null)}
+      />
     </>
   );
 }

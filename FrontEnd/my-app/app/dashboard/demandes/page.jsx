@@ -401,6 +401,7 @@ export default function DemandesPage() {
                               href={`/dashboard/publier?edit=${request.id}`}
                             />
                           }
+                          nativeButton={false}
                           className="h-8 rounded-lg border-slate-200 px-3 text-[12px] font-semibold text-slate-700 hover:bg-slate-50"
                         >
                           <Pencil className="size-3.5" />

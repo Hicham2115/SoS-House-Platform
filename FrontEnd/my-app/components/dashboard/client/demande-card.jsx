@@ -123,6 +123,7 @@ export function DemandeCard({
                 onClick={(e) => e.stopPropagation()}
               />
             }
+            nativeButton={false}
             className="h-9 w-fit rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
           >
             <Pencil className="size-4" />
