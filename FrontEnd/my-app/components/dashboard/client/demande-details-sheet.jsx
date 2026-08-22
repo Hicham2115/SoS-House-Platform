@@ -74,8 +74,16 @@ export function DemandeDetailsSheet({
             </SheetHeader>
 
             <div className="flex flex-col gap-4 px-4 pb-4">
-              <span className="w-fit rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold tracking-wide text-amber-700 uppercase">
-                En attente de réponses
+              <span
+                className={`w-fit rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide uppercase ${
+                  demande.status === "assignee"
+                    ? "bg-teal-50 text-teal-700"
+                    : "bg-amber-50 text-amber-700"
+                }`}
+              >
+                {demande.status === "assignee"
+                  ? "Prestataire choisi"
+                  : "En attente de réponses"}
               </span>
 
               <div className="rounded-2xl border border-slate-200 p-4">

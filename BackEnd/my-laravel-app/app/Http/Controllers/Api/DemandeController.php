@@ -5,12 +5,18 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Demande;
+use App\Models\DemandeUnlock;
+use App\Models\User;
 
 
 class DemandeController extends Controller
 {
+    // Credits spent by a provider to unlock one demande's full details.
+    private const UNLOCK_COST = 10;
+
     public function index(Request $request): JsonResponse
     {
         return response()->json(
@@ -24,17 +30,59 @@ class DemandeController extends Controller
     // Minimum provider niveau required to see a demande with this invoice_required.
     private const INVOICE_MIN_RANK = ['aucune' => 0, 'simple' => 1, 'tva' => 2];
 
+    private function isEligible(Demande $demande, User $user): bool
+    {
+        $userRank = self::NIVEAU_RANK[$user->niveau] ?? 0;
+
+        return $userRank >= (self::INVOICE_MIN_RANK[$demande->invoice_required] ?? 0);
+    }
+
     public function available(Request $request): JsonResponse
     {
         abort_unless($request->user()->role === 'artisan', 403);
 
-        $userRank = self::NIVEAU_RANK[$request->user()->niveau] ?? 0;
-
         $demandes = Demande::latest()->get()->filter(
-            fn (Demande $demande) => $userRank >= (self::INVOICE_MIN_RANK[$demande->invoice_required] ?? 0)
+            fn (Demande $demande) => $this->isEligible($demande, $request->user())
         )->values();
 
         return response()->json($demandes);
+    }
+
+    public function unlock(Request $request, Demande $demande): JsonResponse
+    {
+        $user = $request->user();
+
+        abort_unless($user->role === 'artisan', 403);
+        abort_unless($this->isEligible($demande, $user), 403, 'Cette demande n\'est pas accessible à votre niveau.');
+
+        $existing = DemandeUnlock::where('demande_id', $demande->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($existing) {
+            return response()->json(['unlock' => $existing, 'credits' => $user->credits]);
+        }
+
+        $unlock = DB::transaction(function () use ($demande, $user) {
+            // Lock the row to avoid a double-spend from a double click / race.
+            $locked = User::whereKey($user->id)->lockForUpdate()->first();
+
+            abort_if($locked->credits < self::UNLOCK_COST, 422, 'Crédits insuffisants.');
+
+            $locked->decrement('credits', self::UNLOCK_COST);
+
+            return DemandeUnlock::create([
+                'demande_id' => $demande->id,
+                'user_id' => $user->id,
+                'credits_spent' => self::UNLOCK_COST,
+                'unlocked_at' => now(),
+            ]);
+        });
+
+        return response()->json([
+            'unlock' => $unlock,
+            'credits' => $unlock->user->fresh()->credits,
+        ], 201);
     }
 
     public function uploadPhoto(Request $request): JsonResponse

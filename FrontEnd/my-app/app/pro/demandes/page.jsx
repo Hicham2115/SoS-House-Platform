@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { DemandeDetailsSheet } from "@/components/dashboard/shared/demande-details-sheet";
 import { FilterSelect } from "@/components/dashboard/shared/filter-select";
+import { UnlockDemandeDialog } from "@/components/dashboard/pro/unlock-demande-dialog";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,6 +75,7 @@ export default function ProDemandesPage() {
   const [sortBy, setSortBy] = useState("recent");
   const [savedIds, setSavedIds] = useState([]);
   const [selectedDemandeId, setSelectedDemandeId] = useState(null);
+  const [unlockDemandeId, setUnlockDemandeId] = useState(null);
   const selectedDemande =
     (rawDemandes ?? []).find((d) => d.id === selectedDemandeId) ?? null;
 
@@ -185,13 +187,13 @@ export default function ProDemandesPage() {
             className="w-48"
           />
 
-          <FilterSelect
+          {/* <FilterSelect
             icon={FileText}
             value={invoiceFilter}
             onValueChange={setInvoiceFilter}
             options={invoiceOptions}
             className="w-72"
-          />
+          /> */}
 
           <FilterSelect
             icon={Wallet}
@@ -320,11 +322,14 @@ export default function ProDemandesPage() {
                         <Eye className="size-4" />
                         Détails
                       </Button>
-                      <span className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-700">
+                      {/* <span className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-700">
                         <Lock className="size-4 text-slate-400" />
                         {demande.credits} crédits
-                      </span>
-                      <Button className="h-9 shrink-0 rounded-lg bg-[#ffa514] px-4 text-[13px] font-bold text-slate-950 hover:bg-[#ffaf2d]">
+                      </span> */}
+                      <Button
+                        onClick={() => setUnlockDemandeId(demande.id)}
+                        className="h-9 shrink-0 rounded-lg bg-[#ffa514] px-4 text-[13px] font-bold text-slate-950 hover:bg-[#ffaf2d]"
+                      >
                         Débloquer
                       </Button>
                       <button
@@ -378,6 +383,13 @@ export default function ProDemandesPage() {
         demande={selectedDemande}
         open={Boolean(selectedDemande)}
         onOpenChange={(open) => !open && setSelectedDemandeId(null)}
+      />
+
+      <UnlockDemandeDialog
+        key={unlockDemandeId ?? "none"}
+        demande={demandes.find((d) => d.id === unlockDemandeId) ?? null}
+        open={Boolean(unlockDemandeId)}
+        onOpenChange={(open) => !open && setUnlockDemandeId(null)}
       />
     </>
   );

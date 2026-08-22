@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'role', 'profession', 'phone', 'avatar', 'raison_sociale', 'ice', 'ville', 'nom_du_referant', 'quartier', 'adresse', 'etage', 'notification_Channel', 'niveau', 'rc', 'secteur_activite', 'nom_commercial', 'carte_auto_entrepreneur', 'cin_recto', 'cin_verso', 'selfie', 'radius_km', 'provider_categories', 'disponibilite_jours', 'heure_debut', 'heure_fin', 'bio', 'annees_experience', 'specialites'])]
+#[Fillable(['name', 'email', 'password', 'role', 'profession', 'phone', 'avatar', 'raison_sociale', 'ice', 'ville', 'nom_du_referant', 'quartier', 'adresse', 'etage', 'notification_Channel', 'niveau', 'rc', 'secteur_activite', 'nom_commercial', 'carte_auto_entrepreneur', 'cin_recto', 'cin_verso', 'selfie', 'radius_km', 'provider_categories', 'disponibilite_jours', 'heure_debut', 'heure_fin', 'bio', 'annees_experience', 'specialites', 'credits'])]
 
 #[Hidden(['password', 'remember_token'])]
 
@@ -58,12 +58,23 @@ class User extends Authenticatable
             "bio" => 'string',
             "annees_experience" => 'integer',
             "specialites" => 'array',
+            "credits" => 'integer',
         ];
     }
 
     public function demandes()
     {
         return $this->hasMany(Demande::class);
+    }
+
+    public function demandeUnlocks()
+    {
+        return $this->hasMany(DemandeUnlock::class);
+    }
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class);
     }
 
     public function contacts()

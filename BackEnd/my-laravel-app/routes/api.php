@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DemandeController;
+use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\ProviderPortfolioController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -27,6 +28,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/demandes/{demande}', [DemandeController::class, 'show']);
     Route::put('/demandes/{demande}', [DemandeController::class, 'update']);
     Route::delete('/demandes/{demande}', [DemandeController::class, 'destroy']);
+    Route::post('/demandes/{demande}/unlock', [DemandeController::class, 'unlock']);
+    Route::get('/demandes/{demande}/offers', [OfferController::class, 'index']);
+    Route::post('/demandes/{demande}/offers', [OfferController::class, 'store']);
+    Route::get('/offers', [OfferController::class, 'mine']);
+    Route::post('/offers/{offer}/accept', [OfferController::class, 'accept']);
 
     Route::post('/contacts', [ContactController::class, 'store']);
 

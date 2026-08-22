@@ -15,6 +15,7 @@ import avatar3 from "@/app/assets/avatars/avatar-3.png";
 // workflow (mission accepted, in progress, done, ...) as it's built out.
 export const statusStyles = {
   "En attente de réponses": "bg-amber-50 text-amber-700",
+  "Prestataire choisi": "bg-teal-50 text-teal-700",
 };
 
 export const urgencyStyles = {

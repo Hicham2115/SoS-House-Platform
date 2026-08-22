@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import {
   CircleHelp,
   FileText,
+  Handshake,
   History,
   LayoutDashboard,
   LogOut,
@@ -24,6 +25,7 @@ import { useUser } from "@/hooks/use-user";
 const navItems = [
   { href: "/dashboard", Icon: LayoutDashboard, label: "Tableau de bord" },
   { href: "/dashboard/demandes", Icon: FileText, label: "Demandes actives" },
+  { href: "/dashboard/offres", Icon: Handshake, label: "Offres reçues" },
   {
     href: "/dashboard/publier",
     Icon: Megaphone,
