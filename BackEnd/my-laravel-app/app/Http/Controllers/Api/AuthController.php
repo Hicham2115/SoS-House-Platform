@@ -48,7 +48,9 @@ class AuthController extends Controller
             }
         }
 
-        $user = User::create($validated);
+        // Starting balance so new accounts can try the unlock flow right away.
+        // TODO: revisit once there's a real signup bonus / credit purchase policy.
+        $user = User::create($validated + ['credits' => 100]);
 
         return response()->json($user, 201);
     }
