@@ -71,7 +71,7 @@ export function DemandeDetailsSheet({ demande, open, onOpenChange }) {
                 En attente de réponses
               </span>
 
-              <div className="rounded-2xl border border-slate-200 p-4">
+              <div className="rounded-md border border-slate-200 p-4">
                 <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5 text-[12px] font-bold tracking-[0.04em] text-teal-700 uppercase">
                   <Tag className="size-3.5" />
                   Service
@@ -126,7 +126,7 @@ export function DemandeDetailsSheet({ demande, open, onOpenChange }) {
                 </div>
               )}
 
-              <div className="rounded-2xl border border-slate-200 p-4">
+              <div className="rounded-md border border-slate-200 p-4">
                 <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5 text-[12px] font-bold tracking-[0.04em] text-teal-700 uppercase">
                   <MapPin className="size-3.5" />
                   Localisation et urgence

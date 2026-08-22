@@ -1,35 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import {
-  CalendarDays,
   FileText,
   ListChecks,
   MapPin,
   MessageSquare,
   Phone,
+  ShieldCheck,
   Wallet,
 } from "lucide-react";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSubmittedOffers } from "@/hooks/use-offers";
+import { useClientOffers } from "@/hooks/use-offers";
 import { demandeTitle } from "@/lib/demande-display";
 import { getCategory } from "@/lib/services-catalog";
 
-export default function ProMissionsPage() {
-  const { data: offers, isPending } = useSubmittedOffers();
+const niveauMeta = {
+  n0: { label: "Non vérifié", className: "bg-slate-100 text-slate-600" },
+  n1: { label: "Auto-entrepreneur", className: "bg-amber-50 text-amber-700" },
+  n2: {
+    label: "Entreprise enregistrée",
+    className: "bg-violet-50 text-violet-600",
+  },
+};
+
+export default function ClientMissionsPage() {
+  const { data: offers, isPending } = useClientOffers();
   const missions = (offers ?? []).filter((o) => o.status === "accepted");
 
   return (
     <>
       <DashboardHeader
         title="Mes missions"
-        subtitle="Les demandes que vous avez remportées — contactez vos clients ci-dessous."
-        ctaLabel="+ Voir les nouvelles demandes"
-        ctaHref="/pro/demandes"
-        settingsHref="/pro/parametres"
+        subtitle="Les demandes pour lesquelles vous avez choisi un prestataire."
       />
 
       <div className="flex flex-1 flex-col gap-3 bg-slate-50 p-5 sm:p-8">
@@ -50,8 +55,8 @@ export default function ProMissionsPage() {
           <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-slate-200 bg-white px-4 py-14 text-center">
             <ListChecks className="size-8 text-slate-300" strokeWidth={1.5} />
             <p className="text-[13px] text-slate-500">
-              Aucune mission pour l&apos;instant. Débloquez des demandes et
-              proposez un prix pour en décrocher une.
+              Aucune mission pour l&apos;instant. Choisissez une offre reçue
+              pour démarrer une mission.
             </p>
           </div>
         ) : (
@@ -59,6 +64,7 @@ export default function ProMissionsPage() {
             const demande = offer.demande;
             const category = demande ? getCategory(demande.category) : null;
             const Icon = category?.Icon ?? FileText;
+            const niveau = niveauMeta[offer.user?.niveau] ?? niveauMeta.n0;
 
             return (
               <div
@@ -73,31 +79,33 @@ export default function ProMissionsPage() {
                   <p className="text-[15px] font-bold text-slate-950">
                     {demande ? demandeTitle(demande) : "Demande"}
                   </p>
-                  <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[12px] text-slate-500">
-                    {demande?.ville && (
-                      <>
-                        <MapPin className="size-3.5 shrink-0" />
-                        {demande.ville}
-                        <span className="text-slate-600">·</span>
-                      </>
-                    )}
-                    <CalendarDays className="size-3.5 shrink-0" />
-                    {format(new Date(offer.created_at), "d MMM yyyy", {
-                      locale: fr,
-                    })}
-                  </p>
-
-                  {demande?.user && (
-                    <p className="mt-2 text-[13px] font-semibold text-slate-800">
-                      Client : {demande.user.name}
-                      {demande.adresse && (
-                        <span className="font-normal text-slate-500">
-                          {" "}
-                          · {demande.adresse}
-                        </span>
-                      )}
+                  {demande?.ville && (
+                    <p className="mt-0.5 flex items-center gap-1 text-[12px] text-slate-500">
+                      <MapPin className="size-3.5 shrink-0" />
+                      {demande.ville}
                     </p>
                   )}
+
+                  <div className="mt-2 flex items-center gap-2">
+                    <Avatar size="sm">
+                      <AvatarImage
+                        src={offer.user?.avatar}
+                        alt={offer.user?.name}
+                      />
+                      <AvatarFallback className="bg-teal-100 font-bold text-teal-700">
+                        {offer.user?.name?.[0]?.toUpperCase() ?? "P"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-[13px] font-semibold text-slate-800">
+                      {offer.user?.name ?? "Prestataire"}
+                    </span>
+                    <span
+                      className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${niveau.className}`}
+                    >
+                      <ShieldCheck className="size-3" />
+                      {niveau.label}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex shrink-0 flex-col items-end gap-2">
@@ -106,14 +114,14 @@ export default function ProMissionsPage() {
                     {offer.price} MAD
                   </span>
                   <div className="flex items-center gap-2">
-                    {demande?.user?.phone && (
+                    {offer.user?.phone && (
                       <span className="flex items-center gap-1.5 rounded-lg bg-teal-700 px-3 py-1.5 text-[12px] font-bold text-white">
                         <Phone className="size-3.5" />
-                        {demande.user.phone}
+                        {offer.user.phone}
                       </span>
                     )}
                     <Link
-                      href={`/pro/messagerie?demande=${demande?.id}`}
+                      href={`/dashboard/messagerie?demande=${offer.demande_id}`}
                       className="flex items-center gap-1.5 rounded-lg border border-teal-200 bg-white px-3 py-1.5 text-[12px] font-bold text-teal-700 hover:bg-teal-50"
                     >
                       <MessageSquare className="size-3.5" />

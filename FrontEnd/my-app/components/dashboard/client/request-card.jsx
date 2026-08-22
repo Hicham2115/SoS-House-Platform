@@ -13,7 +13,7 @@ export function RequestCard({ demande, icon: Icon, title, onViewDetails }) {
     <button
       type="button"
       onClick={onViewDetails}
-      className="flex w-full items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-teal-200 hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)]"
+      className="flex w-full items-center gap-4 rounded-md border border-slate-200 bg-white p-4 text-left transition hover:border-teal-200 hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)]"
     >
       <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
         <Icon className="size-5" strokeWidth={1.8} />

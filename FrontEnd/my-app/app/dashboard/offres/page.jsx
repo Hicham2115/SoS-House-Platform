@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
@@ -11,12 +12,15 @@ import {
   FileText,
   Inbox,
   MapPin,
+  MessageSquare,
   MessageSquareQuote,
+  Phone,
   Send,
   ShieldCheck,
   Sparkles,
   Tag,
 } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -29,7 +33,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAcceptOffer, useClientOffers } from "@/hooks/use-offers";
+import { useClientOffers } from "@/hooks/use-offers";
+import { api } from "@/lib/axios";
 import { statusStyles, urgencyStyles } from "@/lib/dashboard-data";
 import { demandeTitle } from "@/lib/demande-display";
 import { getCategory, urgencyOptions } from "@/lib/services-catalog";
@@ -85,7 +90,7 @@ export default function ClientOffresPage() {
           Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+              className="flex items-center gap-3 rounded-md border border-slate-200 bg-white p-4"
             >
               <Skeleton className="size-11 shrink-0 rounded-full" />
               <div className="flex-1 space-y-2">
@@ -95,7 +100,7 @@ export default function ClientOffresPage() {
             </div>
           ))
         ) : !groups.length ? (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-14 text-center">
+          <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-slate-200 bg-white px-4 py-14 text-center">
             <Inbox className="size-8 text-slate-300" strokeWidth={1.5} />
             <p className="text-[13px] text-slate-500">
               Aucune offre reçue pour l&apos;instant.
@@ -126,7 +131,7 @@ export default function ClientOffresPage() {
               <div
                 key={demande.id}
                 onClick={() => setSelectedDemandeId(demande.id)}
-                className="relative flex cursor-pointer flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 pr-10 transition hover:border-teal-200 hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)] lg:flex-row lg:items-start lg:gap-6"
+                className="relative flex cursor-pointer flex-col gap-4 rounded-md border border-slate-200 bg-white p-5 pr-10 transition hover:border-teal-200 hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)] lg:flex-row lg:items-start lg:gap-6"
               >
                 <div className="flex flex-1 gap-4">
                   <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
@@ -274,7 +279,15 @@ export default function ClientOffresPage() {
 }
 
 function OfferCard({ offer, isCheapest }) {
-  const acceptOffer = useAcceptOffer();
+  const queryClient = useQueryClient();
+  const acceptOffer = useMutation({
+    mutationFn: async (offerId) =>
+      (await api.post(`/offers/${offerId}/accept`)).data,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["demandes"] });
+      queryClient.invalidateQueries({ queryKey: ["offers"] });
+    },
+  });
   const niveau = niveauMeta[offer.user?.niveau] ?? niveauMeta.n0;
   const accepted = offer.status === "accepted";
   const rejected = offer.status === "rejected";
@@ -288,7 +301,7 @@ function OfferCard({ offer, isCheapest }) {
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border bg-white p-4 transition ${
+      className={`relative overflow-hidden rounded-md border bg-white p-4 transition ${
         accepted
           ? "border-teal-300 shadow-[0_8px_24px_rgba(13,148,136,0.15)]"
           : rejected
@@ -344,6 +357,24 @@ function OfferCard({ offer, isCheapest }) {
           <p className="text-[13px] leading-normal text-slate-700">
             {offer.message}
           </p>
+        </div>
+      )}
+
+      {accepted && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {offer.user?.phone && (
+            <span className="flex flex-1 items-center gap-2 rounded-xl bg-teal-50 p-3 text-[13px] font-bold text-teal-700">
+              <Phone className="size-4 shrink-0" />
+              {offer.user.phone}
+            </span>
+          )}
+          <Link
+            href={`/dashboard/messagerie?demande=${offer.demande_id}`}
+            className="flex items-center gap-2 rounded-xl border border-teal-200 bg-white p-3 text-[13px] font-bold text-teal-700 transition hover:bg-teal-50"
+          >
+            <MessageSquare className="size-4 shrink-0" />
+            Messagerie
+          </Link>
         </div>
       )}
 

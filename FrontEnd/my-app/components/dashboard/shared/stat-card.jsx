@@ -28,7 +28,7 @@ export function StatCard({
 }) {
   const captionClassName = `mt-2 flex w-fit items-center gap-1 text-[12px] font-semibold ${captionStyles[captionTone]}`;
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+    <div className="rounded-md border border-slate-200 bg-white p-5">
       <div className="flex items-center gap-4">
         <span
           className={`flex size-14 shrink-0 items-center justify-center rounded-full ${toneStyles[tone]}`}

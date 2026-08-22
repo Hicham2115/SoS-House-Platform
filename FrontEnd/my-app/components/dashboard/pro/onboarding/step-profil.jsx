@@ -101,7 +101,7 @@ export function StepProfil({ formData, updateField, onFinish, isPending }) {
         >
           <label
             htmlFor="canal-whatsapp"
-            className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)]"
+            className="flex cursor-pointer items-center gap-3 rounded-md border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)]"
           >
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
               <MessageCircle className="size-[18px]" strokeWidth={1.8} />
@@ -113,7 +113,7 @@ export function StepProfil({ formData, updateField, onFinish, isPending }) {
           </label>
           <label
             htmlFor="canal-email"
-            className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)]"
+            className="flex cursor-pointer items-center gap-3 rounded-md border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)]"
           >
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
               <Mail className="size-[18px]" strokeWidth={1.8} />

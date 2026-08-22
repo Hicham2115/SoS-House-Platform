@@ -7,30 +7,11 @@ import { ProfileOnboarding } from "@/components/dashboard/client/profile-onboard
 import { RequestCard } from "@/components/dashboard/client/request-card";
 import { StatCard } from "@/components/dashboard/shared/stat-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDemandes } from "@/hooks/use-demandes";
 import { useUser } from "@/hooks/use-user";
 import { getCategory } from "@/lib/services-catalog";
-import {
-  missionHistoryPreview,
-  missionStatusLabels,
-  missionStatusStyles,
-} from "@/lib/dashboard-data";
-import {
-  CalendarX,
-  CircleCheckBig,
-  FileText,
-  MoreVertical,
-  Smile,
-  Star,
-  TrendingUp,
-} from "lucide-react";
-
-const missionIconStyles = {
-  terminee: "bg-green-50 text-green-600",
-  annulee: "bg-slate-100 text-slate-500",
-};
+import { CircleCheckBig, FileText, Smile, Star, TrendingUp } from "lucide-react";
 
 export default function DashboardPage() {
   const { data: demandes, isPending } = useDemandes();
@@ -120,7 +101,7 @@ export default function DashboardPage() {
                 Array.from({ length: 2 }).map((_, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+                    className="flex items-center gap-3 rounded-md border border-slate-200 bg-white p-4"
                   >
                     <Skeleton className="size-11 shrink-0 rounded-full" />
                     <div className="flex-1 space-y-2">
@@ -130,7 +111,7 @@ export default function DashboardPage() {
                   </div>
                 ))
               ) : requests.length === 0 ? (
-                <p className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-[13px] text-slate-500">
+                <p className="rounded-md border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-[13px] text-slate-500">
                   Aucune demande pour le moment.
                 </p>
               ) : (
@@ -144,79 +125,6 @@ export default function DashboardPage() {
                   />
                 ))
               )}
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <h2 className="text-[17px] font-bold text-slate-950">
-                Historique des missions
-              </h2>
-              <Link
-                href="/dashboard/historique"
-                className="text-[13px] font-semibold text-teal-700"
-              >
-                Voir tout →
-              </Link>
-            </div>
-
-            <div className="mt-4 flex flex-col gap-3">
-              {missionHistoryPreview.map((mission) => {
-                const Icon =
-                  mission.status === "annulee" ? CalendarX : CircleCheckBig;
-                return (
-                  <div
-                    key={mission.title}
-                    className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center"
-                  >
-                    <span
-                      className={`flex size-11 shrink-0 items-center justify-center rounded-full ${missionIconStyles[mission.status]}`}
-                    >
-                      <Icon className="size-5" strokeWidth={1.8} />
-                    </span>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[15px] font-bold text-slate-950">
-                        {mission.title}
-                      </p>
-                      <p className="mt-0.5 text-[13px] text-slate-600">
-                        {mission.category} · {mission.ville}
-                      </p>
-                    </div>
-
-                    <span
-                      className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide uppercase ${missionStatusStyles[mission.status]}`}
-                    >
-                      {missionStatusLabels[mission.status]}
-                    </span>
-
-                    <div className="shrink-0 text-right">
-                      <p className="text-[14px] font-bold text-slate-950">
-                        {mission.price ?? "—"}
-                      </p>
-                      <p className="text-[12px] text-slate-500">
-                        {mission.date}
-                      </p>
-                    </div>
-
-                    <div className="flex shrink-0 items-center gap-2">
-                      <Button
-                        variant="outline"
-                        className="h-9 rounded-lg border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 hover:bg-slate-50"
-                      >
-                        Voir les détails
-                      </Button>
-                      <button
-                        type="button"
-                        aria-label="Plus d'options"
-                        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-50 hover:text-slate-700"
-                      >
-                        <MoreVertical className="size-4" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </div>
         </div>

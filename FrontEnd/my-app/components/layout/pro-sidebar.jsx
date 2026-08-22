@@ -12,12 +12,15 @@ import {
   LayoutDashboard,
   ListChecks,
   LogOut,
+  MessageSquare,
   PanelLeftClose,
   PanelLeftOpen,
+  Send,
   Settings,
 } from "lucide-react";
 import logo from "@/app/assets/logo.jpeg";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useConversations } from "@/hooks/use-conversations";
 import { useLogout } from "@/hooks/use-logout";
 import { useUser } from "@/hooks/use-user";
 
@@ -28,7 +31,9 @@ const navItems = [
     Icon: ClipboardList,
     label: "Demandes disponibles",
   },
+  { href: "/pro/offres", Icon: Send, label: "Mes offres" },
   { href: "/pro/missions", Icon: ListChecks, label: "Mes missions" },
+  { href: "/pro/messagerie", Icon: MessageSquare, label: "Messagerie" },
   { href: "/pro/devis", Icon: FileText, label: "Devis et factures" },
   { href: "/pro/credits", Icon: CreditCard, label: "Crédits et recharge" },
   { href: "/pro/statistiques", Icon: BarChart3, label: "Statistiques" },
@@ -38,8 +43,14 @@ const navItems = [
 export function ProSidebar() {
   const pathname = usePathname();
   const { data: user } = useUser();
+  const { data: conversations } = useConversations();
   const logout = useLogout();
   const [collapsed, setCollapsed] = useState(false);
+
+  const messagerieUnread = (conversations ?? []).reduce(
+    (sum, c) => sum + (c.unread_count ?? 0),
+    0,
+  );
 
   return (
     <aside
@@ -67,6 +78,10 @@ export function ProSidebar() {
       <nav className="mt-4 flex flex-col gap-0.5">
         {navItems.map(({ href, Icon, label }) => {
           const active = pathname === href;
+          const badge =
+            href === "/pro/messagerie" && messagerieUnread > 0
+              ? messagerieUnread
+              : null;
           return (
             <Link
               key={href}
@@ -84,13 +99,18 @@ export function ProSidebar() {
               {!collapsed && (
                 <span className="flex-1 whitespace-nowrap">{label}</span>
               )}
+              {badge && !collapsed && (
+                <span className="flex size-5 items-center justify-center rounded-full bg-[#ffa514] text-[11px] font-bold text-slate-950">
+                  {badge}
+                </span>
+              )}
             </Link>
           );
         })}
       </nav>
 
       <div
-        className={`mt-6 flex items-center gap-3 rounded-2xl bg-white/5 p-3 ${
+        className={`mt-6 flex items-center gap-3 rounded-md bg-white/5 p-3 ${
           collapsed ? "justify-center" : ""
         }`}
       >

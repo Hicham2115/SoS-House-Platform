@@ -99,7 +99,7 @@ export function StepUrgency({ defaultValues, priceRange, onSubmit }) {
                   key={option.value}
                   type="button"
                   onClick={() => field.handleChange(option.value)}
-                  className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] ${
+                  className={`flex items-center gap-3 rounded-md border p-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] ${
                     selected
                       ? "border-teal-600 bg-teal-50/60"
                       : "border-slate-200 hover:bg-slate-50"

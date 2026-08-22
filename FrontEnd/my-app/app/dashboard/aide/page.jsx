@@ -91,7 +91,7 @@ export default function AidePage() {
       <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
           <form
-            className="order-2 flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)] lg:order-1"
+            className="order-2 flex flex-col gap-5 rounded-md border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)] lg:order-1"
             onSubmit={(e) => {
               e.preventDefault();
               form.handleSubmit();
@@ -178,7 +178,7 @@ export default function AidePage() {
           </form>
 
           <div className="order-1 flex flex-col gap-6 lg:order-2">
-            <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-teal-600 to-teal-700 p-6 shadow-[0_20px_40px_rgba(13,148,136,0.25)]">
+            <div className="relative overflow-hidden rounded-md bg-linear-to-br from-teal-600 to-teal-700 p-6 shadow-[0_20px_40px_rgba(13,148,136,0.25)]">
               <span className="absolute -top-8 -right-8 size-32 rounded-full bg-white/10" />
               <span className="absolute -bottom-10 right-16 size-24 rounded-full bg-white/10" />
 
@@ -209,7 +209,7 @@ export default function AidePage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white px-4">
+            <div className="rounded-md border border-slate-200 bg-white px-4">
               <p className="px-1 pt-4 text-[15px] font-bold text-slate-950">
                 Questions fréquentes
               </p>

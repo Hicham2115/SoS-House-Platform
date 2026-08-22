@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { Lock, Send, Wallet, X } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CheckCircle2, Clock, Lock, Send, Trash2, Wallet, X } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import {
@@ -15,18 +16,55 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useUnlockDemande } from "@/hooks/use-demande-unlock";
-import { useCreateOffer } from "@/hooks/use-offers";
+import { useSubmittedOffers } from "@/hooks/use-offers";
+import { api } from "@/lib/axios";
 
 const offerSchema = z.object({
   price: z.coerce.number().int().min(1, "Indiquez un prix"),
   message: z.string().trim().max(1000).optional(),
 });
 
+const offerStatusMeta = {
+  pending: { label: "En attente de réponse", Icon: Clock, className: "text-amber-600" },
+  accepted: { label: "Acceptée par le client", Icon: CheckCircle2, className: "text-teal-600" },
+  rejected: { label: "Non retenue", Icon: X, className: "text-slate-500" },
+};
+
 export function UnlockDemandeDialog({ demande, open, onOpenChange }) {
   const [step, setStep] = useState("confirm");
-  const unlockDemande = useUnlockDemande();
-  const createOffer = useCreateOffer(demande?.id);
+  const queryClient = useQueryClient();
+  const { data: submittedOffers } = useSubmittedOffers();
+  const existingOffer = (submittedOffers ?? []).find(
+    (o) => o.demande_id === demande?.id,
+  );
+
+  const withdrawOffer = useMutation({
+    mutationFn: async (offerId) => (await api.delete(`/offers/${offerId}`)).data,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["offers"] });
+      toast.success("Offre retirée. Vous pouvez en envoyer une nouvelle.");
+    },
+    onError: (error) => toast.error(error.message),
+  });
+
+  const unlockDemande = useMutation({
+    mutationFn: async (demandeId) =>
+      (await api.post(`/demandes/${demandeId}/unlock`)).data,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["demandes"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+
+  const createOffer = useMutation({
+    mutationFn: async (data) =>
+      (await api.post(`/demandes/${demande?.id}/offers`, data)).data,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["demandes", demande?.id, "offers"],
+      });
+    },
+  });
 
   const form = useForm({
     defaultValues: { price: "", message: "" },
@@ -72,7 +110,70 @@ export function UnlockDemandeDialog({ demande, open, onOpenChange }) {
           <X className="size-4" />
         </button>
 
-        {step === "confirm" ? (
+        {existingOffer ? (
+          <>
+            <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-teal-100/70">
+              <span className="flex size-14 items-center justify-center rounded-full bg-linear-to-br from-teal-600 to-teal-700 text-white shadow-[0_10px_20px_rgba(13,148,136,0.35)]">
+                <Send className="size-6" strokeWidth={1.8} />
+              </span>
+            </div>
+
+            <DialogTitle className="mt-5 text-[22px] font-extrabold text-slate-950">
+              Offre déjà envoyée
+            </DialogTitle>
+
+            <DialogDescription className="mt-4 text-[14px] leading-[1.6] text-slate-500">
+              Vous ne pouvez proposer qu&apos;un seul prix à la fois pour
+              cette demande.
+            </DialogDescription>
+
+            <div className="mt-5 rounded-md bg-slate-50 p-4 text-left">
+              <div className="flex items-center justify-between">
+                <p className="text-[18px] font-extrabold text-slate-950">
+                  {existingOffer.price} MAD
+                </p>
+                {(() => {
+                  const meta =
+                    offerStatusMeta[existingOffer.status] ??
+                    offerStatusMeta.pending;
+                  return (
+                    <span
+                      className={`flex items-center gap-1.5 text-[12px] font-bold ${meta.className}`}
+                    >
+                      <meta.Icon className="size-3.5" />
+                      {meta.label}
+                    </span>
+                  );
+                })()}
+              </div>
+              {existingOffer.message && (
+                <p className="mt-2 text-[13px] leading-[1.5] text-slate-600">
+                  {existingOffer.message}
+                </p>
+              )}
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 items-stretch gap-3">
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="h-auto min-h-12 rounded-xl border-slate-200 py-3 text-[14px] font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                Fermer
+              </Button>
+              {existingOffer.status === "pending" && (
+                <Button
+                  onClick={() => withdrawOffer.mutate(existingOffer.id)}
+                  disabled={withdrawOffer.isPending}
+                  className="h-auto min-h-12 rounded-xl bg-red-50 py-3 text-[14px] font-bold text-red-600 hover:bg-red-100"
+                >
+                  <Trash2 className="size-4 shrink-0" />
+                  {withdrawOffer.isPending ? "Retrait..." : "Retirer mon offre"}
+                </Button>
+              )}
+            </div>
+          </>
+        ) : step === "confirm" ? (
           <>
             <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-amber-100/70">
               <span className="flex size-14 items-center justify-center rounded-full bg-linear-to-br from-amber-400 to-amber-500 text-slate-950 shadow-[0_10px_20px_rgba(217,158,21,0.35)]">
@@ -91,7 +192,7 @@ export function UnlockDemandeDialog({ demande, open, onOpenChange }) {
               qui choisira l&apos;offre qui lui convient.
             </DialogDescription>
 
-            <div className="mt-5 flex items-start gap-3 rounded-2xl bg-amber-50 p-4 text-left">
+            <div className="mt-5 flex items-start gap-3 rounded-md bg-amber-50 p-4 text-left">
               <Wallet className="mt-0.5 size-5 shrink-0 text-amber-600" />
               <div>
                 <p className="text-[13px] font-bold text-amber-700">
@@ -148,7 +249,10 @@ export function UnlockDemandeDialog({ demande, open, onOpenChange }) {
               <form.Field name="price">
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
-                    <Label htmlFor="price" className="text-[13px] text-slate-700">
+                    <Label
+                      htmlFor="price"
+                      className="text-[13px] text-slate-700"
+                    >
                       Prix proposé (MAD)
                     </Label>
                     <Input

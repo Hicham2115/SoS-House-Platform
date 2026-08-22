@@ -48,7 +48,7 @@ export function StepInvoice({ defaultValue, editable, onSubmit }) {
                 <label
                   key={optionValue}
                   htmlFor={`invoice-${optionValue}`}
-                  className={`flex cursor-pointer items-center gap-4 rounded-2xl border p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] ${
+                  className={`flex cursor-pointer items-center gap-4 rounded-md border p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] ${
                     selected
                       ? "border-teal-600 bg-teal-50/60"
                       : "border-slate-200 hover:bg-slate-50"
@@ -82,7 +82,7 @@ export function StepInvoice({ defaultValue, editable, onSubmit }) {
           </RadioGroup>
         ) : (
           <>
-            <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
+            <div className="flex items-center gap-4 rounded-md border border-slate-200 bg-slate-50 p-3.5">
               <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-500">
                 {locked ? (
                   <locked.Icon className="size-5" strokeWidth={1.8} />

@@ -155,7 +155,7 @@ export function StepPortfolio({ portfolio, onContinue, onSkip }) {
           />
         ))}
 
-        <div className="flex flex-col gap-2.5 rounded-2xl border border-dashed border-slate-300 p-3.5">
+        <div className="flex flex-col gap-2.5 rounded-md border border-dashed border-slate-300 p-3.5">
           <Input
             placeholder='Titre du document (ex : "Certificat CAP Plomberie")'
             value={certDraft.title}
@@ -212,7 +212,7 @@ export function StepPortfolio({ portfolio, onContinue, onSkip }) {
           />
         ))}
 
-        <div className="flex flex-col gap-2.5 rounded-2xl border border-dashed border-slate-300 p-3.5">
+        <div className="flex flex-col gap-2.5 rounded-md border border-dashed border-slate-300 p-3.5">
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             <FileUploadField
               id="new-realisation-avant"
@@ -299,7 +299,7 @@ export function StepPortfolio({ portfolio, onContinue, onSkip }) {
           />
         ))}
 
-        <div className="flex flex-col gap-2.5 rounded-2xl border border-dashed border-slate-300 p-3.5">
+        <div className="flex flex-col gap-2.5 rounded-md border border-dashed border-slate-300 p-3.5">
           <FileUploadField
             id="new-travaux-photo"
             label="Photo"

@@ -75,13 +75,12 @@ export default function ProCreditsPage() {
         ctaLabel="+ Voir les nouvelles demandes"
         ctaHref="/pro/demandes"
         settingsHref="/pro/parametres"
-        notificationCount={3}
       />
 
       <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
         <div className="flex flex-col gap-6">
           <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
-            <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-[#0b1730] to-[#132650] p-6 text-white shadow-[0_20px_40px_rgba(11,23,48,0.25)]">
+            <div className="relative overflow-hidden rounded-md bg-linear-to-br from-[#0b1730] to-[#132650] p-6 text-white shadow-[0_20px_40px_rgba(11,23,48,0.25)]">
               <span className="absolute -top-10 -right-10 size-40 rounded-full bg-white/5" />
               <span className="absolute -bottom-14 right-24 size-28 rounded-full bg-white/5" />
 
@@ -136,7 +135,7 @@ export default function ProCreditsPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className="rounded-md border border-slate-200 bg-white p-5">
               <span className="inline-block rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-bold text-teal-700">
                 À savoir
               </span>
@@ -164,7 +163,7 @@ export default function ProCreditsPage() {
                 return (
                   <div
                     key={pkg.id}
-                    className={`relative flex flex-col items-center gap-3 rounded-2xl border p-4 text-center transition ${
+                    className={`relative flex flex-col items-center gap-3 rounded-md border p-4 text-center transition ${
                       selected
                         ? "border-teal-600 bg-teal-50/60"
                         : "border-slate-200 bg-white hover:border-slate-300"
@@ -204,7 +203,7 @@ export default function ProCreditsPage() {
               })}
 
               <div
-                className={`flex flex-col items-center gap-3 rounded-2xl border p-4 text-center transition ${
+                className={`flex flex-col items-center gap-3 rounded-md border p-4 text-center transition ${
                   selectedPackage === "custom"
                     ? "border-teal-600 bg-teal-50/60"
                     : "border-slate-200 bg-white"
@@ -252,7 +251,7 @@ export default function ProCreditsPage() {
                     key={method.id}
                     type="button"
                     onClick={() => setSelectedMethod(method.id)}
-                    className={`flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition ${
+                    className={`flex flex-col items-start gap-2 rounded-md border p-4 text-left transition ${
                       selected
                         ? "border-teal-600 bg-teal-50/60"
                         : "border-slate-200 bg-white hover:border-slate-300"
@@ -273,7 +272,7 @@ export default function ProCreditsPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white">
+          <div className="rounded-md border border-slate-200 bg-white">
             <div className="p-5">
               <h2 className="text-[17px] font-bold text-slate-950">
                 Historique des transactions

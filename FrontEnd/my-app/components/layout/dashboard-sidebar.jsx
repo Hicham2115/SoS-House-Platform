@@ -8,8 +8,8 @@ import {
   CircleHelp,
   FileText,
   Handshake,
-  History,
   LayoutDashboard,
+  ListChecks,
   LogOut,
   Megaphone,
   MessageSquare,
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import logo from "@/app/assets/logo.jpeg";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useConversations } from "@/hooks/use-conversations";
 import { useLogout } from "@/hooks/use-logout";
 import { useUser } from "@/hooks/use-user";
 
@@ -31,16 +32,11 @@ const navItems = [
     Icon: Megaphone,
     label: "Publier une demande",
   },
+  { href: "/dashboard/missions", Icon: ListChecks, label: "Mes missions" },
   {
     href: "/dashboard/messagerie",
     Icon: MessageSquare,
     label: "Messagerie",
-    badge: 2,
-  },
-  {
-    href: "/dashboard/historique",
-    Icon: History,
-    label: "Historique des missions",
   },
   {
     href: "/dashboard/parametres",
@@ -53,8 +49,14 @@ const navItems = [
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { data: user } = useUser();
+  const { data: conversations } = useConversations();
   const logout = useLogout();
   const [collapsed, setCollapsed] = useState(false);
+
+  const messagerieUnread = (conversations ?? []).reduce(
+    (sum, c) => sum + (c.unread_count ?? 0),
+    0,
+  );
 
   return (
     <aside
@@ -79,8 +81,12 @@ export function DashboardSidebar() {
       <Image src={logo} alt="SOS House" className="w-24 mx-auto mt-2" />
 
       <nav className="mt-4 flex flex-col gap-0.5">
-        {navItems.map(({ href, Icon, label, badge }) => {
+        {navItems.map(({ href, Icon, label }) => {
           const active = pathname === href;
+          const badge =
+            href === "/dashboard/messagerie" && messagerieUnread > 0
+              ? messagerieUnread
+              : null;
           return (
             <Link
               key={href}
@@ -109,7 +115,7 @@ export function DashboardSidebar() {
       </nav>
 
       <div
-        className={`mt-6 flex items-center gap-3 rounded-2xl bg-white/5 p-3 ${
+        className={`mt-6 flex items-center gap-3 rounded-md bg-white/5 p-3 ${
           collapsed ? "justify-center" : ""
         }`}
       >

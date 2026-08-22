@@ -1,8 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, ChevronDown, LogOut, Settings, User } from "lucide-react";
-import avatar1 from "@/app/assets/avatars/avatar-1.png";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import {
+  Bell,
+  CheckCheck,
+  ChevronDown,
+  LogOut,
+  MessageSquare,
+  Send,
+  Settings,
+  ThumbsUp,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +24,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLogout } from "@/hooks/use-logout";
+import { useNotifications } from "@/hooks/use-notifications";
 import { useUser } from "@/hooks/use-user";
+import { api } from "@/lib/axios";
+
+const notificationMeta = {
+  offer_received: { Icon: Send, className: "bg-teal-50 text-teal-700" },
+  offer_accepted: { Icon: ThumbsUp, className: "bg-amber-50 text-amber-700" },
+  message_received: {
+    Icon: MessageSquare,
+    className: "bg-violet-50 text-violet-600",
+  },
+};
+
+function notificationHref(notification, prefix) {
+  const demandeId = notification.data?.demande_id;
+  if (notification.type === "message_received") {
+    return `${prefix}/messagerie?demande=${demandeId}`;
+  }
+  if (notification.type === "offer_accepted") {
+    return `${prefix}/missions`;
+  }
+  return `${prefix}/offres`;
+}
 
 export function DashboardHeader({
   title,
@@ -21,13 +54,27 @@ export function DashboardHeader({
   ctaLabel = "+ Publier une demande",
   ctaHref = "/dashboard/publier",
   settingsHref = "/dashboard/parametres",
-  notificationCount = 3,
 }) {
   const { data: user } = useUser();
   const logout = useLogout();
+  const queryClient = useQueryClient();
+  const { data: notificationData } = useNotifications();
+
+  const markRead = useMutation({
+    mutationFn: async (id) => (await api.post(`/notifications/${id}/read`)).data,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+  });
+
+  const markAllRead = useMutation({
+    mutationFn: async () => (await api.post("/notifications/read-all")).data,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+  });
 
   const displayName = user?.name ?? "Mon compte";
   const initials = user?.name?.[0]?.toUpperCase() ?? "U";
+  const prefix = user?.role === "artisan" ? "/pro" : "/dashboard";
+  const notifications = notificationData?.notifications ?? [];
+  const unreadCount = notificationData?.unread_count ?? 0;
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-white px-5 py-4 sm:px-8">
@@ -39,18 +86,91 @@ export function DashboardHeader({
       </div>
 
       <div className="flex items-center gap-4">
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="relative flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
-        >
-          <Bell className="size-5" strokeWidth={1.8} />
-          {notificationCount > 0 && (
-            <span className="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-              {notificationCount}
-            </span>
-          )}
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            aria-label="Notifications"
+            className="relative flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-slate-500 outline-none transition hover:bg-slate-100 hover:text-slate-900"
+          >
+            <Bell className="size-5" strokeWidth={1.8} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="w-80 rounded-xl border border-slate-200/80 p-1.5 shadow-[0_12px_30px_rgba(12,55,55,0.1)]"
+          >
+            <div className="flex items-center justify-between px-2 py-1.5">
+              <p className="text-[13px] font-bold text-slate-950">
+                Notifications
+              </p>
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => markAllRead.mutate()}
+                  className="flex items-center gap-1 text-[12px] font-semibold text-teal-700 hover:text-teal-800"
+                >
+                  <CheckCheck className="size-3.5" />
+                  Tout marquer comme lu
+                </button>
+              )}
+            </div>
+            <DropdownMenuSeparator className="my-1" />
+            {notifications.length === 0 ? (
+              <p className="px-2 py-6 text-center text-[13px] text-slate-400">
+                Aucune notification.
+              </p>
+            ) : (
+              <div className="flex max-h-80 flex-col overflow-y-auto">
+                {notifications.map((notification) => {
+                  const meta =
+                    notificationMeta[notification.type] ??
+                    notificationMeta.message_received;
+                  return (
+                    <DropdownMenuItem
+                      key={notification.id}
+                      render={
+                        <Link
+                          href={notificationHref(notification, prefix)}
+                          onClick={() => markRead.mutate(notification.id)}
+                        />
+                      }
+                      className={`items-start gap-2.5 rounded-lg px-2 py-2.5 whitespace-normal ${
+                        !notification.read_at ? "bg-teal-50/50" : ""
+                      }`}
+                    >
+                      <span
+                        className={`flex size-8 shrink-0 items-center justify-center rounded-full ${meta.className}`}
+                      >
+                        <meta.Icon className="size-4" strokeWidth={1.8} />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[13px] font-bold text-slate-950">
+                          {notification.title}
+                        </p>
+                        {notification.body && (
+                          <p className="mt-0.5 line-clamp-2 text-[12px] text-slate-500">
+                            {notification.body}
+                          </p>
+                        )}
+                        <p className="mt-1 text-[11px] text-slate-400">
+                          {format(new Date(notification.created_at), "d MMM HH:mm", {
+                            locale: fr,
+                          })}
+                        </p>
+                      </div>
+                      {!notification.read_at && (
+                        <span className="mt-1.5 size-2 shrink-0 rounded-full bg-[#ffa514]" />
+                      )}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </div>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-full py-1 pr-2 outline-none hover:bg-slate-50">

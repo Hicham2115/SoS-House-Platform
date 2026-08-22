@@ -52,4 +52,14 @@ class Demande extends Model
     {
         return $this->hasMany(Offer::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function acceptedOffer()
+    {
+        return $this->hasOne(Offer::class)->where('status', 'accepted');
+    }
 }

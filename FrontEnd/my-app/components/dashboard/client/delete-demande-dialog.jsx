@@ -36,7 +36,7 @@ export function DeleteDemandeDialog({ trigger, onConfirm, isDeleting }) {
           répondre à cette demande.
         </AlertDialogDescription>
 
-        <div className="mt-5 flex items-start gap-3 rounded-2xl bg-red-50 p-4 text-left">
+        <div className="mt-5 flex items-start gap-3 rounded-md bg-red-50 p-4 text-left">
           <ShieldAlert className="mt-0.5 size-5 shrink-0 text-red-500" />
           <div>
             <p className="text-[13px] font-bold text-red-700">

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { useAuthStore } from "@/lib/store/auth";
 
@@ -20,29 +20,13 @@ export function useOffers(demandeId) {
   });
 }
 
-export function useCreateOffer(demandeId) {
-  const queryClient = useQueryClient();
+// Offers a provider has submitted, across every demande they bid on.
+export function useSubmittedOffers() {
+  const token = useAuthStore((state) => state.token);
 
-  return useMutation({
-    mutationFn: async (data) =>
-      (await api.post(`/demandes/${demandeId}/offers`, data)).data,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["demandes", demandeId, "offers"],
-      });
-    },
-  });
-}
-
-export function useAcceptOffer() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (offerId) =>
-      (await api.post(`/offers/${offerId}/accept`)).data,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["demandes"] });
-      queryClient.invalidateQueries({ queryKey: ["offers"] });
-    },
+  return useQuery({
+    queryKey: ["offers", "submitted"],
+    queryFn: async () => (await api.get("/offers/submitted")).data,
+    enabled: Boolean(token),
   });
 }

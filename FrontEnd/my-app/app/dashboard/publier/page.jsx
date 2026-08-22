@@ -187,7 +187,7 @@ function PublierPageContent() {
           subtitle="Chargement des informations de votre demande…"
         />
         <div className="flex flex-1 flex-col bg-slate-50 p-5 sm:p-8">
-          <div className="h-64 w-full animate-pulse rounded-2xl border border-slate-200 bg-white" />
+          <div className="h-64 w-full animate-pulse rounded-md border border-slate-200 bg-white" />
         </div>
       </>
     );
@@ -205,7 +205,7 @@ function PublierPageContent() {
       />
 
       <div className="flex flex-1 flex-col bg-slate-50 p-5 sm:p-8">
-        <div className="w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-8">
+        <div className="w-full rounded-md border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-8">
           <div className="flex items-center gap-3">
             {activeIndex > 0 && (
               <button

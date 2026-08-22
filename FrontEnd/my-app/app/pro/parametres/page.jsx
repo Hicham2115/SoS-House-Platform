@@ -84,7 +84,7 @@ function FieldRow({ Icon, id, label, helperText, children, first }) {
 function SectionCard({ icon: Icon, title, subtitle, children, onSubmit }) {
   return (
     <form
-      className="flex flex-col gap-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
+      className="flex flex-col gap-1 rounded-md border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit();
@@ -276,11 +276,10 @@ export default function ProParametresPage() {
         ctaLabel="+ Voir les nouvelles demandes"
         ctaHref="/pro/demandes"
         settingsHref="/pro/parametres"
-        notificationCount={3}
       />
 
       <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
-        <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 rounded-md border border-slate-200 bg-white p-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <Avatar className="size-16">
               <AvatarImage

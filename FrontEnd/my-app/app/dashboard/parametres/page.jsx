@@ -178,7 +178,7 @@ export default function ParametresPage() {
 
       <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
         <form
-          className="relative flex flex-col gap-1 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
+          className="relative flex flex-col gap-1 overflow-hidden rounded-md border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
           onSubmit={(e) => {
             e.preventDefault();
             form.handleSubmit();
@@ -327,7 +327,7 @@ export default function ParametresPage() {
         </form>
 
         <form
-          className="relative flex flex-col gap-1 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
+          className="relative flex flex-col gap-1 overflow-hidden rounded-md border border-slate-200 bg-white p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]"
           onSubmit={(e) => {
             e.preventDefault();
             passwordForm.handleSubmit();

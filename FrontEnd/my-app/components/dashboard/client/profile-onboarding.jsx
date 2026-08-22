@@ -194,7 +194,7 @@ export function ProfileOnboarding() {
 
   return (
     <>
-      <div className="rounded-2xl border border-teal-100 bg-teal-50 p-5">
+      <div className="rounded-md border border-teal-100 bg-teal-50 p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-600 text-white">
@@ -443,7 +443,7 @@ export function ProfileOnboarding() {
                       >
                         <label
                           htmlFor="notif-whatsapp"
-                          className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] hover:bg-slate-50"
+                          className="flex cursor-pointer items-center gap-3 rounded-md border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] hover:bg-slate-50"
                         >
                           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
                             <MessageCircle
@@ -461,7 +461,7 @@ export function ProfileOnboarding() {
                         </label>
                         <label
                           htmlFor="notif-email"
-                          className="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] hover:bg-slate-50"
+                          className="flex cursor-pointer items-center gap-3 rounded-md border border-slate-200 p-3.5 transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(12,55,55,0.08)] hover:bg-slate-50"
                         >
                           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
                             <Mail className="size-[18px]" strokeWidth={1.8} />

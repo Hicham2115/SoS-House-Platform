@@ -18,6 +18,7 @@ import {
   computeOnboardingPct,
   initialProviderOnboardingData,
 } from "@/components/dashboard/pro/provider-onboarding-modal";
+import { UnlockDemandeDialog } from "@/components/dashboard/pro/unlock-demande-dialog";
 import { StatCard } from "@/components/dashboard/shared/stat-card";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,7 @@ export default function ProDashboardPage() {
   const { data: portfolio } = useProviderPortfolio();
   const [onboardingStatus, setOnboardingStatus] = useState("blocking");
   const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [unlockDemandeId, setUnlockDemandeId] = useState(null);
   const [onboardingData, setOnboardingData] = useState(
     initialProviderOnboardingData,
   );
@@ -151,7 +153,6 @@ export default function ProDashboardPage() {
         ctaLabel="+ Voir les nouvelles demandes"
         ctaHref="/pro/demandes"
         settingsHref="/pro/parametres"
-        notificationCount={6}
       />
 
       <div className="flex flex-1 flex-col gap-6 bg-slate-50 p-5 sm:p-8">
@@ -189,7 +190,7 @@ export default function ProDashboardPage() {
                 Array.from({ length: 3 }).map((_, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+                    className="flex items-center gap-3 rounded-md border border-slate-200 bg-white p-4"
                   >
                     <Skeleton className="size-11 shrink-0 rounded-full" />
                     <div className="flex-1 space-y-2">
@@ -199,7 +200,7 @@ export default function ProDashboardPage() {
                   </div>
                 ))
               ) : availableDemandes.length === 0 ? (
-                <p className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-[13px] text-slate-500">
+                <p className="rounded-md border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-[13px] text-slate-500">
                   Aucune demande disponible pour le moment.
                 </p>
               ) : (
@@ -210,7 +211,7 @@ export default function ProDashboardPage() {
                   return (
                     <div
                       key={demande.id}
-                      className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center"
+                      className="flex flex-col gap-3 rounded-md border border-slate-200 bg-white p-4 sm:flex-row sm:items-center"
                     >
                       <span
                         className={`flex size-11 shrink-0 items-center justify-center rounded-full ${tone?.icon ?? "bg-teal-50 text-teal-700"}`}
@@ -242,7 +243,10 @@ export default function ProDashboardPage() {
                           <Unlock className="size-4 text-slate-400" />
                           {demande.credits} crédits
                         </span>
-                        <Button className="h-9 shrink-0 rounded-lg bg-[#ffa514] px-4 text-[13px] font-bold text-slate-950 hover:bg-[#ffaf2d]">
+                        <Button
+                          onClick={() => setUnlockDemandeId(demande.id)}
+                          className="h-9 shrink-0 rounded-lg bg-[#ffa514] px-4 text-[13px] font-bold text-slate-950 hover:bg-[#ffaf2d]"
+                        >
                           Débloquer
                         </Button>
                       </div>
@@ -277,7 +281,7 @@ export default function ProDashboardPage() {
                 return (
                   <div
                     key={mission.id}
-                    className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center"
+                    className="flex flex-col gap-3 rounded-md border border-slate-200 bg-white p-4 sm:flex-row sm:items-center"
                   >
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">
                       <Icon className="size-5" strokeWidth={1.8} />
@@ -345,6 +349,15 @@ export default function ProDashboardPage() {
         formData={onboardingData}
         updateField={updateOnboardingField}
         onFinish={handleOnboardingFinish}
+      />
+
+      <UnlockDemandeDialog
+        key={unlockDemandeId ?? "none"}
+        demande={
+          availableDemandes.find((d) => d.id === unlockDemandeId) ?? null
+        }
+        open={Boolean(unlockDemandeId)}
+        onOpenChange={(open) => !open && setUnlockDemandeId(null)}
       />
     </>
   );

@@ -33,7 +33,7 @@ export function DemandeCard({
   return (
     <div
       onClick={onViewDetails}
-      className="relative flex cursor-pointer flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 pr-10 transition hover:border-teal-200 hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)] lg:flex-row lg:items-start lg:gap-6"
+      className="relative flex cursor-pointer flex-col gap-4 rounded-md border border-slate-200 bg-white p-5 pr-10 transition hover:border-teal-200 hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)] lg:flex-row lg:items-start lg:gap-6"
     >
       <div className="flex flex-1 gap-4">
         <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700">

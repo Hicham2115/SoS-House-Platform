@@ -45,7 +45,7 @@ export function StepRecap({ draft, isPending, isEditing, onSubmit }) {
 
   return (
     <div className="mt-5 flex flex-col gap-4">
-      <div className="rounded-2xl border border-slate-200 p-4">
+      <div className="rounded-md border border-slate-200 p-4">
         <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5 text-[12px] font-bold uppercase tracking-[0.04em] text-teal-700">
           <Tag className="size-3.5" />
           Service
@@ -85,7 +85,7 @@ export function StepRecap({ draft, isPending, isEditing, onSubmit }) {
         )}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 p-4">
+      <div className="rounded-md border border-slate-200 p-4">
         <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5 text-[12px] font-bold uppercase tracking-[0.04em] text-teal-700">
           <MapPin className="size-3.5" />
           Localisation et urgence
@@ -114,7 +114,7 @@ export function StepRecap({ draft, isPending, isEditing, onSubmit }) {
       </div>
 
       {priceRange && (
-        <div className="flex items-start gap-2.5 rounded-2xl bg-teal-50 p-3.5 text-teal-800">
+        <div className="flex items-start gap-2.5 rounded-md bg-teal-50 p-3.5 text-teal-800">
           <Wallet className="mt-0.5 size-4 shrink-0" />
           <span className="text-[12px] leading-[1.5]">
             Estimation indicative pour cette catégorie :{" "}

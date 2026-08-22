@@ -86,7 +86,7 @@ function CardsSkeleton() {
       {Array.from({ length: 3 }).map((_, index) => (
         <div
           key={index}
-          className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5"
+          className="flex items-center gap-4 rounded-md border border-slate-200 bg-white p-5"
         >
           <Skeleton className="size-14 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2">
@@ -101,7 +101,7 @@ function CardsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white">
+    <div className="rounded-md border border-slate-200 bg-white">
       <Table>
         <TableHeader>
           <TableRow className="border-slate-200 hover:bg-transparent">
@@ -151,7 +151,7 @@ function TableSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
+    <div className="flex flex-col items-center gap-1 rounded-md border border-dashed border-slate-200 bg-white py-16 text-center">
       <p className="text-[15px] font-bold text-slate-950">
         Aucune demande pour le moment
       </p>
@@ -322,7 +322,7 @@ export default function DemandesPage() {
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-slate-200 bg-white">
+          <div className="rounded-md border border-slate-200 bg-white">
             <Table>
               <TableHeader>
                 <TableRow className="border-slate-200 hover:bg-transparent">

@@ -37,7 +37,7 @@ export function ProviderOnboardingBanner({ status, progress, onOpenModal }) {
   if (!variant || !copy) return null;
 
   return (
-    <div className={`rounded-2xl border p-5 ${variant.wrapper}`}>
+    <div className={`rounded-md border p-5 ${variant.wrapper}`}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
           <span
