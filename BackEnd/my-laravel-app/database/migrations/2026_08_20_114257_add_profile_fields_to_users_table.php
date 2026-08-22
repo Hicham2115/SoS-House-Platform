@@ -11,18 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('avatar')->nullable();
-            $table->string('account_type')->nullable();
-            $table->string('raison_sociale')->nullable();
-            $table->string('ice')->nullable();
-            $table->string('nom_du_referant')->nullable();
-            $table->string('ville')->nullable();
-            $table->string('quartier')->nullable();
-            $table->string('adresse')->nullable();
-            $table->string('etage')->nullable();
-            $table->string('notification_Channel')->nullable();
-        });
+        // No-op: these columns were later added directly to
+        // 0001_01_01_000000_create_users_table.php, so a fresh database
+        // already has them by the time this migration runs. Kept as a
+        // no-op (rather than deleted) so environments where this migration
+        // already ran keep a consistent migrations history.
     }
 
     /**
@@ -30,19 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn([
-                'avatar',
-                'account_type',
-                'raison_sociale',
-                'ice',
-                'nom_du_referant',
-                'ville',
-                'quartier',
-                'adresse',
-                'etage',
-                'notification_Channel',
-            ]);
-        });
+        // See up() — nothing to reverse here.
     }
 };
