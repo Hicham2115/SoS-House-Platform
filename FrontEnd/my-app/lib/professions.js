@@ -13,7 +13,7 @@ export const categories = [
   "Entretien de jardin",
   "Débroussaillage de jardin",
   "Pose de prise électrique",
-  "Bricolage et petits travaux",
+  "Bricolage et petits travaux", 
   "Réparation de voiture",
   "Plomberie et installation sanitaire",
   "Déménagement",
