@@ -1,4 +1,4 @@
-import { ChevronRight, Clock, TriangleAlert, UserRoundCog } from "lucide-react";
+import { ChevronRight, TriangleAlert, UserRoundCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { bannerCopy } from "@/lib/pro-onboarding-data";
 
@@ -20,12 +20,12 @@ const variants = {
     pctText: "text-teal-700",
   },
   pending_review: {
-    wrapper: "border-slate-200 bg-white",
-    iconWrapper: "bg-slate-200 text-slate-600",
-    Icon: Clock,
-    barTrack: "bg-slate-100",
-    barFill: "bg-slate-400",
-    pctText: "text-slate-500",
+    wrapper: "border-teal-100 bg-teal-50",
+    iconWrapper: "bg-teal-600 text-white",
+    Icon: UserRoundCog,
+    barTrack: "bg-teal-100",
+    barFill: "bg-teal-600",
+    pctText: "text-teal-700",
   },
 };
 
@@ -46,16 +46,9 @@ export function ProviderOnboardingBanner({ status, progress, onOpenModal }) {
             <variant.Icon className="size-5" strokeWidth={1.8} />
           </span>
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-[15px] font-bold text-slate-950">
-                {copy.title}
-              </p>
-              {status === "pending_review" && (
-                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-600">
-                  En cours de vérification
-                </span>
-              )}
-            </div>
+            <p className="text-[15px] font-bold text-slate-950">
+              {copy.title}
+            </p>
             <p className="mt-0.5 text-[13px] text-slate-600">
               {copy.subtitle}
             </p>
@@ -75,16 +68,14 @@ export function ProviderOnboardingBanner({ status, progress, onOpenModal }) {
           </div>
         </div>
 
-        {status !== "pending_review" && (
-          <Button
-            type="button"
-            onClick={onOpenModal}
-            className="h-10 shrink-0 rounded-xl bg-[#0b1730] px-5 text-[13px] font-semibold text-white hover:bg-[#142248]"
-          >
-            Compléter mon profil
-            <ChevronRight className="size-4" />
-          </Button>
-        )}
+        <Button
+          type="button"
+          onClick={onOpenModal}
+          className="h-10 shrink-0 rounded-xl bg-[#0b1730] px-5 text-[13px] font-semibold text-white hover:bg-[#142248]"
+        >
+          Compléter mon profil
+          <ChevronRight className="size-4" />
+        </Button>
       </div>
     </div>
   );

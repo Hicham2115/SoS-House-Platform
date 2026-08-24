@@ -3,12 +3,12 @@
 
 export const bannerCopy = {
   blocking: {
-    title: "Complétez votre vérification pour recevoir des demandes",
+    title: "Complétez votre profil pour recevoir des demandes",
     subtitle: "Votre zone d'intervention (étape 1) est requise avant de pouvoir répondre.",
   },
   pending_review: {
-    title: "Vérification en cours (48-72h)",
-    subtitle: "Notre équipe examine vos documents.",
+    title: "Votre profil est presque complet",
+    subtitle: "Continuez à compléter votre profil et votre portfolio.",
   },
   optional: {
     title: "Complétez votre profil pour améliorer votre visibilité",
