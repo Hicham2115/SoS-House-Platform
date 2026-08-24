@@ -31,6 +31,28 @@ import bricolage from "@/app/assets/services/bricolage.jpg";
 import nettoyage from "@/app/assets/services/nottoyage.jpg";
 import painting from "@/app/assets/services/painting.jpg";
 import lavage from "@/app/assets/services/lavage.jpg";
+import transportDeColisImg from "@/app/assets/services/Transport de colis.jpg";
+import vidangeDeVoitureImg from "@/app/assets/services/Vidange de voiture.jpg";
+import peintureMuraleImg from "@/app/assets/services/Peinture murale.jpg";
+import poseDePlafondImg from "@/app/assets/services/Pose de plafond.jpg";
+import poseDePapierPeintImg from "@/app/assets/services/Pose de papier peint.jpg";
+import reparationDeLaveVaisselleImg from "@/app/assets/services/Réparation de lave-vaisselle.png";
+import recuperationDeColisImg from "@/app/assets/services/Récupération de colis .jpg";
+import reparationDeMachineALaverImg from "@/app/assets/services/Réparation de machine à laver.jpg";
+import solAPeindreImg from "@/app/assets/services/Sol à peindre.jpg";
+import montageDeCuisineEnKitImg from "@/app/assets/services/Montage de cuisine en kit.jpg";
+import gardeDeBebeImg from "@/app/assets/services/Garde de bébé.jpg";
+import entretienDeJardinImg from "@/app/assets/services/Entretien de jardin.jpg";
+import debroussaillageDeJardinImg from "@/app/assets/services/Débroussaillage de jardin.jpg";
+import poseDePriseElectriqueImg from "@/app/assets/services/Pose de prise électrique.jpg";
+import bricolageEtPetitsTravauxImg from "@/app/assets/services/Bricolage et petits travaux.jpg";
+import reparationDeVoitureImg from "@/app/assets/services/Réparation de voiture.jpg";
+import plomberieEtInstallationSanitaireImg from "@/app/assets/services/Plomberie et installation sanitaire.jpg";
+import demenagementImg from "@/app/assets/services/Déménagement.jpg";
+import femmeDeMenageImg from "@/app/assets/services/Femme de ménage .jpg";
+import installationElectriqueImg from "@/app/assets/services/Installation électrique.jpg";
+import maconnerieImg from "@/app/assets/services/Maçonnerie.jpg";
+import depannageElectromenagerImg from "@/app/assets/services/Dépannage électroménager.jpg";
 const services = [
   {
     Icon: Droplet,
@@ -76,7 +98,35 @@ const services = [
   },
 ];
 
-const allServices = [...services, ...categories.map((title) => ({ title }))];
+const categoryImages = {
+  "Transport de colis": transportDeColisImg,
+  "Vidange de voiture": vidangeDeVoitureImg,
+  "Peinture murale": peintureMuraleImg,
+  "Pose de plafond": poseDePlafondImg,
+  "Pose de papier peint": poseDePapierPeintImg,
+  "Réparation de lave-vaisselle": reparationDeLaveVaisselleImg,
+  "Récupération de colis": recuperationDeColisImg,
+  "Réparation de machine à laver": reparationDeMachineALaverImg,
+  "Sol à peindre": solAPeindreImg,
+  "Montage de cuisine en kit": montageDeCuisineEnKitImg,
+  "Garde de bébé": gardeDeBebeImg,
+  "Entretien de jardin": entretienDeJardinImg,
+  "Débroussaillage de jardin": debroussaillageDeJardinImg,
+  "Pose de prise électrique": poseDePriseElectriqueImg,
+  "Bricolage et petits travaux": bricolageEtPetitsTravauxImg,
+  "Réparation de voiture": reparationDeVoitureImg,
+  "Plomberie et installation sanitaire": plomberieEtInstallationSanitaireImg,
+  "Déménagement": demenagementImg,
+  "Femme de ménage": femmeDeMenageImg,
+  "Installation électrique": installationElectriqueImg,
+  "Maçonnerie": maconnerieImg,
+  "Dépannage électroménager": depannageElectromenagerImg,
+};
+
+const allServices = [
+  ...services,
+  ...categories.map((title) => ({ title, image: categoryImages[title] })),
+];
 const INITIAL_COUNT = 8;
 
 function ServiceCard({ Icon, title, description, image }) {
