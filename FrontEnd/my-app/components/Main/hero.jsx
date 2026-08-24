@@ -232,13 +232,13 @@ export function Hero() {
           </div>
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
             <Button
-              onClick={openSignUp}
+              onClick={() => openSignUp("client")}
               className="h-[60px] justify-between rounded-xl bg-[#ffa514] px-7 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d] sm:min-w-[200px]"
             >
               Publier une demande <ArrowRight className="size-5" />
             </Button>
             <Button
-              onClick={openSignUp}
+              onClick={() => openSignUp("artisan")}
               variant="outline"
               className="h-[60px] rounded-xl border-teal-800 bg-white/70 px-8 text-[15px] font-bold text-teal-800 transition hover:bg-teal-50"
             >

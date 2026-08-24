@@ -6,8 +6,14 @@ export const useAuthDialogStore = create((set) => ({
   step: "role",
   role: null,
 
-  openSignUp: () =>
-    set({ open: true, mode: "signup", step: "role", role: null }),
+  // Pass "client" or "artisan" to skip the role-picker and jump straight
+  // into that flow (used by CTAs that already say which one they mean).
+  openSignUp: (role) =>
+    set(
+      role
+        ? { open: true, mode: "signup", role, step: role === "artisan" ? "niveau" : "form" }
+        : { open: true, mode: "signup", step: "role", role: null },
+    ),
 
   openSignIn: () =>
     set({ open: true, mode: "signin", step: "form", role: null }),

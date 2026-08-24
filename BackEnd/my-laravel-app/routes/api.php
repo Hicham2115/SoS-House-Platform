@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DemandeController;
@@ -55,6 +56,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Contact / support form.
     Route::post('/contacts', [ContactController::class, 'store']);
+
+    // Admin: platform overview and provider verification queue.
+    Route::get('/admin/overview', [AdminController::class, 'overview']);
+    Route::get('/admin/users', [AdminController::class, 'users']);
+    Route::get('/admin/verifications', [AdminController::class, 'pendingVerifications']);
+    Route::get('/admin/verifications/{artisan}', [AdminController::class, 'showVerification']);
+    Route::post('/admin/verifications/{artisan}/approve', [AdminController::class, 'approveVerification']);
+    Route::post('/admin/verifications/{artisan}/reject', [AdminController::class, 'rejectVerification']);
 
     // Provider public profile: certifications, past work, photos.
     Route::get('/provider/portfolio', [ProviderPortfolioController::class, 'index']);

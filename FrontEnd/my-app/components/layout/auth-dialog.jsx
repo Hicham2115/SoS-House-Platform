@@ -275,7 +275,13 @@ export function AuthDialog() {
         toast.success("Connexion réussie.");
         signInForm.reset();
         setOpen(false);
-        router.push(data.user.role === "artisan" ? "/pro" : "/dashboard");
+        router.push(
+          data.user.role === "artisan"
+            ? "/pro"
+            : data.user.role === "admin"
+              ? "/admin"
+              : "/dashboard",
+        );
       } catch (error) {
         console.error(error);
         toast.error("Email ou mot de passe incorrect.");

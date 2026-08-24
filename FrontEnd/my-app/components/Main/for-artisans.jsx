@@ -241,7 +241,7 @@ export function ForArtisans() {
           </div>
           <div className="relative flex shrink-0 flex-col items-start gap-2 sm:items-end">
             <Button
-              onClick={openSignUp}
+              onClick={() => openSignUp("artisan")}
               className="h-[52px] justify-between rounded-xl bg-[#ffa514] px-6 text-[15px] font-bold text-slate-950 shadow-[0_13px_25px_rgba(255,165,20,0.2)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
             >
               Créer mon compte artisan <ArrowRight className="size-4" />

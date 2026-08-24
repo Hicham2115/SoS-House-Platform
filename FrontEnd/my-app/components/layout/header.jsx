@@ -38,7 +38,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden shrink-0 items-center gap-7 lg:flex">
+        <div className="hidden shrink-0 items-center gap-5 lg:flex">
           <button
             type="button"
             onClick={openSignIn}
@@ -47,7 +47,14 @@ export function Header() {
             Se connecter
           </button>
           <Button
-            onClick={openSignUp}
+            onClick={() => openSignUp("artisan")}
+            variant="outline"
+            className="h-12 rounded-xl border-teal-800 px-5 text-[14px] font-semibold text-teal-800 transition hover:bg-teal-50"
+          >
+            Devenir prestataire
+          </Button>
+          <Button
+            onClick={() => openSignUp("client")}
             className="h-12 rounded-xl bg-[#ffa514] px-7 text-[14px] font-semibold text-slate-950 shadow-[0_8px_20px_rgba(255,165,20,0.18)] transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
           >
             Publier une demande
@@ -56,7 +63,7 @@ export function Header() {
 
         <div className="flex shrink-0 items-center gap-2 lg:hidden">
           <Button
-            onClick={openSignUp}
+            onClick={() => openSignUp("client")}
             className="h-10 rounded-md bg-[#ffa514] px-4 text-sm font-bold text-slate-950 transition hover:-translate-y-0.5 hover:bg-[#ffaf2d]"
           >
             Publier une demande
@@ -64,7 +71,8 @@ export function Header() {
           <MobileNav
             navLinks={navLinks}
             onOpenAuth={openSignIn}
-            onOpenSignUp={openSignUp}
+            onOpenSignUp={() => openSignUp("client")}
+            onOpenSignUpArtisan={() => openSignUp("artisan")}
           />
         </div>
       </div>

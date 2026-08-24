@@ -10,7 +10,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-export function MobileNav({ navLinks, onOpenAuth, onOpenSignUp }) {
+export function MobileNav({
+  navLinks,
+  onOpenAuth,
+  onOpenSignUp,
+  onOpenSignUpArtisan,
+}) {
   return (
     <Sheet>
       <SheetTrigger
@@ -44,6 +49,18 @@ export function MobileNav({ navLinks, onOpenAuth, onOpenSignUp }) {
             className="cursor-pointer rounded-lg px-3 py-2.5 text-center text-[15px] font-semibold text-teal-800"
           >
             Se connecter
+          </SheetClose>
+          <SheetClose
+            onClick={onOpenSignUpArtisan}
+            render={
+              <Button
+                variant="outline"
+                className="h-12 rounded-xl border-teal-800 px-7 text-[15px] font-semibold text-teal-800 transition hover:bg-teal-50"
+              />
+            }
+            nativeButton={false}
+          >
+            Devenir prestataire
           </SheetClose>
           <SheetClose
             onClick={onOpenSignUp}

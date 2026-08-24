@@ -27,10 +27,17 @@ export default function DashboardLayout({ children }) {
       router.replace("/");
     } else if (user?.role === "artisan") {
       router.replace("/pro");
+    } else if (user?.role === "admin") {
+      router.replace("/admin");
     }
   }, [mounted, token, user, router]);
 
-  if (!mounted || !token || user?.role === "artisan") {
+  if (
+    !mounted ||
+    !token ||
+    user?.role === "artisan" ||
+    user?.role === "admin"
+  ) {
     return null;
   }
 

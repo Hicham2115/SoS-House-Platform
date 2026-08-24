@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'role', 'profession', 'phone', 'avatar', 'raison_sociale', 'ice', 'ville', 'nom_du_referant', 'quartier', 'adresse', 'etage', 'notification_Channel', 'niveau', 'rc', 'secteur_activite', 'nom_commercial', 'carte_auto_entrepreneur', 'cin_recto', 'cin_verso', 'selfie', 'radius_km', 'provider_categories', 'disponibilite_jours', 'heure_debut', 'heure_fin', 'bio', 'annees_experience', 'specialites', 'credits'])]
+#[Fillable(['name', 'email', 'password', 'role', 'profession', 'phone', 'avatar', 'raison_sociale', 'ice', 'ville', 'nom_du_referant', 'quartier', 'adresse', 'etage', 'notification_Channel', 'niveau', 'rc', 'secteur_activite', 'nom_commercial', 'carte_auto_entrepreneur', 'cin_recto', 'cin_verso', 'selfie', 'radius_km', 'provider_categories', 'disponibilite_jours', 'heure_debut', 'heure_fin', 'bio', 'annees_experience', 'specialites', 'credits', 'verification_status', 'verification_rejection_reason'])]
 
 #[Hidden(['password', 'remember_token'])]
 
@@ -59,6 +59,8 @@ class User extends Authenticatable
             "annees_experience" => 'integer',
             "specialites" => 'array',
             "credits" => 'integer',
+            "verification_status" => 'string',
+            "verification_rejection_reason" => 'string',
         ];
     }
 
